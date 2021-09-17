@@ -25,13 +25,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
-public class Solitaire
+public class FivePiles
 {
 	// CONSTANTS
 	public static final int TABLE_HEIGHT = Card.CARD_HEIGHT * 4;
 	public static final int TABLE_WIDTH = (Card.CARD_WIDTH * 7) + 100;
 	public static final int NUM_FINAL_DECKS = 1; //was 4 in solitaire
-	public static final int NUM_PLAY_DECKS = 5; //five piles
+	public static final int NUM_PLAY_DECKS = 5; //five playing piles
 	public static final Point DECK_POS = new Point(5, 5);
 	public static final Point SHOW_POS = new Point(DECK_POS.x + Card.CARD_WIDTH + 5, DECK_POS.y);
 	public static final Point FINAL_POS = new Point(SHOW_POS.x + Card.CARD_WIDTH + 150, DECK_POS.y);
@@ -44,7 +44,7 @@ public class Solitaire
 	private static CardStack deck; // populated with standard 52 card deck
 
 	// GUI COMPONENTS (top level)
-	private static final JFrame frame = new JFrame("Klondike Solitaire");
+	private static final JFrame frame = new JFrame("Five Piles");
 	protected static final JPanel table = new JPanel();
 	// other components
 	private static JEditorPane gameTitle = new JEditorPane("text/html", "");
@@ -76,8 +76,8 @@ public class Solitaire
 	// add/subtract points based on gameplay actions
 	protected static void setScore(int deltaScore)
 	{
-		Solitaire.score += deltaScore;
-		String newScore = "Score: " + Solitaire.score;
+		FivePiles.score += deltaScore;
+		String newScore = "Score: " + FivePiles.score;
 		scoreBox.setText(newScore);
 		scoreBox.repaint();
 	}
@@ -85,13 +85,13 @@ public class Solitaire
 	// GAME TIMER UTILITIES
 	protected static void updateTimer()
 	{
-		Solitaire.time += 1;
+		FivePiles.time += 1;
 		// every 10 seconds elapsed we take away 2 points
-		if (Solitaire.time % 10 == 0)
+		if (FivePiles.time % 10 == 0)
 		{
 			setScore(-2);
 		}
-		String time = "Seconds: " + Solitaire.time;
+		String time = "Seconds: " + FivePiles.time;
 		timeBox.setText(time);
 		timeBox.repaint();
 	}
@@ -328,7 +328,7 @@ public class Solitaire
 				if (prevCard != null)
 					table.remove(prevCard);
 				Card c = deck.pop().setFaceup();
-				table.add(Solitaire.moveCard(c, SHOW_POS.x, SHOW_POS.y));
+				table.add(FivePiles.moveCard(c, SHOW_POS.x, SHOW_POS.y));
 				c.repaint();
 				table.repaint();
 				prevCard = c;
@@ -402,7 +402,7 @@ public class Solitaire
 						break;
 					}
 				}
-				// Moving from SHOW TO FINAL
+				// Moving from SHOW TO FINAL //this likely what we would need to edit to accept valid pairs
 				for (int x = 0; x < NUM_FINAL_DECKS; x++)
 				{
 					dest = final_cards[x];
