@@ -47,7 +47,7 @@ public class FivePiles
 	private static final JFrame frame = new JFrame("Five Piles");
 	protected static final JPanel table = new JPanel();
 	// other components
-	private static JEditorPane gameTitle = new JEditorPane("text/html", "");
+	private static JEditorPane gameTitle = new JEditorPane("text/html", ""); //
 	private static JButton showRulesButton = new JButton("Show Rules");
 	private static JButton newGameButton = new JButton("New Game");
 	private static JButton toggleTimerButton = new JButton("Pause Timer");
