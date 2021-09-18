@@ -3,9 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fivepiles;
-
-
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -28,11 +25,11 @@ class Card extends JPanel
 		SPADES, CLUBS, DIAMONDS, HEARTS
 	}
 
-	private Suit _suit;
+	private Suit _suit; //card suit
 
-	private Value _value;
+	private Value _value;//creates Value object called _value
 
-	private Boolean _faceup;
+	private Boolean _faceup; //Is the card face up or down?
 
 	private Point _location; // location relative to container
 
@@ -40,28 +37,29 @@ class Card extends JPanel
 	// functions
 
 	private int x; // used for relative positioning within CardStack Container
-	private int y;
+	private int y; // used for relative positioning within CardStack Container
 
-	private final int x_offset = 10;
-	private final int y_offset = 20;
-	private final int new_x_offset = x_offset + (CARD_WIDTH - 30);
-	final static public int CARD_HEIGHT = 150;
+	private final int x_offset = 10; //x_offset is = 10
+	private final int y_offset = 20; // the y_offset is = 20
+	private final int new_x_offset = x_offset + (CARD_WIDTH - 30); //the new x_offset is equal to the original x_offset plus the CARD_WIDTH - 30
+	final static public int CARD_HEIGHT = 150; // CARD_HEIGHT instantiated to 150
 
-	final static public int CARD_WIDTH = 100;
+	final static public int CARD_WIDTH = 100; // CARD_WIDTH instantiated to  100
 
-	final static public int CORNER_ANGLE = 25;
+	final static public int CORNER_ANGLE = 25; // CORNER_ANGLE instantiatied to 25
 
-	Card(Suit suit, Value value)
+	Card(Suit suit, Value value) //This constructor takes in a suit and value
 	{
-		_suit = suit;
-		_value = value;
-		_faceup = false;
-		_location = new Point();
-		x = 0;
-		y = 0;
-		_location.x = x;
-		_location.y = y;
-		whereAmI = new Point();
+		_suit = suit; // Instantiates suit
+		_value = value; // Instantiates value
+		_faceup = false; // starts facedown
+		_location = new Point(); // create new instance of the Point() class
+		x = 0; //x defaults to 0
+		y = 0; // y defaults to 0
+		_location.x = x; //location's x is equal to x
+		_location.y = y; //locations' y is equal to y
+
+		whereAmI = new Point(); // whereAmI = new Point() instance
 	}
 
 	Card()
@@ -77,94 +75,94 @@ class Card extends JPanel
 		whereAmI = new Point();
 	}
 
-	public Suit getSuit()
+	public Suit getSuit() // Function on how to get our Suit
 	{
-		switch (_suit)
+		switch (_suit) // checks _suit
 		{
-		case HEARTS:
-			System.out.println("Hearts");
-			break;
-		case DIAMONDS:
-			System.out.println("Diamonds");
-			break;
-		case SPADES:
-			System.out.println("Spades");
-			break;
-		case CLUBS:
-			System.out.println("Clubs");
-			break;
+			case HEARTS: // if the suit is HEARTS, then print "Hearts"
+				System.out.println("Hearts");
+				break; // break out of case-loop
+			case DIAMONDS: // if the suit is Diamonds, then print "Diamonds"
+				System.out.println("Diamonds");
+				break;
+			case SPADES:
+				System.out.println("Spades");
+				break;
+			case CLUBS:
+				System.out.println("Clubs");
+				break;
 		}
-		return _suit;
+		return _suit; // Return the suit
 	}
 
-	public Value getValue()
+	public Value getValue() // function for getting our values
 	{
-		switch (_value)
+		switch (_value) // switch checks the _value of the card
 		{
-		case ACE:
-			System.out.println(" Ace");
-			break;
-		case TWO:
-			System.out.println(" 2");
-			break;
-		case THREE:
-			System.out.println(" 3");
-			break;
-		case FOUR:
-			System.out.println(" 4");
-			break;
-		case FIVE:
-			System.out.println(" 5");
-			break;
-		case SIX:
-			System.out.println(" 6");
-			break;
-		case SEVEN:
-			System.out.println(" 7");
-			break;
-		case EIGHT:
-			System.out.println(" 8");
-			break;
-		case NINE:
-			System.out.println(" 9");
-			break;
-		case TEN:
-			System.out.println(" 10");
-			break;
-		case JACK:
-			System.out.println(" Jack");
-			break;
-		case QUEEN:
-			System.out.println(" Queen");
-			break;
-		case KING:
-			System.out.println(" King");
-			break;
+			case ACE: // if _value = ACE, then print " Ace"
+				System.out.println(" Ace");
+				break;
+			case TWO:
+				System.out.println(" 2");
+				break;
+			case THREE:
+				System.out.println(" 3");
+				break;
+			case FOUR:
+				System.out.println(" 4");
+				break;
+			case FIVE:
+				System.out.println(" 5");
+				break;
+			case SIX:
+				System.out.println(" 6");
+				break;
+			case SEVEN:
+				System.out.println(" 7");
+				break;
+			case EIGHT:
+				System.out.println(" 8");
+				break;
+			case NINE:
+				System.out.println(" 9");
+				break;
+			case TEN:
+				System.out.println(" 10");
+				break;
+			case JACK:
+				System.out.println(" Jack");
+				break;
+			case QUEEN:
+				System.out.println(" Queen");
+				break;
+			case KING:
+				System.out.println(" King");
+				break;
 		}
-		return _value;
+		return _value; // Return the value
 	}
 
 	public void setWhereAmI(Point p)
 	{
 		whereAmI = p;
-	}
+	} //this takes a Point called p and sets whereAmI = to it
 
 	public Point getWhereAmI()
 	{
 		return whereAmI;
-	}
+	} // this will return whereAmI
 
 	public Point getXY()
 	{
 		return new Point(x, y);
-	}
+	} // this will return a new instance of Point with our x and y
 
 	public Boolean getFaceStatus()
 	{
 		return _faceup;
-	}
+	} // this will return if the card is face up or down (1/0)
 
-	public void setXY(Point p)
+	public void setXY(Point p) // this sets our x and y  values based on our Point P
 	{
 		x = p.x;
 		y = p.y;
@@ -174,29 +172,29 @@ class Card extends JPanel
 	public void setSuit(Suit suit)
 	{
 		_suit = suit;
-	}
+	} // this will take in suit and set _suit equal to it
 
 	public void setValue(Value value)
 	{
 		_value = value;
+	} // this will set _value = value
+
+	public Card setFaceup() //when this is called it will make sure our card is face up
+	{
+		_faceup = true; // card is face up
+		return this; // return that status for later
 	}
 
-	public Card setFaceup()
+	public Card setFacedown() //when called, make card facedown
 	{
-		_faceup = true;
-		return this;
-	}
-
-	public Card setFacedown()
-	{
-		_faceup = false;
-		return this;
+		_faceup = false; // set status to false (facedown)
+		return this; // return the status
 	}
 
 	@Override
 	public boolean contains(Point p)
 	{
-		Rectangle rect = new Rectangle(whereAmI.x, whereAmI.y, Card.CARD_WIDTH, Card.CARD_HEIGHT);
+		Rectangle rect = new Rectangle(whereAmI.x, whereAmI.y, Card.CARD_WIDTH, Card.CARD_HEIGHT);// make new rectangle with the x and y positions and the card's width and height
 		return (rect.contains(p));
 	}
 
@@ -228,61 +226,61 @@ class Card extends JPanel
 		{
 			switch (_suit)
 			{
-			case HEARTS:
-				drawSuit(g2d, "♥", Color.RED);
-				break;
-			case DIAMONDS:
-				drawSuit(g2d, "◆", Color.RED);
-				break;
-			case SPADES:
-				drawSuit(g2d, "♠", Color.BLACK);
-				break;
-			case CLUBS:
-				drawSuit(g2d, "♣", Color.BLACK);
-				break;
+				case HEARTS:
+					drawSuit(g2d, "Hearts", Color.RED);
+					break;
+				case DIAMONDS:
+					drawSuit(g2d, "Diamonds", Color.RED);
+					break;
+				case SPADES:
+					drawSuit(g2d, "Spades", Color.BLACK);
+					break;
+				case CLUBS:
+					drawSuit(g2d, "Clubs", Color.BLACK);
+					break;
 			}
 			int new_x_offset = x_offset + (CARD_WIDTH - 30);
 			switch (_value)
 			{
-			case ACE:
-				drawValue(g2d, "A");
-				break;
-			case TWO:
-				drawValue(g2d, "2");
-				break;
-			case THREE:
-				drawValue(g2d, "3");
-				break;
-			case FOUR:
-				drawValue(g2d, "4");
-				break;
-			case FIVE:
-				drawValue(g2d, "5");
-				break;
-			case SIX:
-				drawValue(g2d, "6");
-				break;
-			case SEVEN:
-				drawValue(g2d, "7");
-				break;
-			case EIGHT:
-				drawValue(g2d, "8");
-				break;
-			case NINE:
-				drawValue(g2d, "9");
-				break;
-			case TEN:
-				drawValue(g2d, "10");
-				break;
-			case JACK:
-				drawValue(g2d, "J");
-				break;
-			case QUEEN:
-				drawValue(g2d, "Q");
-				break;
-			case KING:
-				drawValue(g2d, "K");
-				break;
+				case ACE:
+					drawValue(g2d, "A");
+					break;
+				case TWO:
+					drawValue(g2d, "2");
+					break;
+				case THREE:
+					drawValue(g2d, "3");
+					break;
+				case FOUR:
+					drawValue(g2d, "4");
+					break;
+				case FIVE:
+					drawValue(g2d, "5");
+					break;
+				case SIX:
+					drawValue(g2d, "6");
+					break;
+				case SEVEN:
+					drawValue(g2d, "7");
+					break;
+				case EIGHT:
+					drawValue(g2d, "8");
+					break;
+				case NINE:
+					drawValue(g2d, "9");
+					break;
+				case TEN:
+					drawValue(g2d, "10");
+					break;
+				case JACK:
+					drawValue(g2d, "J");
+					break;
+				case QUEEN:
+					drawValue(g2d, "Q");
+					break;
+				case KING:
+					drawValue(g2d, "K");
+					break;
 			}
 		} else
 		{
@@ -298,4 +296,3 @@ class Card extends JPanel
 	}
 
 }// END Card
-
