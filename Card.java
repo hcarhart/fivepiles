@@ -4,11 +4,7 @@
  * and open the template in the editor.
  */
 package fivepiles;
-<<<<<<< HEAD
 
-
-=======
->>>>>>> 7b98531301191d771ce93a3153af9ad0be17b5d7
 
 import java.awt.Color;
 import java.awt.Graphics;
