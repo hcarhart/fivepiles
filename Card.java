@@ -143,6 +143,52 @@ class Card extends JPanel
 		return _value;
 	}
 
+	/**
+	 * This method is meant to be used to see if the numerical values of two cards add up to 13, to achieve a score.
+	 * @param value Possible choices are ACE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, JACK, QUEEN, KING.
+	 * @return Returns a numerical value corresponding to the Value provided.
+	 */
+	private int numericalFromValue(Value value){
+		switch (value) {
+			case ACE:
+				return 1;
+			case TWO:
+				return 2;
+			case THREE:
+				return 3;
+			case FOUR:
+				return 4;
+			case FIVE:
+				return 5;
+			case SIX:
+				return 6;
+			case SEVEN:
+				return 7;
+			case EIGHT:
+				return 8;
+			case NINE:
+				return 9;
+			case TEN:
+				return 10;
+			case JACK:
+				return 11;
+			case QUEEN:
+				return 12;
+			case KING:
+				return 13;
+			default:
+				return 0;
+		}
+	}
+
+	/**
+	 * This method is necessary to calculate whether the value of two cards added, results in 13.
+	 * @return Returns the NUMERICAL value of the Card object.
+	 */
+	public int getNumericalValue(){
+		return numericalFromValue(this.getValue());
+	}
+
 	public void setWhereAmI(Point p)
 	{
 		whereAmI = p;
