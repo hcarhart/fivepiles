@@ -204,6 +204,11 @@ public class FivePiles // Test. Did it work?
         // used for moving a stack of cards
         private CardStack transferStack = new CardStack(false);
 
+
+        // Testing
+        CardStack ChosenCards = new CardStack(false);
+        // Testing
+
         private boolean validPlayStackMove(Card source, Card dest) {
             int s_val = source.getValue().ordinal();
             int d_val = dest.getValue().ordinal();
@@ -294,6 +299,25 @@ public class FivePiles // Test. Did it work?
                 }
 
             }
+
+            // If card isn't null (exists / is a card) then add it to an invisible card stack.
+            // if that card stack is even, then two cards have been selected.
+            // check the value of those two cards added.
+            // if that is 13, add twenty points.
+            if (card != null){
+                int value = card.getNumericalValue();
+                System.out.println("Card value: " + value);
+                if (ChosenCards.getFirst() != null) {
+                    value += ChosenCards.getFirst().getNumericalValue();
+                    System.out.println("Added value: " + value);
+                }
+                ChosenCards.push(card);
+
+                if ( value == 13){
+                    System.out.println("20 points added for matching to 13!");
+                    score += 20;
+                }
+            }
             // SHOW (WASTE) CARD OPERATIONS
             // display new show card
 
@@ -318,7 +342,7 @@ public class FivePiles // Test. Did it work?
                 }
 
                 
-                deck.showSize();
+                //deck.showSize();
                 if (prevCard != null) {
                     table.remove(prevCard);
                 } else 
@@ -330,7 +354,7 @@ public class FivePiles // Test. Did it work?
                         c.repaint();
                         table.repaint();
                         prevCard = c;
-                        
+						deck.showSize();
                     }
                 
 
@@ -361,6 +385,8 @@ public class FivePiles // Test. Did it work?
 
         }
 
+
+
         @Override
         public void mouseReleased(MouseEvent e) {
             stop = e.getPoint();
@@ -369,6 +395,7 @@ public class FivePiles // Test. Did it work?
 
             // SHOW CARD MOVEMENTS
             if (movedCard != null) {
+
                 // Moving from SHOW TO PLAY
                 for (int x = 0; x < NUM_PLAY_DECKS; x++) {
                     dest = playCardStack[x];
