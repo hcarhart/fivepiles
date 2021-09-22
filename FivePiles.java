@@ -204,7 +204,6 @@ public class FivePiles // Test. Did it work?
         // used for moving a stack of cards
         private CardStack transferStack = new CardStack(false);
 
-
         // Testing
         CardStack ChosenCards = new CardStack(false);
         // Testing
@@ -304,7 +303,7 @@ public class FivePiles // Test. Did it work?
             // if that card stack is even, then two cards have been selected.
             // check the value of those two cards added.
             // if that is 13, add twenty points.
-            if (card != null){
+            if (card != null) {
                 int value = card.getNumericalValue();
                 System.out.println("Card value: " + value);
                 if (ChosenCards.getFirst() != null) {
@@ -313,27 +312,16 @@ public class FivePiles // Test. Did it work?
                 }
                 ChosenCards.push(card);
 
-                if ( value == 13){
+                if (value == 13) {
                     System.out.println("20 points added for matching to 13!");
                     score += 20;
                 }
             }
             // SHOW (WASTE) CARD OPERATIONS
             // display new show card
+            // dealing from the deck: still need to handle last two cards here
 
-//                        for (int x = 0; x < NUM_PLAY_DECKS; x++)
-//		{
-//			int hld = 0;
-//			Card c = deck.pop().setFaceup();
-//			playCardStack[x].putFirst(c);
-//
-////			for (int y = x + 1; y < NUM_PLAY_DECKS; y++)
-////			{
-////				playCardStack[y].putFirst(c = deck.pop());
-////			}
-//		}
             if (newCardButton.contains(start) && deck.showSize() > 0) {
-
                 if (putBackOnDeck && prevCard != null) {
                     System.out.println("Putting back on show stack: ");
                     prevCard.getValue();
@@ -341,31 +329,21 @@ public class FivePiles // Test. Did it work?
                     deck.putFirst(prevCard);
                 }
 
-                
-                //deck.showSize();
                 if (prevCard != null) {
                     table.remove(prevCard);
-                } else 
-                    for (int x = 0; x < NUM_PLAY_DECKS; x++) {
-                        int hld = 0;
-                        Card c = deck.pop().setFaceup();
-                        playCardStack[x].putFirst(c);
-                        table.add(FivePiles.moveCard(c, SHOW_POS.x, SHOW_POS.y));
-                        c.repaint();
-                        table.repaint();
-                        prevCard = c;
-						deck.showSize();
-                    }
-                
+                }
+                for (int x = 0; x < NUM_PLAY_DECKS; x++) {
+                    Card c = deck.pop().setFaceup();
+                    playCardStack[x].putFirst(c);
+                    table.add(FivePiles.moveCard(c, SHOW_POS.x, SHOW_POS.y));
+                    c.repaint();
+                    table.repaint();
+                    //prevCard = c; //not sure if this is needed if theres no card recycling.
+                }
+                deck.showSize();
 
             }
 
-//				Card c = deck.pop().setFaceup();
-//				table.add(FivePiles.moveCard(c, SHOW_POS.x, SHOW_POS.y));
-//				c.repaint();
-//				table.repaint();
-//				prevCard = c;}
-            // preparing to move show card
             if (newCardPlace.contains(start) && prevCard != null) {
                 movedCard = prevCard;
             }
@@ -384,8 +362,6 @@ public class FivePiles // Test. Did it work?
             putBackOnDeck = true;
 
         }
-
-
 
         @Override
         public void mouseReleased(MouseEvent e) {
