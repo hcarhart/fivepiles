@@ -209,44 +209,47 @@ public class FivePiles // Test. Did it work?
         // Testing
 
         private boolean validPlayStackMove(Card source, Card dest) {
-            int s_val = source.getValue().ordinal();
-            int d_val = dest.getValue().ordinal();
-            Card.Suit s_suit = source.getSuit();
-            Card.Suit d_suit = dest.getSuit();
+            if (dest != null) {
+                int s_val = source.getValue().ordinal();
+                int d_val = dest.getValue().ordinal();
+                Card.Suit s_suit = source.getSuit();
+                Card.Suit d_suit = dest.getSuit();
 
-            // destination card should be one higher value
-            if ((s_val + 1) == d_val) {
-                // destination card should be opposite color
-                switch (s_suit) {
-                    case SPADES:
-                        if (d_suit != Card.Suit.HEARTS && d_suit != Card.Suit.DIAMONDS) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    case CLUBS:
-                        if (d_suit != Card.Suit.HEARTS && d_suit != Card.Suit.DIAMONDS) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    case HEARTS:
-                        if (d_suit != Card.Suit.SPADES && d_suit != Card.Suit.CLUBS) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    case DIAMONDS:
-                        if (d_suit != Card.Suit.SPADES && d_suit != Card.Suit.CLUBS) {
-                            return false;
-                        } else {
-                            return true;
-                        }
+                // destination card should be one higher value
+                if ((s_val + 1) == d_val) {
+                    // destination card should be opposite color
+                    switch (s_suit) {
+                        case SPADES:
+                            if (d_suit != Card.Suit.HEARTS && d_suit != Card.Suit.DIAMONDS) {
+                                return false;
+                            } else {
+                                return true;
+                            }
+                        case CLUBS:
+                            if (d_suit != Card.Suit.HEARTS && d_suit != Card.Suit.DIAMONDS) {
+                                return false;
+                            } else {
+                                return true;
+                            }
+                        case HEARTS:
+                            if (d_suit != Card.Suit.SPADES && d_suit != Card.Suit.CLUBS) {
+                                return false;
+                            } else {
+                                return true;
+                            }
+                        case DIAMONDS:
+                            if (d_suit != Card.Suit.SPADES && d_suit != Card.Suit.CLUBS) {
+                                return false;
+                            } else {
+                                return true;
+                            }
+                    }
+                    return false; // this never gets reached
+                } else {
+                    return false;
                 }
-                return false; // this never gets reached
-            } else {
-                return false;
             }
+            return false; // This was added as it wanted a return statement.
         }
 
         private boolean validFinalStackMove(Card source, Card dest) {
