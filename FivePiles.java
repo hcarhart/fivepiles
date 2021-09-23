@@ -304,17 +304,44 @@ public class FivePiles // Test. Did it work?
             // check the value of those two cards added.
             // if that is 13, add twenty points.
             if (card != null) {
-                int value = card.getNumericalValue();
-                System.out.println("Card value: " + value);
-                if (ChosenCards.getFirst() != null) {
-                    value += ChosenCards.getFirst().getNumericalValue();
+                int value = card.getNumericalValue(); // Gets the value of the card clicked on.
+                System.out.println("Card value of " + card.getValue() + ": " + value);
+                if (ChosenCards.getFirst() != null) { // If the first card in our temporary pile isn't null, it means we selected 2 cards and should combine their values.
+                    value += ChosenCards.getFirst().getNumericalValue(); // Combine the values of our two selected cards.
                     System.out.println("Added value: " + value);
                 }
-                ChosenCards.push(card);
 
-                if (value == 13) {
+                Card old = ChosenCards.getFirst(); // Store the old card in a variable
+                ChosenCards.putFirst(card); // Put the clicked card on top of the temporary card stack.
+
+                if (value == 13) { // If the combined value of 2 selected cards is 13.
                     System.out.println("20 points added for matching to 13!");
-                    score += 20;
+                    score += 20; // Add 20 points. This is just temporary and can be changed.
+                    for (int x = 0; x < NUM_PLAY_DECKS; x++) { // Loop through all existing play decks.
+                        if (playCardStack[x].getFirst() != null) { // If the first card in the play deck exists
+                            if (playCardStack[x].getFirst().getXY().equals(card.getXY()) && playCardStack[x].getFirst().getValue().equals(card.getValue())) { // Check if it is the same card as the one we clicked on.
+                                System.out.println("Popped and removed/repainted.");
+                                Card c = playCardStack[x].popFirst(); // We pop the card from the play deck, since it added to 13.
+                                table.remove(FivePiles.moveCard(c, SHOW_POS.x, SHOW_POS.y)); // We remove the card from the table.
+                                c.repaint(); // Repaint to visualize changes.
+                                table.repaint(); // Repaint to visualize changes.
+                            }
+                        }
+                        if (old != null && playCardStack[x].getFirst() != null) { // If the first card in the play deck exists and the previously clicked card exists
+                            if (playCardStack[x].getFirst().getXY().equals(old.getXY()) && playCardStack[x].getFirst().getValue().equals(old.getValue())) { // Check if it is the same card as the one we PREVIOUSLY clicked on.
+                                System.out.println("Popped and removed/repainted.");
+                                Card c = playCardStack[x].popFirst(); // We pop the card from the play deck, since it added to 13.
+                                table.remove(FivePiles.moveCard(c, SHOW_POS.x, SHOW_POS.y)); // We remove the card from the table.
+                                c.repaint(); // Repaint to visualize changes.
+                                table.repaint(); // Repaint to visualize changes.
+                            }
+                        }
+
+
+                        ChosenCards = new CardStack(false);
+
+                    }
+
                 }
             }
             // SHOW (WASTE) CARD OPERATIONS
@@ -322,6 +349,8 @@ public class FivePiles // Test. Did it work?
             // dealing from the deck: still need to handle last two cards here
 
             if (newCardButton.contains(start) && deck.showSize() > 0) {
+
+                ChosenCards = new CardStack(false); // Added this to ensure we can't pick between cards from different layers.
                 if (putBackOnDeck && prevCard != null) {
                     System.out.println("Putting back on show stack: ");
                     prevCard.getValue();
@@ -333,12 +362,14 @@ public class FivePiles // Test. Did it work?
                     table.remove(prevCard);
                 }
                 for (int x = 0; x < NUM_PLAY_DECKS; x++) {
-                    Card c = deck.pop().setFaceup();
-                    playCardStack[x].putFirst(c);
-                    table.add(FivePiles.moveCard(c, SHOW_POS.x, SHOW_POS.y));
-                    c.repaint();
-                    table.repaint();
-                    //prevCard = c; //not sure if this is needed if theres no card recycling.
+                    if (deck.showSize() > 0) { // Added this condition to account for the deck running out.
+                        Card c = deck.pop().setFaceup();
+                        playCardStack[x].putFirst(c);
+                        table.add(FivePiles.moveCard(c, SHOW_POS.x, SHOW_POS.y));
+                        c.repaint();
+                        table.repaint();
+                        //prevCard = c; //not sure if this is needed if theres no card recycling.
+                    }
                 }
                 deck.showSize();
 
@@ -450,8 +481,10 @@ public class FivePiles // Test. Did it work?
                         } else {
                             c = source.popFirst();
                         }
+                        if (c != null) {
+                            c.repaint();
+                        }
 
-                        c.repaint();
                         // if playstack, turn next card up
                         if (source.getFirst() != null) {
                             Card temp = source.getFirst().setFaceup();
@@ -482,8 +515,10 @@ public class FivePiles // Test. Did it work?
                         } else {
                             c = source.popFirst();
                         }
+                        if (c != null) {
+                            c.repaint();
+                        }
 
-                        c.repaint();
                         // if playstack, turn next card up
                         if (source.getFirst() != null) {
                             Card temp = source.getFirst().setFaceup();
