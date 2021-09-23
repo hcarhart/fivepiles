@@ -319,7 +319,7 @@ public class FivePiles // Test. Did it work?
                     score += 20; // Add 20 points. This is just temporary and can be changed.
                     for (int x = 0; x < NUM_PLAY_DECKS; x++) { // Loop through all existing play decks.
                         if (playCardStack[x].getFirst() != null) { // If the first card in the play deck exists
-                            if (playCardStack[x].getFirst().getXY().equals(card.getXY()) && playCardStack[x].getFirst().getValue().equals(card.getValue())) { // Check if it is the same card as the one we clicked on.
+                            if (playCardStack[x].getFirst().getID().equals(card.getID())){ // Check if it is the same card as the one we clicked on.
                                 System.out.println("Popped and removed/repainted.");
                                 Card c = playCardStack[x].popFirst(); // We pop the card from the play deck, since it added to 13.
                                 if (c != null) {
@@ -331,7 +331,9 @@ public class FivePiles // Test. Did it work?
                             }
                         }
                         if (old != null && playCardStack[x].getFirst() != null) { // If the first card in the play deck exists and the previously clicked card exists
-                            if (playCardStack[x].getFirst().getXY().equals(old.getXY()) && playCardStack[x].getFirst().getValue().equals(old.getValue())) { // Check if it is the same card as the one we PREVIOUSLY clicked on.
+                            System.out.println(playCardStack[x].getFirst().getID());
+                            System.out.println(old.getID());
+                            if (playCardStack[x].getFirst().getID().equals(old.getID())){ // Check if it is the same card as the one we clicked on.
                                 System.out.println("Popped and removed/repainted.");
                                 Card c = playCardStack[x].popFirst(); // We pop the card from the play deck, since it added to 13.
                                 if (c != null) {

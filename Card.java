@@ -96,6 +96,10 @@ class Card extends JPanel
 		return _suit;
 	}
 
+	public String getID(){
+		return this.getValue() + this.getSuit().toString() + this.getXY();
+	}
+
 	public Value getValue()
 	{
 		switch (_value)
