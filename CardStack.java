@@ -194,9 +194,11 @@ class CardStack extends JComponent
 				Card c = iter.next();
 				// this origin is point(0,0) inside the cardstack container
 				prev = new Point();// c.getXY(); // starting deck pos
-				add(FivePiles.moveCard(c, prev.x, prev.y));
-				// setting x & y position
-				c.setWhereAmI(getXY());
+				if (c != null) {
+					add(FivePiles.moveCard(c, prev.x, prev.y));
+					// setting x & y position
+					c.setWhereAmI(getXY());
+				}
 				prevWhereAmI = getXY();
 			} else
 			{
@@ -206,12 +208,14 @@ class CardStack extends JComponent
 			for (; iter.hasNext();)
 			{
 				Card c = iter.next();
-				c.setXY(new Point(prev.x, prev.y + SPREAD));
-				add(FivePiles.moveCard(c, prev.x, prev.y + SPREAD));
-				prev = c.getXY();
-				// setting x & y position
-				c.setWhereAmI(new Point(prevWhereAmI.x, prevWhereAmI.y + SPREAD));
-				prevWhereAmI = c.getWhereAmI();
+				if (c != null) {
+					c.setXY(new Point(prev.x, prev.y + SPREAD));
+					add(FivePiles.moveCard(c, prev.x, prev.y + SPREAD));
+					prev = c.getXY();
+					// setting x & y position
+					c.setWhereAmI(new Point(prevWhereAmI.x, prevWhereAmI.y + SPREAD));
+					prevWhereAmI = c.getWhereAmI();
+				}
 			}
 
 		}

@@ -305,7 +305,7 @@ public class FivePiles // Test. Did it work?
             // if that is 13, add twenty points.
             if (card != null) {
                 int value = card.getNumericalValue(); // Gets the value of the card clicked on.
-                System.out.println("Card value of " + card.getValue() + ": " + value);
+                //System.out.println("Card value of " + card.getValue() + ": " + value);
                 if (ChosenCards.getFirst() != null) { // If the first card in our temporary pile isn't null, it means we selected 2 cards and should combine their values.
                     value += ChosenCards.getFirst().getNumericalValue(); // Combine the values of our two selected cards.
                     System.out.println("Added value: " + value);
@@ -322,8 +322,11 @@ public class FivePiles // Test. Did it work?
                             if (playCardStack[x].getFirst().getXY().equals(card.getXY()) && playCardStack[x].getFirst().getValue().equals(card.getValue())) { // Check if it is the same card as the one we clicked on.
                                 System.out.println("Popped and removed/repainted.");
                                 Card c = playCardStack[x].popFirst(); // We pop the card from the play deck, since it added to 13.
-                                table.remove(FivePiles.moveCard(c, SHOW_POS.x, SHOW_POS.y)); // We remove the card from the table.
-                                c.repaint(); // Repaint to visualize changes.
+                                if (c != null) {
+                                    table.remove(FivePiles.moveCard(c, SHOW_POS.x, SHOW_POS.y)); // We remove the card from the table.
+
+                                    c.repaint(); // Repaint to visualize changes.
+                                }
                                 table.repaint(); // Repaint to visualize changes.
                             }
                         }
@@ -331,8 +334,11 @@ public class FivePiles // Test. Did it work?
                             if (playCardStack[x].getFirst().getXY().equals(old.getXY()) && playCardStack[x].getFirst().getValue().equals(old.getValue())) { // Check if it is the same card as the one we PREVIOUSLY clicked on.
                                 System.out.println("Popped and removed/repainted.");
                                 Card c = playCardStack[x].popFirst(); // We pop the card from the play deck, since it added to 13.
-                                table.remove(FivePiles.moveCard(c, SHOW_POS.x, SHOW_POS.y)); // We remove the card from the table.
-                                c.repaint(); // Repaint to visualize changes.
+                                if (c != null) {
+                                    table.remove(FivePiles.moveCard(c, SHOW_POS.x, SHOW_POS.y)); // We remove the card from the table.
+
+                                    c.repaint(); // Repaint to visualize changes.
+                                }
                                 table.repaint(); // Repaint to visualize changes.
                             }
                         }
@@ -364,9 +370,11 @@ public class FivePiles // Test. Did it work?
                 for (int x = 0; x < NUM_PLAY_DECKS; x++) {
                     if (deck.showSize() > 0) { // Added this condition to account for the deck running out.
                         Card c = deck.pop().setFaceup();
-                        playCardStack[x].putFirst(c);
-                        table.add(FivePiles.moveCard(c, SHOW_POS.x, SHOW_POS.y));
-                        c.repaint();
+                        if (c != null) {
+                            playCardStack[x].putFirst(c);
+                            table.add(FivePiles.moveCard(c, SHOW_POS.x, SHOW_POS.y));
+                            c.repaint();
+                        }
                         table.repaint();
                         //prevCard = c; //not sure if this is needed if theres no card recycling.
                     }
