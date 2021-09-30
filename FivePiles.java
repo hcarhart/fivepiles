@@ -91,6 +91,9 @@ public class FivePiles // Test. Did it work?
     }
 
     protected static void startTimer() {
+        if (scoreClock != null){ // He was creating several timers, incrementing all at once.
+            scoreClock.cancel(); // Timer fix for acceleration.
+        }
         scoreClock = new ScoreClock();
         // set the timer to update every second
         timer.scheduleAtFixedRate(scoreClock, 1000, 1000);
