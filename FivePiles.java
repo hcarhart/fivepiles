@@ -1,5 +1,7 @@
 package fivepiles;
 
+import java.awt.event.WindowEvent;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -10,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -26,8 +29,8 @@ public class FivePiles // Test. Did it work?
 {
     // CONSTANTS
 
-    public static final int TABLE_HEIGHT = Card.CARD_HEIGHT * 4;
-    public static final int TABLE_WIDTH = (Card.CARD_WIDTH * 7) + 100;
+    public static final int TABLE_HEIGHT = Card.CARD_HEIGHT * 4; //150*4 = 600
+    public static final int TABLE_WIDTH = (Card.CARD_WIDTH * 7) + 100; //100 * 7 = 700
     public static final int NUM_FINAL_DECKS = 1; //was 4 in solitaire
     public static final int NUM_PLAY_DECKS = 5; //five playing piles
     public static final Point DECK_POS = new Point(5, 5);
@@ -53,6 +56,12 @@ public class FivePiles // Test. Did it work?
     private static JTextField timeBox = new JTextField();// displays the time
     private static JTextField statusBox = new JTextField();// status messages
     private static final Card newCardButton = new Card();// reveal waste card
+
+
+    private static JButton selectGameButton = new JButton("Select Game");
+    private static JButton statisticsButton = new JButton("Statistics");
+    private static JButton exitMenuButton = new JButton("Exit");
+    private static JButton fivePilesButton = new JButton("Five Piles");
 
     // TIMER UTILITIES
     private static Timer timer = new Timer();
@@ -119,6 +128,45 @@ public class FivePiles // Test. Did it work?
     }
 
     // BUTTON LISTENERS
+
+    private static class SelectGameListener implements ActionListener
+    {
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            table.remove(selectGameButton);
+            table.remove(statisticsButton);
+            table.remove(exitMenuButton);
+            table.repaint();
+
+            fivePilesButton.addActionListener(new NewGameListener());
+            fivePilesButton.setBounds((TABLE_WIDTH/2)-75, (TABLE_HEIGHT)/2-135, 150, 50);
+
+            table.add(fivePilesButton);
+        }
+
+    }
+
+    private static class ExitMenuListener implements ActionListener
+    {
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+        }
+
+    }
+
+    private static class StatisticsListener implements ActionListener
+    {
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+
+        }
+
+    }
+
     private static class NewGameListener implements ActionListener {
 
         @Override
@@ -186,9 +234,9 @@ public class FivePiles // Test. Did it work?
     }
 
     /*
-	 * This class handles all of the logic of moving the Card components as well
-	 * as the game logic. This determines where Cards can be moved according to
-	 * the rules of Klondike solitiaire
+     * This class handles all of the logic of moving the Card components as well
+     * as the game logic. This determines where Cards can be moved according to
+     * the rules of Klondike solitiaire
      */
     private static class CardMovementManager extends MouseAdapter {
 
@@ -212,47 +260,44 @@ public class FivePiles // Test. Did it work?
         // Testing
 
         private boolean validPlayStackMove(Card source, Card dest) {
-            if (dest != null) {
-                int s_val = source.getValue().ordinal();
-                int d_val = dest.getValue().ordinal();
-                Card.Suit s_suit = source.getSuit();
-                Card.Suit d_suit = dest.getSuit();
+            int s_val = source.getValue().ordinal();
+            int d_val = dest.getValue().ordinal();
+            Card.Suit s_suit = source.getSuit();
+            Card.Suit d_suit = dest.getSuit();
 
-                // destination card should be one higher value
-                if ((s_val + 1) == d_val) {
-                    // destination card should be opposite color
-                    switch (s_suit) {
-                        case SPADES:
-                            if (d_suit != Card.Suit.HEARTS && d_suit != Card.Suit.DIAMONDS) {
-                                return false;
-                            } else {
-                                return true;
-                            }
-                        case CLUBS:
-                            if (d_suit != Card.Suit.HEARTS && d_suit != Card.Suit.DIAMONDS) {
-                                return false;
-                            } else {
-                                return true;
-                            }
-                        case HEARTS:
-                            if (d_suit != Card.Suit.SPADES && d_suit != Card.Suit.CLUBS) {
-                                return false;
-                            } else {
-                                return true;
-                            }
-                        case DIAMONDS:
-                            if (d_suit != Card.Suit.SPADES && d_suit != Card.Suit.CLUBS) {
-                                return false;
-                            } else {
-                                return true;
-                            }
-                    }
-                    return false; // this never gets reached
-                } else {
-                    return false;
+            // destination card should be one higher value
+            if ((s_val + 1) == d_val) {
+                // destination card should be opposite color
+                switch (s_suit) {
+                    case SPADES:
+                        if (d_suit != Card.Suit.HEARTS && d_suit != Card.Suit.DIAMONDS) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    case CLUBS:
+                        if (d_suit != Card.Suit.HEARTS && d_suit != Card.Suit.DIAMONDS) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    case HEARTS:
+                        if (d_suit != Card.Suit.SPADES && d_suit != Card.Suit.CLUBS) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    case DIAMONDS:
+                        if (d_suit != Card.Suit.SPADES && d_suit != Card.Suit.CLUBS) {
+                            return false;
+                        } else {
+                            return true;
+                        }
                 }
+                return false; // this never gets reached
+            } else {
+                return false;
             }
-            return false; // This was added as it wanted a return statement.
         }
 
         private boolean validFinalStackMove(Card source, Card dest) {
@@ -280,9 +325,9 @@ public class FivePiles // Test. Did it work?
             transferStack.makeEmpty();
 
             /*
-			 * Here we use transferStack to temporarily hold all the cards above
-			 * the selected card in case player wants to move a stack rather
-			 * than a single card
+             * Here we use transferStack to temporarily hold all the cards above
+             * the selected card in case player wants to move a stack rather
+             * than a single card
              */
             for (int x = 0; x < NUM_PLAY_DECKS; x++) {
                 if (stopSearch) {
@@ -325,7 +370,7 @@ public class FivePiles // Test. Did it work?
                     score += 20; // Add 20 points. This is just temporary and can be changed.
                     for (int x = 0; x < NUM_PLAY_DECKS; x++) { // Loop through all existing play decks.
                         if (playCardStack[x].getFirst() != null) { // If the first card in the play deck exists
-                            if (playCardStack[x].getFirst().getID().equals(card.getID())){ // Check if it is the same card as the one we clicked on.
+                            if (playCardStack[x].getFirst().getXY().equals(card.getXY()) && playCardStack[x].getFirst().getValue().equals(card.getValue())) { // Check if it is the same card as the one we clicked on.
                                 System.out.println("Popped and removed/repainted.");
                                 Card c = playCardStack[x].popFirst(); // We pop the card from the play deck, since it added to 13.
                                 if (c != null) {
@@ -337,9 +382,7 @@ public class FivePiles // Test. Did it work?
                             }
                         }
                         if (old != null && playCardStack[x].getFirst() != null) { // If the first card in the play deck exists and the previously clicked card exists
-                            System.out.println(playCardStack[x].getFirst().getID());
-                            System.out.println(old.getID());
-                            if (playCardStack[x].getFirst().getID().equals(old.getID())){ // Check if it is the same card as the one we clicked on.
+                            if (playCardStack[x].getFirst().getXY().equals(old.getXY()) && playCardStack[x].getFirst().getValue().equals(old.getValue())) { // Check if it is the same card as the one we PREVIOUSLY clicked on.
                                 System.out.println("Popped and removed/repainted.");
                                 Card c = playCardStack[x].popFirst(); // We pop the card from the play deck, since it added to 13.
                                 if (c != null) {
@@ -702,6 +745,10 @@ public class FivePiles // Test. Did it work?
     }//end card movement manager class 
 
     private static void playNewGame() {
+
+        table.addMouseListener(new CardMovementManager());
+        table.addMouseMotionListener(new CardMovementManager());
+
         deck = new CardStack(true); // deal 52 cards
         deck.shuffle();
         table.removeAll();
@@ -788,6 +835,27 @@ public class FivePiles // Test. Did it work?
         table.repaint();
     }
 
+    public static void startProgram()
+    {
+
+        table.removeAll();
+
+        selectGameButton.addActionListener(new SelectGameListener());
+        selectGameButton.setBounds((TABLE_WIDTH/2)-75, (TABLE_HEIGHT)/2-135, 150, 50);
+
+        statisticsButton.addActionListener(new StatisticsListener());
+        statisticsButton.setBounds((TABLE_WIDTH/2)-75, (TABLE_HEIGHT/2)-35, 150, 50);
+
+        exitMenuButton.addActionListener(new ExitMenuListener());
+        exitMenuButton.setBounds((TABLE_WIDTH/2)-75, (TABLE_HEIGHT/2)+65, 150, 50);
+
+
+        table.add(selectGameButton);
+        table.add(statisticsButton);
+        table.add(exitMenuButton);
+
+
+    }
     public static void main(String[] args) {
 
         Container contentPane;
@@ -801,11 +869,14 @@ public class FivePiles // Test. Did it work?
         contentPane.add(table);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        playNewGame();
+        startProgram();
 
-        table.addMouseListener(new CardMovementManager());
-        table.addMouseMotionListener(new CardMovementManager());
+        //playNewGame();
 
+//        table.addMouseListener(new CardMovementManager());
+//        table.addMouseMotionListener(new CardMovementManager());
+
+        frame.setResizable(false);
         frame.setVisible(true);
 
     }
