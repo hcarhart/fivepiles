@@ -12,18 +12,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
+import java.awt.Font;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JEditorPane;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
+import javax.swing.*;
 
 public class FivePiles // Test. Did it work?
 {
@@ -51,6 +43,8 @@ public class FivePiles // Test. Did it work?
     private static JEditorPane gameTitle = new JEditorPane("text/html", ""); //
     private static JButton showRulesButton = new JButton("Show Rules");
     private static JButton newGameButton = new JButton("New Game");
+    private static JButton menuButton = new JButton("Menu"); // Returns player to main platform/menu.
+    private static JButton menuSureButton = new JButton("Are you sure? You will lose any progress.");
     private static JButton toggleTimerButton = new JButton("Pause Timer");
     private static JTextField scoreBox = new JTextField();// displays the score
     private static JTextField timeBox = new JTextField();// displays the time
@@ -139,7 +133,9 @@ public class FivePiles // Test. Did it work?
             table.remove(exitMenuButton);
             table.repaint();
 
-            fivePilesButton.addActionListener(new NewGameListener());
+            if (fivePilesButton.getActionListeners().length < 1) { // This condition is to ensure the same action happens only once per click.
+                fivePilesButton.addActionListener(new NewGameListener());
+            }
             fivePilesButton.setBounds((TABLE_WIDTH/2)-75, (TABLE_HEIGHT)/2-135, 150, 50);
 
             table.add(fivePilesButton);
@@ -172,6 +168,44 @@ public class FivePiles // Test. Did it work?
         @Override
         public void actionPerformed(ActionEvent e) {
             playNewGame();
+        }
+
+    }
+
+    private static class openMenu implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            System.out.println(menuSureButton.isVisible());
+            System.out.println(menuButton.getActionListeners().length);
+            if (menuSureButton.isVisible()){
+                menuSureButton.hide();
+            }else {
+                menuSureButton.show();
+            }
+        }
+
+    }
+
+    private static class menuReturnConfirmation implements ActionListener {
+
+        private static boolean fontset = false;
+
+        public menuReturnConfirmation(){
+            if (!fontset) { // I changed the font size to be smaller to fit the button.
+                menuSureButton.setFont(new Font("Arial", Font.PLAIN, 8));
+                fontset = true;
+            }
+
+            if (menuSureButton.isVisible()) {
+                menuSureButton.hide();
+            }
+
+        }
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            menuSureButton.hide();
+            startProgram();
         }
 
     }
@@ -744,10 +778,15 @@ public class FivePiles // Test. Did it work?
         }// end mousePressed()
     }//end card movement manager class 
 
+
     private static void playNewGame() {
 
-        table.addMouseListener(new CardMovementManager());
-        table.addMouseMotionListener(new CardMovementManager());
+        if (table.getMouseListeners().length < 1) {
+            table.addMouseListener(new CardMovementManager());
+        }
+        if (table.getMouseMotionListeners().length < 1) {
+            table.addMouseMotionListener(new CardMovementManager());
+        }
 
         deck = new CardStack(true); // deal 52 cards
         deck.shuffle();
@@ -795,10 +834,24 @@ public class FivePiles // Test. Did it work?
         // reset time
         time = 0;
 
-        newGameButton.addActionListener(new NewGameListener());
+        if (menuButton.getActionListeners().length < 1) { // This condition is to ensure the same action happens only once per click.
+            menuButton.addActionListener(new openMenu());
+        }
+        menuButton.setBounds(605, TABLE_HEIGHT - 70, 194, 30);
+
+        if (menuSureButton.getActionListeners().length < 1) { // This condition is to ensure the same action happens only once per click.
+            menuSureButton.addActionListener(new menuReturnConfirmation());
+        }
+        menuSureButton.setBounds(605, TABLE_HEIGHT - 100, 194, 30);
+
+        if (newGameButton.getActionListeners().length < 1) { // This condition is to ensure the same action happens only once per click.
+            newGameButton.addActionListener(new NewGameListener());
+        }
         newGameButton.setBounds(0, TABLE_HEIGHT - 70, 120, 30);
 
-        showRulesButton.addActionListener(new ShowRulesListener());
+        if (showRulesButton.getActionListeners().length < 1) { // This condition is to ensure the same action happens only once per click.
+            showRulesButton.addActionListener(new ShowRulesListener());
+        }
         showRulesButton.setBounds(120, TABLE_HEIGHT - 70, 120, 30);
 
         gameTitle.setText(" ");//text
@@ -819,17 +872,21 @@ public class FivePiles // Test. Did it work?
         startTimer();
 
         toggleTimerButton.setBounds(480, TABLE_HEIGHT - 70, 125, 30);
-        toggleTimerButton.addActionListener(new ToggleTimerListener());
+        if (toggleTimerButton.getActionListeners().length < 1) { // This condition is to ensure the same action happens only once per click.
+            toggleTimerButton.addActionListener(new ToggleTimerListener());
+        }
 
         statusBox.setBounds(605, TABLE_HEIGHT - 70, 180, 30);
         statusBox.setEditable(false);
         statusBox.setOpaque(false);
 
-        table.add(statusBox);
+        //table.add(statusBox);
         table.add(toggleTimerButton);
         table.add(gameTitle);
         table.add(timeBox);
         table.add(newGameButton);
+        table.add(menuButton); // Return to main menu
+        table.add(menuSureButton); // Confirm return to main menu.
         table.add(showRulesButton);
         table.add(scoreBox);
         table.repaint();
@@ -838,15 +895,33 @@ public class FivePiles // Test. Did it work?
     public static void startProgram()
     {
 
-        table.removeAll();
+        if (menuButton.getActionListeners().length > 1) {
+            for (int i=0; i<menuButton.getActionListeners().length; i++) {
+                menuButton.removeActionListener(menuButton.getActionListeners()[i]);
+            }
+        }
 
-        selectGameButton.addActionListener(new SelectGameListener());
+        if (menuSureButton.getActionListeners().length > 1) {
+            for (int i=0; i<menuSureButton.getActionListeners().length; i++) {
+                menuSureButton.removeActionListener(menuSureButton.getActionListeners()[i]);
+            }
+        }
+        table.removeAll();
+        table.repaint();
+
+        if (selectGameButton.getActionListeners().length < 1) { // This condition is to ensure the same action happens only once per click.
+            selectGameButton.addActionListener(new SelectGameListener());
+        }
         selectGameButton.setBounds((TABLE_WIDTH/2)-75, (TABLE_HEIGHT)/2-135, 150, 50);
 
-        statisticsButton.addActionListener(new StatisticsListener());
+        if (statisticsButton.getActionListeners().length < 1) { // This condition is to ensure the same action happens only once per click.
+            statisticsButton.addActionListener(new StatisticsListener());
+        }
         statisticsButton.setBounds((TABLE_WIDTH/2)-75, (TABLE_HEIGHT/2)-35, 150, 50);
 
-        exitMenuButton.addActionListener(new ExitMenuListener());
+        if (exitMenuButton.getActionListeners().length < 1) { // This condition is to ensure the same action happens only once per click.
+            exitMenuButton.addActionListener(new ExitMenuListener());
+        }
         exitMenuButton.setBounds((TABLE_WIDTH/2)-75, (TABLE_HEIGHT/2)+65, 150, 50);
 
 
