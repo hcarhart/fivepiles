@@ -394,8 +394,8 @@ public class FivePiles // Test. Did it work?
                 if (prevCard != null) {
                     table.remove(prevCard);
                 }
-                for (int x = 0; x < NUM_PLAY_DECKS; x++) {
-                    if (deck.showSize() > 0) { // Added this condition to account for the deck running out.
+                for (int x = 0; x < NUM_PLAY_DECKS-2; x++) {
+                    if (deck.showSize() > 2) { // Added this condition to account for the deck running out / last 2 cards.
                         Card c = deck.pop().setFaceup();
                         if (c != null) {
                             playCardStack[x].putFirst(c);
@@ -403,7 +403,22 @@ public class FivePiles // Test. Did it work?
                             c.repaint();
                         }
                         table.repaint();
-                        //prevCard = c; //not sure if this is needed if theres no card recycling.
+                    }else { // This part is to handle the last 2 cards.
+                        Card c1 = deck.pop(); // We pop the first card.
+                        Card c2 = deck.pop(); // We pop the second card.
+
+
+                        if (c1 != null && c2 != null){ //
+                            c1 = c1.setFaceup(); // Set them faceup.
+                            c2 = c2.setFaceup(); // Set them faceup.
+                            playCardStack[NUM_PLAY_DECKS-2].putFirst(c1); // Put first card in the first extra pile.
+                            table.add(FivePiles.moveCard(c1, SHOW_POS.x, SHOW_POS.y));
+                            playCardStack[NUM_PLAY_DECKS-1].putFirst(c2); // Put the second card in the second extra pile.
+                            table.add(FivePiles.moveCard(c2, SHOW_POS.x, SHOW_POS.y));
+                            c1.repaint();
+                            c2.repaint();
+                        }
+                        table.repaint();
                     }
                 }
                 deck.showSize();
@@ -582,7 +597,9 @@ public class FivePiles // Test. Did it work?
         for (int x = 0; x < NUM_PLAY_DECKS; x++) {
             int hld = 0;
             Card c = deck.pop().setFaceup();
-            playCardStack[x].putFirst(c);
+            if (x < NUM_PLAY_DECKS-2) {
+                playCardStack[x].putFirst(c);
+            }
 
 //			for (int y = x + 1; y < NUM_PLAY_DECKS; y++)
 //			{
@@ -638,7 +655,7 @@ public class FivePiles // Test. Did it work?
         statusBox.setEditable(false);
         statusBox.setOpaque(false);
 
-        //table.add(statusBox);
+        //table.add(statusBox); // Removed as it was in the way of new UI elements.
         table.add(toggleTimerButton);
         table.add(gameTitle);
         table.add(timeBox);
