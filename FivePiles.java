@@ -586,10 +586,10 @@ public class FivePiles // Test. Did it work?
         }
 
         // Dealing new game
-        for (int x = 0; x < NUM_PLAY_DECKS; x++) {
+        for (int x = 0; x < NUM_PLAY_DECKS-2; x++) {
             int hld = 0;
             Card c = deck.pop().setFaceup();
-            if (x < NUM_PLAY_DECKS-2) {
+            if (x < NUM_PLAY_DECKS) {
                 playCardStack[x].putFirst(c);
             }
 
