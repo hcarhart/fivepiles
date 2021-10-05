@@ -24,7 +24,7 @@ public class FivePiles // Test. Did it work?
     public static final int TABLE_HEIGHT = Card.CARD_HEIGHT * 4; //150*4 = 600
     public static final int TABLE_WIDTH = (Card.CARD_WIDTH * 7) + 100; //100 * 7 = 700
     public static final int NUM_FINAL_DECKS = 1; //was 4 in solitaire
-    public static final int NUM_PLAY_DECKS = 5; //five playing piles
+    public static final int NUM_PLAY_DECKS = 7; //five playing piles
     public static final Point DECK_POS = new Point(5, 5);
     public static final Point SHOW_POS = new Point(DECK_POS.x + Card.CARD_WIDTH + 5, DECK_POS.y);
     public static final Point FINAL_POS = new Point(SHOW_POS.x + Card.CARD_WIDTH + 150, DECK_POS.y);
@@ -239,12 +239,12 @@ public class FivePiles // Test. Did it work?
                     "" +
                     "<br>Five Piles Solitaire uses one deck (52 cards). You have 5 tableau piles.\n<br>" +
                     "" +
-                    "<br>The object of the game\n" +
+                    "<br>The object of the game:\n" +
                     "<br>To discard pairs of cards whose ranks add up to 13.\n <br>" +
                     "<br>Here is a list of valid pairs:" +
                     "Queen-Ace, Jack-Two, 10-3, 9-4, etc." +
                     "<br>Kings are discarded singularly, To discard a King, just click it.\n<br>" +
-                    "<br>The rules\n" +
+                    "<br>The rules:\n" +
                     "<br>Only the top card of each tableau pile is available for play on the foundations.\n<br>" +
                     "\n" +
                     "<br>When you have made all the moves initially available, click on the stock pile to deal one card on each tableau pile. You cannot move cards from one tableau pile to another. The last 2 cards in the stock are dealt separately from the tableau and can be discarded in a pair with cards from any of the 5 tableau piles.\n<br>" +
@@ -268,7 +268,6 @@ public class FivePiles // Test. Did it work?
 
         private Card prevCard = null;// tracking card for waste stack
         private Card movedCard = null;// card moved from waste stack
-        private boolean sourceIsFinalDeck = false;
         private boolean putBackOnDeck = true;// used for waste card recycling
         private boolean checkForWin = false;// should we check if game is over?
         private boolean gameOver = true;// easier to negate this than affirm it
@@ -285,63 +284,6 @@ public class FivePiles // Test. Did it work?
         CardStack ChosenCards = new CardStack(false);
         // Testing
 
-        private boolean validPlayStackMove(Card source, Card dest) {
-            int s_val = source.getValue().ordinal();
-            int d_val = dest.getValue().ordinal();
-            Card.Suit s_suit = source.getSuit();
-            Card.Suit d_suit = dest.getSuit();
-
-            // destination card should be one higher value
-            if ((s_val + 1) == d_val) {
-                // destination card should be opposite color
-                switch (s_suit) {
-                    case SPADES:
-                        if (d_suit != Card.Suit.HEARTS && d_suit != Card.Suit.DIAMONDS) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    case CLUBS:
-                        if (d_suit != Card.Suit.HEARTS && d_suit != Card.Suit.DIAMONDS) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    case HEARTS:
-                        if (d_suit != Card.Suit.SPADES && d_suit != Card.Suit.CLUBS) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    case DIAMONDS:
-                        if (d_suit != Card.Suit.SPADES && d_suit != Card.Suit.CLUBS) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                }
-                return false; // this never gets reached
-            } else {
-                return false;
-            }
-        }
-
-        private boolean validFinalStackMove(Card source, Card dest) {
-            int s_val = source.getValue().ordinal();
-            int d_val = dest.getValue().ordinal();
-            Card.Suit s_suit = source.getSuit();
-            Card.Suit d_suit = dest.getSuit();
-            if (s_val == (d_val + 1)) // destination must one lower
-            {
-                if (s_suit == d_suit) {
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
-        }
 
         @Override
         public void mousePressed(MouseEvent e) {
@@ -444,8 +386,8 @@ public class FivePiles // Test. Did it work?
                 if (prevCard != null) {
                     table.remove(prevCard);
                 }
-                for (int x = 0; x < NUM_PLAY_DECKS; x++) {
-                    if (deck.showSize() > 0) { // Added this condition to account for the deck running out.
+                for (int x = 0; x < NUM_PLAY_DECKS-2; x++) {
+                    if (deck.showSize() > 2) { // Added this condition to account for the deck running out / last 2 cards.
                         Card c = deck.pop().setFaceup();
                         if (c != null) {
                             playCardStack[x].putFirst(c);
@@ -453,7 +395,22 @@ public class FivePiles // Test. Did it work?
                             c.repaint();
                         }
                         table.repaint();
-                        //prevCard = c; //not sure if this is needed if theres no card recycling.
+                    }else { // This part is to handle the last 2 cards.
+                        Card c1 = deck.pop(); // We pop the first card.
+                        Card c2 = deck.pop(); // We pop the second card.
+
+
+                        if (c1 != null && c2 != null){ //
+                            c1 = c1.setFaceup(); // Set them faceup.
+                            c2 = c2.setFaceup(); // Set them faceup.
+                            playCardStack[NUM_PLAY_DECKS-2].putFirst(c1); // Put first card in the first extra pile.
+                            table.add(FivePiles.moveCard(c1, SHOW_POS.x, SHOW_POS.y));
+                            playCardStack[NUM_PLAY_DECKS-1].putFirst(c2); // Put the second card in the second extra pile.
+                            table.add(FivePiles.moveCard(c2, SHOW_POS.x, SHOW_POS.y));
+                            c1.repaint();
+                            c2.repaint();
+                        }
+                        table.repaint();
                     }
                 }
                 deck.showSize();
@@ -471,7 +428,6 @@ public class FivePiles // Test. Did it work?
                     source = final_cards[x];
                     card = source.getLast();
                     transferStack.putFirst(card);
-                    sourceIsFinalDeck = true;
                     break;
                 }
             }
@@ -485,87 +441,15 @@ public class FivePiles // Test. Did it work?
             // used for status bar updates
             boolean validMoveMade = false;
 
-            // SHOW CARD MOVEMENTS
-            if (movedCard != null) {
-
-                // Moving from SHOW TO PLAY
-                for (int x = 0; x < NUM_PLAY_DECKS; x++) {
-                    dest = playCardStack[x];
-                    // to empty play stack, only kings can go
-                    if (dest.empty() && movedCard != null && dest.contains(stop)
-                            && movedCard.getValue() == Card.Value.KING) {
-                        System.out.print("moving new card to empty spot ");
-                        movedCard.setXY(dest.getXY());
-                        table.remove(prevCard);
-                        dest.putFirst(movedCard);
-                        table.repaint();
-                        movedCard = null;
-                        putBackOnDeck = false;
-                        setScore(5);
-                        validMoveMade = true;
-                        break;
-                    }
-                    // to populated play stack
-                    if (movedCard != null && dest.contains(stop) && !dest.empty() && dest.getFirst().getFaceStatus()
-                            && validPlayStackMove(movedCard, dest.getFirst())) {
-                        System.out.print("moving new card ");
-                        movedCard.setXY(dest.getFirst().getXY());
-                        table.remove(prevCard);
-                        dest.putFirst(movedCard);
-                        table.repaint();
-                        movedCard = null;
-                        putBackOnDeck = false;
-                        setScore(5);
-                        validMoveMade = true;
-                        break;
-                    }
-                }
-                // Moving from SHOW TO FINAL //this likely what we would need to edit to accept valid pairs
-                for (int x = 0; x < NUM_FINAL_DECKS; x++) {
-                    dest = final_cards[x];
-                    // only aces can go first
-                    if (dest.empty() && dest.contains(stop)) {
-                        if (movedCard.getValue() == Card.Value.ACE) {
-                            dest.push(movedCard);
-                            table.remove(prevCard);
-                            dest.repaint();
-                            table.repaint();
-                            movedCard = null;
-                            putBackOnDeck = false;
-                            setScore(10);
-                            validMoveMade = true;
-                            break;
-                        }
-                    }
-                    if (!dest.empty() && dest.contains(stop) && validFinalStackMove(movedCard, dest.getLast())) {
-                        System.out.println("Destin" + dest.showSize());
-                        dest.push(movedCard);
-                        table.remove(prevCard);
-                        dest.repaint();
-                        table.repaint();
-                        movedCard = null;
-                        putBackOnDeck = false;
-                        checkForWin = true;
-                        setScore(10);
-                        validMoveMade = true;
-                        break;
-                    }
-                }
-            }// END SHOW STACK OPERATIONS
-
             // PLAY STACK OPERATIONS
             if (card != null && source != null) { // Moving from PLAY TO PLAY
                 for (int x = 0; x < NUM_PLAY_DECKS; x++) {
                     dest = playCardStack[x];
                     // MOVING TO POPULATED STACK
                     if (card.getFaceStatus() == true && dest.contains(stop) && source != dest && !dest.empty()
-                            && validPlayStackMove(card, dest.getFirst()) && transferStack.showSize() == 1) {
-                        Card c = null;
-                        if (sourceIsFinalDeck) {
-                            c = source.pop();
-                        } else {
-                            c = source.popFirst();
-                        }
+                            && transferStack.showSize() == 1) {
+                        Card c = source.popFirst();
+
                         if (c != null) {
                             c.repaint();
                         }
@@ -586,20 +470,12 @@ public class FivePiles // Test. Did it work?
 
                         System.out.print("Destination ");
                         dest.showSize();
-                        if (sourceIsFinalDeck) {
-                            setScore(15);
-                        } else {
-                            setScore(10);
-                        }
+
                         validMoveMade = true;
                         break;
                     } else if (dest.empty() && card.getValue() == Card.Value.KING && transferStack.showSize() == 1) {// MOVING TO EMPTY STACK, ONLY KING ALLOWED
-                        Card c = null;
-                        if (sourceIsFinalDeck) {
-                            c = source.pop();
-                        } else {
-                            c = source.popFirst();
-                        }
+                        Card c = source.popFirst();
+
                         if (c != null) {
                             c.repaint();
                         }
@@ -624,113 +500,8 @@ public class FivePiles // Test. Did it work?
                         validMoveMade = true;
                         break;
                     }
-                    // Moving STACK of cards from PLAY TO PLAY
-                    // to EMPTY STACK
-                    if (dest.empty() && dest.contains(stop) && !transferStack.empty()
-                            && transferStack.getFirst().getValue() == Card.Value.KING) {
-                        System.out.println("King To Empty Stack Transfer");
-                        while (!transferStack.empty()) {
-                            System.out.println("popping from transfer: " + transferStack.getFirst().getValue());
-                            dest.putFirst(transferStack.popFirst());
-                            source.popFirst();
-                        }
-                        if (source.getFirst() != null) {
-                            Card temp = source.getFirst().setFaceup();
-                            temp.repaint();
-                            source.repaint();
-                        }
-
-                        dest.setXY(dest.getXY().x, dest.getXY().y);
-                        dest.repaint();
-
-                        table.repaint();
-                        setScore(5);
-                        validMoveMade = true;
-                        break;
-                    }
-                    // to POPULATED STACK
-                    if (dest.contains(stop) && !transferStack.empty() && source.contains(start)
-                            && validPlayStackMove(transferStack.getFirst(), dest.getFirst())) {
-                        System.out.println("Regular Stack Transfer");
-                        while (!transferStack.empty()) {
-                            System.out.println("popping from transfer: " + transferStack.getFirst().getValue());
-                            dest.putFirst(transferStack.popFirst());
-                            source.popFirst();
-                        }
-                        if (source.getFirst() != null) {
-                            Card temp = source.getFirst().setFaceup();
-                            temp.repaint();
-                            source.repaint();
-                        }
-
-                        dest.setXY(dest.getXY().x, dest.getXY().y);
-                        dest.repaint();
-
-                        table.repaint();
-                        setScore(5);
-                        validMoveMade = true;
-                        break;
-                    }
                 }
-                // from PLAY TO FINAL
-                for (int x = 0; x < NUM_FINAL_DECKS; x++) {
-                    dest = final_cards[x];
 
-                    if (card.getFaceStatus() == true && source != null && dest.contains(stop) && source != dest) {// TO EMPTY STACK
-                        if (dest.empty())// empty final should only take an ACE
-                        {
-                            if (card.getValue() == Card.Value.ACE) {
-                                Card c = source.popFirst();
-                                c.repaint();
-                                if (source.getFirst() != null) {
-
-                                    Card temp = source.getFirst().setFaceup();
-                                    temp.repaint();
-                                    source.repaint();
-                                }
-
-                                dest.setXY(dest.getXY().x, dest.getXY().y);
-                                dest.push(c);
-
-                                dest.repaint();
-
-                                table.repaint();
-
-                                System.out.print("Destination ");
-                                dest.showSize();
-                                card = null;
-                                setScore(10);
-                                validMoveMade = true;
-                                break;
-                            }// TO POPULATED STACK
-                        } else if (validFinalStackMove(card, dest.getLast())) {
-                            Card c = source.popFirst();
-                            c.repaint();
-                            if (source.getFirst() != null) {
-
-                                Card temp = source.getFirst().setFaceup();
-                                temp.repaint();
-                                source.repaint();
-                            }
-
-                            dest.setXY(dest.getXY().x, dest.getXY().y);
-                            dest.push(c);
-
-                            dest.repaint();
-
-                            table.repaint();
-
-                            System.out.print("Destination ");
-                            dest.showSize();
-                            card = null;
-                            checkForWin = true;
-                            setScore(10);
-                            validMoveMade = true;
-                            break;
-                        }
-                    }
-
-                }
             }// end cycle through play decks
 
             // SHOWING STATUS MESSAGE IF MOVE INVALID
@@ -740,13 +511,16 @@ public class FivePiles // Test. Did it work?
             // CHECKING FOR WIN
             if (checkForWin) {
                 boolean gameNotOver = false;
-                // cycle through final decks, if they're all full then game over
-                for (int x = 0; x < NUM_FINAL_DECKS; x++) {
-                    dest = final_cards[x];
-                    if (dest.showSize() != 13) {
-                        // one deck is not full, so game is not over
-                        gameNotOver = true;
-                        break;
+                int emptyPiles = 0;
+                // cycle through play decks, if they are all empty, then you beat five piles.
+                for (int x = 0; x < NUM_PLAY_DECKS; x++) {
+
+                    if (playCardStack[x].showSize() == 0) {
+                        emptyPiles += 1;
+                        if (emptyPiles < 5){
+                            gameNotOver = true;
+                            break;
+                        }
                     }
                 }
                 if (!gameNotOver) {
@@ -764,11 +538,10 @@ public class FivePiles // Test. Did it work?
             source = null;
             dest = null;
             card = null;
-            sourceIsFinalDeck = false;
             checkForWin = false;
             gameOver = false;
         }// end mousePressed()
-    }//end card movement manager class 
+    }//end card movement manager class
 
 
     private static void playNewGame() {
@@ -813,10 +586,12 @@ public class FivePiles // Test. Did it work?
         }
 
         // Dealing new game
-        for (int x = 0; x < NUM_PLAY_DECKS; x++) {
+        for (int x = 0; x < NUM_PLAY_DECKS-2; x++) {
             int hld = 0;
             Card c = deck.pop().setFaceup();
-            playCardStack[x].putFirst(c);
+            if (x < NUM_PLAY_DECKS) {
+                playCardStack[x].putFirst(c);
+            }
 
 //			for (int y = x + 1; y < NUM_PLAY_DECKS; y++)
 //			{
@@ -872,7 +647,7 @@ public class FivePiles // Test. Did it work?
         statusBox.setEditable(false);
         statusBox.setOpaque(false);
 
-        //table.add(statusBox);
+        //table.add(statusBox); // Removed as it was in the way of new UI elements.
         table.add(toggleTimerButton);
         table.add(gameTitle);
         table.add(timeBox);
