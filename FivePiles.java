@@ -234,32 +234,24 @@ public class FivePiles // Test. Did it work?
             JScrollPane scroll;
             JEditorPane rulesTextPane = new JEditorPane("text/html", "");
             rulesTextPane.setEditable(false);
-            String rulesText = "<b>Klondike Solitaire Rules</b>"
-                    + "<br><br> (From Wikipedia) Taking a shuffled standard 52-card deck of playing cards (without Jokers),"
-                    + " one upturned card is dealt on the left of the playing area, then six downturned cards"
-                    + " (from left to right).<p> On top of the downturned cards, an upturned card is dealt on the "
-                    + "left-most downturned pile, and downturned cards on the rest until all piles have an "
-                    + "upturned card. The piles should look like the figure to the right.<p>The four foundations "
-                    + "(light rectangles in the upper right of the figure) are built up by suit from Ace "
-                    + "(low in this game) to King, and the tableau piles can be built down by alternate colors,"
-                    + " and partial or complete piles can be moved if they are built down by alternate colors also. "
-                    + "Any empty piles can be filled with a King or a pile of cards with a King.<p> The point of "
-                    + "the game is to build up a stack of cards starting with 2 and ending with King, all of "
-                    + "the same suit. Once this is accomplished, the goal is to move this to a foundation, "
-                    + "where the player has previously placed the Ace of that suit. Once the player has done this, "
-                    + "they will have \"finished\" that suit- the goal being, of course, to finish all suits, "
-                    + "at which time the player will have won.<br><br><b> Scoring </b><br><br>"
-                    + "Moving cards directly from the Waste stack to a Foundation awards 10 points. However, "
-                    + "if the card is first moved to a Tableau, and then to a Foundation, then an extra 5 points "
-                    + "are received for a total of 15. Thus in order to receive a maximum score, no cards should be moved "
-                    + "directly from the Waste to Foundation.<p>	Time can also play a factor in Windows Solitaire, if the Timed game option is selected. For every 10 seconds of play, 2 points are taken away."
-                    + "<b><br><br>Notes On My Implementation</b><br><br>"
-                    + "Drag cards to and from any stack. As long as the move is valid the card, or stack of "
-                    + "cards, will be repositioned in the desired spot. The game follows the standard scoring and time"
-                    + " model explained above with only one waste card shown at a time."
-                    + "<p> The timer starts running as soon as "
-                    + "the game begins, but it may be paused by pressing the pause button at the bottom of"
-                    + "the screen. ";
+            String rulesText = "<b>File Piles Solitaire</b>"
+                    + "<br>(From bvssolitaire.com/rules/five-piles.htm) 1 deck. Easy. No redeal.<br> "+
+                    "" +
+                    "<br>Five Piles Solitaire uses one deck (52 cards). You have 5 tableau piles.\n<br>" +
+                    "" +
+                    "<br>The object of the game:\n" +
+                    "<br>To discard pairs of cards whose ranks add up to 13.\n <br>" +
+                    "<br>Here is a list of valid pairs:" +
+                    "Queen-Ace, Jack-Two, 10-3, 9-4, etc." +
+                    "<br>Kings are discarded singularly, To discard a King, just click it.\n<br>" +
+                    "<br>The rules:\n" +
+                    "<br>Only the top card of each tableau pile is available for play on the foundations.\n<br>" +
+                    "\n" +
+                    "<br>When you have made all the moves initially available, click on the stock pile to deal one card on each tableau pile. You cannot move cards from one tableau pile to another. The last 2 cards in the stock are dealt separately from the tableau and can be discarded in a pair with cards from any of the 5 tableau piles.\n<br>" +
+                    "\n" +
+                    "<br>Wins are rare.\n<br>" +
+                    "\n" +
+                    "<br>There is no redeal.<br>";
             rulesTextPane.setText(rulesText);
             ruleFrame.add(scroll = new JScrollPane(rulesTextPane));
 
