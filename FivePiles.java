@@ -386,17 +386,19 @@ public class FivePiles // Test. Did it work?
                         if (playCardStack[x].getFirst() != null) { // If the first card in the play deck exists
                             if (playCardStack[x].getFirst().getXY().equals(card.getXY()) && playCardStack[x].getFirst().getID().equals(card.getID())) { // Check if it is the same card as the one we clicked on.
                                 System.out.println("Popped and removed/repainted.");
+
                                 Card c = playCardStack[x].popFirst(); // We pop the card from the play deck, since it added to 13.
+
                                 if (c != null) {
                                     table.remove(FivePiles.moveCard(c, SHOW_POS.x, SHOW_POS.y)); // We remove the card from the table.
-
+                                    System.out.println("Removed: " + card.getID());
                                     c.repaint(); // Repaint to visualize changes.
                                 }
                                 table.repaint(); // Repaint to visualize changes.
                             }
                         }
                         if (old != null && playCardStack[x].getFirst() != null) { // If the first card in the play deck exists and the previously clicked card exists
-                            if (playCardStack[x].getFirst().getXY().equals(old.getXY()) && playCardStack[x].getFirst().getValue().equals(old.getValue())) { // Check if it is the same card as the one we PREVIOUSLY clicked on.
+                            if (playCardStack[x].getFirst().getXY().equals(old.getXY()) && playCardStack[x].getFirst().getID().equals(old.getID())) { // Check if it is the same card as the one we PREVIOUSLY clicked on.
                                 System.out.println("Popped and removed/repainted.");
                                 Card c = playCardStack[x].popFirst(); // We pop the card from the play deck, since it added to 13.
                                 if (c != null) {
