@@ -33,6 +33,8 @@ class Card extends JPanel
 
 	private Boolean _faceup;
 
+	private int _id;
+
 	private Point _location; // location relative to container
 
 	private Point whereAmI; // used to create abs postion rectangle for contains
@@ -55,6 +57,7 @@ class Card extends JPanel
 		_suit = suit;
 		_value = value;
 		_faceup = false;
+		_id = (int)(Math.random()*1000f);
 		_location = new Point();
 		x = 0;
 		y = 0;
@@ -68,6 +71,7 @@ class Card extends JPanel
 		_suit = Card.Suit.CLUBS;
 		_value = Card.Value.ACE;
 		_faceup = false;
+		_id = (int)(Math.random()*1000f);
 		_location = new Point();
 		x = 0;
 		y = 0;
@@ -96,8 +100,13 @@ class Card extends JPanel
 		return _suit;
 	}
 
+	/**
+	 * Returns the card's ID. The cards ID is a random number generated when the card object is constructed.
+	 * @return Returns the card's ID.
+	 */
 	public String getID(){
-		return this.getValue() + this.getSuit().toString() + this.getXY();
+		System.out.println(Integer.toString(_id));
+		return Integer.toString(_id);
 	}
 
 	public Value getValue()
