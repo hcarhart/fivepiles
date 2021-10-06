@@ -230,6 +230,10 @@ class Card extends JPanel
 		_value = value;
 	}
 
+	public boolean isKing(){
+		return this.getNumericalValue() == 13;
+	}
+
 	public Card setFaceup()
 	{
 		_faceup = true;

@@ -73,6 +73,46 @@ public class FivePiles // Test. Did it work?
         return c;
     }
 
+    /**
+     * Checks whether a card is on top of the card stack.
+     *
+     * @param c The card to see if is on the top
+     * @return The truth value
+     */
+    protected static boolean isTop(Card c){
+        boolean valid = false;
+
+        if (c != null) {
+            for (int x = 0; x < NUM_PLAY_DECKS; x++) {
+                if (playCardStack[x].getFirst() != null) {
+                    if (playCardStack[x].getFirst().getID().equals(c.getID())) {
+                        System.out.println("Is top");
+                        valid = true;
+                    }
+                }
+            }
+        }
+
+        return valid;
+    }
+
+    /**
+     * Returns true if the pair of cards, a and b, are both on top and add to 13.
+     * @param a The first card in the pair.
+     * @param b The second card in the pair.
+     * @return Whether the pair adds up to 13 and is on the top of their respective card stack.
+     */
+    protected static boolean isValidPair(Card a, Card b){
+
+        int combinedValue = 0;
+
+        if (a != null && b != null){
+            combinedValue = a.getNumericalValue() + b.getNumericalValue();
+        }
+
+        return (combinedValue==13 && isTop(a) && isTop(b));
+    }
+
     // add/subtract points based on gameplay actions
     protected static void setScore(int deltaScore) {
         FivePiles.score += deltaScore;
@@ -330,10 +370,16 @@ public class FivePiles // Test. Did it work?
                     System.out.println("Added value: " + value);
                 }
 
-                Card old = ChosenCards.getFirst(); // Store the old card in a variable
+                Card old = null;
+                if (!card.isKing()){
+                    System.out.println("Not king");
+                    old = ChosenCards.getFirst(); // Store the old card in a variable
+                }
                 ChosenCards.putFirst(card); // Put the clicked card on top of the temporary card stack.
 
-                if (value == 13) { // If the combined value of 2 selected cards is 13.
+                System.out.println(isTop(card));
+
+                if (isValidPair(card, old) || card.isKing()) { // If the combined value of 2 selected cards is 13, a king, and is on top.
                     System.out.println("20 points added for matching to 13!");
                     score += 20; // Add 20 points. This is just temporary and can be changed.
                     for (int x = 0; x < NUM_PLAY_DECKS; x++) { // Loop through all existing play decks.
@@ -442,68 +488,7 @@ public class FivePiles // Test. Did it work?
             // used for status bar updates
             boolean validMoveMade = false;
 
-            // PLAY STACK OPERATIONS
-            if (card != null && source != null) { // Moving from PLAY TO PLAY
-                for (int x = 0; x < NUM_PLAY_DECKS; x++) {
-                    dest = playCardStack[x];
-                    // MOVING TO POPULATED STACK
-                    if (card.getFaceStatus() == true && dest.contains(stop) && source != dest && !dest.empty()
-                            && transferStack.showSize() == 1) {
-                        Card c = source.popFirst();
-
-                        if (c != null) {
-                            c.repaint();
-                        }
-
-                        // if playstack, turn next card up
-                        if (source.getFirst() != null) {
-                            Card temp = source.getFirst().setFaceup();
-                            temp.repaint();
-                            source.repaint();
-                        }
-
-                        dest.setXY(dest.getXY().x, dest.getXY().y);
-                        dest.putFirst(c);
-
-                        dest.repaint();
-
-                        table.repaint();
-
-                        System.out.print("Destination ");
-                        dest.showSize();
-
-                        validMoveMade = true;
-                        break;
-                    } else if (dest.empty() && card.getValue() == Card.Value.KING && transferStack.showSize() == 1) {// MOVING TO EMPTY STACK, ONLY KING ALLOWED
-                        Card c = source.popFirst();
-
-                        if (c != null) {
-                            c.repaint();
-                        }
-
-                        // if playstack, turn next card up
-                        if (source.getFirst() != null) {
-                            Card temp = source.getFirst().setFaceup();
-                            temp.repaint();
-                            source.repaint();
-                        }
-
-                        dest.setXY(dest.getXY().x, dest.getXY().y);
-                        dest.putFirst(c);
-
-                        dest.repaint();
-
-                        table.repaint();
-
-                        System.out.print("Destination ");
-                        dest.showSize();
-                        setScore(5);
-                        validMoveMade = true;
-                        break;
-                    }
-                }
-
-            }// end cycle through play decks
+            table.repaint();
 
             // SHOWING STATUS MESSAGE IF MOVE INVALID
             if (!validMoveMade && dest != null && card != null) {
