@@ -57,7 +57,7 @@ class Card extends JPanel
 		_suit = suit;
 		_value = value;
 		_faceup = false;
-		_id = (int)(Math.random()*1000f);
+		_id = (int)(Math.random()*100000f);
 		_location = new Point();
 		x = 0;
 		y = 0;
@@ -71,7 +71,7 @@ class Card extends JPanel
 		_suit = Card.Suit.CLUBS;
 		_value = Card.Value.ACE;
 		_faceup = false;
-		_id = (int)(Math.random()*1000f);
+		_id = (int)(Math.random()*100000f);
 		_location = new Point();
 		x = 0;
 		y = 0;

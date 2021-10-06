@@ -589,6 +589,9 @@ public class FivePiles // Test. Did it work?
         // reset time
         time = 0;
 
+        // reset score
+        FivePiles.score = 0;
+
         if (menuButton.getActionListeners().length < 1) { // This condition is to ensure the same action happens only once per click.
             menuButton.addActionListener(new openMenu());
         }
