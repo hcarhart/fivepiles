@@ -1,7 +1,7 @@
 package fivepiles;
 
+///////////////////////////////////////// Imports /////////////////////////////////////////
 import java.awt.event.WindowEvent;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -16,24 +16,21 @@ import java.awt.Font;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.*;
+///////////////////////////////////////// Imports /////////////////////////////////////////
 
-public class FivePiles // Test. Did it work?
+public class FivePiles
 {
     // CONSTANTS
-
     public static final int TABLE_HEIGHT = Card.CARD_HEIGHT * 4; //150*4 = 600
     public static final int TABLE_WIDTH = (Card.CARD_WIDTH * 7) + 100; //100 * 7 = 700
-    public static final int NUM_FINAL_DECKS = 1; //was 4 in solitaire
-    public static final int NUM_PLAY_DECKS = 7; //five playing piles
+    public static final int NUM_PLAY_DECKS = 7; // 5 playing piles, 2 extra for the last 2 cards.
     public static final Point DECK_POS = new Point(5, 5);
     public static final Point SHOW_POS = new Point(DECK_POS.x + Card.CARD_WIDTH + 5, DECK_POS.y);
     public static final Point FINAL_POS = new Point(SHOW_POS.x + Card.CARD_WIDTH + 150, DECK_POS.y);
     public static final Point PLAY_POS = new Point(DECK_POS.x, FINAL_POS.y + Card.CARD_HEIGHT + 30);
 
     // GAMEPLAY STRUCTURES
-    private static FinalStack[] final_cards;// Foundation Stacks
     private static CardStack[] playCardStack; // Tableau stacks
-    private static final Card newCardPlace = new Card();// waste card spot
     private static CardStack deck; // populated with standard 52 card deck
 
     // GUI COMPONENTS (top level)
@@ -66,7 +63,7 @@ public class FivePiles // Test. Did it work?
     private static int score = 0;// keep track of the score
     private static int time = 0;// keep track of seconds elapsed
 
-    // moves a card to abs location within a component
+    // moves a card to absolute location within a component
     protected static Card moveCard(Card c, int x, int y) {
         c.setBounds(new Rectangle(new Point(x, y), new Dimension(Card.CARD_WIDTH + 10, Card.CARD_HEIGHT + 10)));
         c.setXY(new Point(x, y));
@@ -80,20 +77,20 @@ public class FivePiles // Test. Did it work?
      * @return The truth value
      */
     protected static boolean isTop(Card c){
-        boolean valid = false;
+        boolean valid = false; // Start by setting a boolean to store our decision.
 
-        if (c != null) {
-            for (int x = 0; x < NUM_PLAY_DECKS; x++) {
-                if (playCardStack[x].getFirst() != null) {
-                    if (playCardStack[x].getFirst().getID().equals(c.getID())) {
+        if (c != null) { // This is to make sure our card definitely exists (isn't null).
+            for (int x = 0; x < NUM_PLAY_DECKS; x++) { // NUM_PLAY_DECKS refers to the number of decks we have in play, we for loop through that.
+                if (playCardStack[x].getFirst() != null) { // x is the index corresponding to the playCardStack of x. The first "pile" is playCardStack[1] of type CardStack.
+                    if (playCardStack[x].getFirst().getID().equals(c.getID())) { // If the first card in a pile is the SAME card as what we're checking if is in top, then it is on top.
                         System.out.println("Is top");
-                        valid = true;
+                        valid = true; // The card c is on top of a pile, so it is valid (on top).
                     }
                 }
             }
         }
 
-        return valid;
+        return valid; // Return true if our card c is on top of a pile, false otherwise.
     }
 
     /**
@@ -104,21 +101,21 @@ public class FivePiles // Test. Did it work?
      */
     protected static boolean isValidPair(Card a, Card b){
 
-        int combinedValue = 0;
+        int combinedValue = 0; // This is the combined value of two cards paired up.
 
-        if (a != null && b != null){
-            combinedValue = a.getNumericalValue() + b.getNumericalValue();
+        if (a != null && b != null){ // If a isn't null and b isn't null then we can add their values.
+            combinedValue = a.getNumericalValue() + b.getNumericalValue(); // Add both cards' values.
         }
 
-        return (combinedValue==13 && isTop(a) && isTop(b));
+        return (combinedValue==13 && isTop(a) && isTop(b)); // If both cards add to 13 and they're both on top of a pile, they're a valid pair.
     }
 
-    // add/subtract points based on gameplay actions
-    protected static void setScore(int deltaScore) {
-        FivePiles.score += deltaScore;
-        String newScore = "Score: " + FivePiles.score;
-        scoreBox.setText(newScore);
-        scoreBox.repaint();
+    // Adds/subtracts points based on gameplay actions. This also updates the score visually.
+    protected static void setScore(int deltaScore) { // deltaScore is an integer of how much score should change.
+        FivePiles.score += deltaScore; // We add to our game score, the deltaScore.
+        String newScore = "Score: " + FivePiles.score; // We change our score box message to be our new value.
+        scoreBox.setText(newScore); // Update the score box with our new message.
+        scoreBox.repaint(); // We call repaint on the GUI element scoreBox to refresh it with our new information we gave it.
     }
 
     // GAME TIMER UTILITIES
@@ -166,19 +163,24 @@ public class FivePiles // Test. Did it work?
 
     private static class SelectGameListener implements ActionListener
     {
-
         @Override
         public void actionPerformed(ActionEvent ae) {
+            // We remove the several buttons since we selected game, and are therefore changing visuals.
             table.remove(selectGameButton);
             table.remove(statisticsButton);
             table.remove(exitMenuButton);
-            table.repaint();
+            table.repaint(); // This is to refresh our table (the primary GUI element that holds all our others).
+            //
 
-            if (fivePilesButton.getActionListeners().length < 1) { // This condition is to ensure the same action happens only once per click.
+
+            if (fivePilesButton.getActionListeners().length < 1) { // This condition is to ensure the same action happens only once per click. Otherwise we stack listeners that do the same things, causing repeats.
                 fivePilesButton.addActionListener(new NewGameListener());
             }
+
+            // This line defines the bounds of our five piles button, its position and size.
             fivePilesButton.setBounds((TABLE_WIDTH/2)-75, (TABLE_HEIGHT)/2-135, 150, 50);
 
+            // Since we defined our button's listener and bounds, we add it to the table to actually exist.
             table.add(fivePilesButton);
         }
 
@@ -213,15 +215,15 @@ public class FivePiles // Test. Did it work?
 
     }
 
-    private static class openMenu implements ActionListener {
+    private static class openMenu implements ActionListener { // The listener for the confirmation return to menu button.
 
         @Override
         public void actionPerformed(ActionEvent e) {
             System.out.println(menuSureButton.isVisible());
             System.out.println(menuButton.getActionListeners().length);
-            if (menuSureButton.isVisible()){
+            if (menuSureButton.isVisible()){ // If the menu is visible, we hide it.
                 menuSureButton.hide();
-            }else {
+            }else { // Otherwise it isn't visible, so we show it. Basically a toggle.
                 menuSureButton.show();
             }
         }
@@ -238,15 +240,15 @@ public class FivePiles // Test. Did it work?
                 fontset = true;
             }
 
-            if (menuSureButton.isVisible()) {
+            if (menuSureButton.isVisible()) { // We want to ensure the button isn't visible when created. It pops up when we click return to menu button.
                 menuSureButton.hide();
             }
 
         }
         @Override
-        public void actionPerformed(ActionEvent e) {
-            menuSureButton.hide();
-            startProgram();
+        public void actionPerformed(ActionEvent e) { // This is what happens if we click the button.
+            menuSureButton.hide(); // We hide ethe menu confirmation button.
+            startProgram(); // And startProgram() which returns us to the main menu.
         }
 
     }
@@ -269,13 +271,13 @@ public class FivePiles // Test. Did it work?
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            JDialog ruleFrame = new JDialog(frame, true);
-            ruleFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-            ruleFrame.setSize(TABLE_HEIGHT, TABLE_WIDTH);
+            JDialog ruleFrame = new JDialog(frame, true); // Create a new dialog box for our frame.
+            ruleFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE); // Set what happens when the window closes.
+            ruleFrame.setSize(TABLE_HEIGHT, TABLE_WIDTH); // Set the dimensions of the dialog box.
             JScrollPane scroll;
-            JEditorPane rulesTextPane = new JEditorPane("text/html", "");
-            rulesTextPane.setEditable(false);
-            String rulesText = "<b>File Piles Solitaire</b>"
+            JEditorPane rulesTextPane = new JEditorPane("text/html", ""); // The actual text/content.
+            rulesTextPane.setEditable(false); // Make the text not editable.
+            String rulesText = "<b>File Piles Solitaire</b>" // The rules for Five Piles.
                     + "<br>(From bvssolitaire.com/rules/five-piles.htm) 1 deck. Easy. No redeal.<br> "+
                     "" +
                     "<br>Five Piles Solitaire uses one deck (52 cards). You have 5 tableau piles.\n<br>" +
@@ -293,29 +295,19 @@ public class FivePiles // Test. Did it work?
                     "<br>Wins are rare.\n<br>" +
                     "\n" +
                     "<br>There is no redeal.<br>";
-            rulesTextPane.setText(rulesText);
+            rulesTextPane.setText(rulesText); // Sets the text for our text GUI element to the rules string above.
             ruleFrame.add(scroll = new JScrollPane(rulesTextPane));
 
-            ruleFrame.setVisible(true);
+            ruleFrame.setVisible(true); // Set the window of rules to be visible.
         }
     }
 
-    /*
-     * This class handles all of the logic of moving the Card components as well
-     * as the game logic. This determines where Cards can be moved according to
-     * the rules of Klondike solitiaire
-     */
     private static class CardMovementManager extends MouseAdapter {
 
-        private Card prevCard = null;// tracking card for waste stack
-        private Card movedCard = null;// card moved from waste stack
-        private boolean putBackOnDeck = true;// used for waste card recycling
         private boolean checkForWin = false;// should we check if game is over?
-        private boolean gameOver = false;// no
-        private boolean skip = false;
+        private boolean gameOver = false;// We want to start this as false, since the game isn't over immediately.
         private Point start = null;// where mouse was clicked
-        private Point stop = null;// where mouse was released
-        private Card card = null; // card to be moved
+        private Card card = null; // card being clicked
         // used for moving single cards
         private CardStack source = null;
         private CardStack dest = null;
@@ -328,9 +320,9 @@ public class FivePiles // Test. Did it work?
 
 
         @Override
-        public void mousePressed(MouseEvent e) {
-            start = e.getPoint();
-            boolean stopSearch = false;
+        public void mousePressed(MouseEvent e) { // Stuff in this method happen when left mouse button is pressed down.
+            start = e.getPoint(); // The point where the mouse was when it was clicked.
+            boolean stopSearch = false; // Used for searching for what card was pressed.
             statusBox.setText("");
             transferStack.makeEmpty();
 
@@ -364,7 +356,7 @@ public class FivePiles // Test. Did it work?
             // if that card stack is even, then two cards have been selected.
             // check the value of those two cards added.
             // if that is 13, add twenty points.
-            if (card != null) {
+            if (card != null) { // When we use a card, it's important to check that it exists first.
                 int value = card.getNumericalValue(); // Gets the value of the card clicked on.
                 //System.out.println("Card value of " + card.getValue() + ": " + value);
                 if (ChosenCards.getFirst() != null) { // If the first card in our temporary pile isn't null, it means we selected 2 cards and should combine their values.
@@ -372,8 +364,9 @@ public class FivePiles // Test. Did it work?
                     System.out.println("Added value: " + value);
                 }
 
-                Card old = null;
-                if (!card.isKing()){
+                Card old = null; // Initialize a new variable to hold the card that we selected before.
+
+                if (!card.isKing()){ // If the card we clicked ISN'T a king. This method is custom and doesn't exist for other types.
                     System.out.println("Not king");
                     old = ChosenCards.getFirst(); // Store the old card in a variable
                 }
@@ -381,12 +374,12 @@ public class FivePiles // Test. Did it work?
 
                 System.out.println(isTop(card));
 
-                if (isValidPair(card, old) || card.isKing()) { // If the combined value of 2 selected cards is 13, a king, and is on top.
+                if (isValidPair(card, old) || card.isKing() && isTop(card)) { // If the combined value of 2 selected cards is 13, a king, and is on top.
                     System.out.println("20 points added for matching to 13!");
                     score += 20; // Add 20 points. This is just temporary and can be changed.
                     for (int x = 0; x < NUM_PLAY_DECKS; x++) { // Loop through all existing play decks.
                         if (playCardStack[x].getFirst() != null) { // If the first card in the play deck exists
-                            if (playCardStack[x].getFirst().getXY().equals(card.getXY()) && playCardStack[x].getFirst().getID().equals(card.getID())) { // Check if it is the same card as the one we clicked on.
+                            if (playCardStack[x].getFirst().getXY().equals(card.getXY()) && playCardStack[x].getFirst().getID().equals(card.getID())) { // Check if it is the same card as the one we clicked on. Basically, if the position (xy) and ID are the same, it's the same card.
                                 System.out.println("Popped and removed/repainted.");
 
                                 Card c = playCardStack[x].popFirst(); // We pop the card from the play deck, since it added to 13.
@@ -413,7 +406,7 @@ public class FivePiles // Test. Did it work?
                         }
 
 
-                        ChosenCards = new CardStack(false);
+                        ChosenCards = new CardStack(false); // We recreate our temporary cards holder object of type CardStack, ChosenCards.
 
                     }
 
@@ -421,90 +414,71 @@ public class FivePiles // Test. Did it work?
             }
             // SHOW (WASTE) CARD OPERATIONS
             // display new show card
-            // dealing from the deck: still need to handle last two cards here
-            //
-
-            if (newCardButton.contains(start) && deck.showSize() > 0) {
+            // dealing from the deck
+            if (newCardButton.contains(start) && deck.showSize() > 0) { // If the mouse is within the bounds of newCardButton and the deck has more than 0 cards.
 
                 ChosenCards = new CardStack(false); // Added this to ensure we can't pick between cards from different layers.
-                if (putBackOnDeck && prevCard != null) {
-                    System.out.println("Putting back on show stack: ");
-                    prevCard.getValue();
-                    prevCard.getSuit();
-                    deck.putFirst(prevCard);
-                }
 
-                if (prevCard != null) {
-                    table.remove(prevCard);
-                }
-                for (int x = 0; x < NUM_PLAY_DECKS-2; x++) {
+
+                for (int x = 0; x < NUM_PLAY_DECKS-2; x++) { // We want to add new cards to our 5 piles, so we for loop through the total number of play decks.
                     if (deck.showSize() > 2) { // Added this condition to account for the deck running out / last 2 cards.
-                        Card c = deck.pop().setFaceup();
-                        if (c != null) {
-                            playCardStack[x].putFirst(c);
-                            table.add(FivePiles.moveCard(c, SHOW_POS.x, SHOW_POS.y));
-                            c.repaint();
+                        Card c = deck.pop().setFaceup(); // We get our card from the deck and set it faceup.
+                        if (c != null) { // We make sure the "card" we just got actually exists.
+                            playCardStack[x].putFirst(c); // We put this newly obtained card into the pile we're iterating over.
+                            table.add(FivePiles.moveCard(c, SHOW_POS.x, SHOW_POS.y)); // We add the card visual to the table.
+                            c.repaint(); // We repaint our card so it shows in the card stack (pile).
                         }
-                        table.repaint();
-                    }else { // This part is to handle the last 2 cards.
+                        table.repaint(); // We repaint the table now so it shows the new card stack (pile).
+                    }else { // This part is to handle the last 2 cards. We do this if we have only 2 cards left in the deck.
                         Card c1 = deck.pop(); // We pop the first card.
                         Card c2 = deck.pop(); // We pop the second card.
 
 
-                        if (c1 != null && c2 != null){ //
+                        if (c1 != null && c2 != null){ // We make sure the cards we popped actually exist.
                             c1 = c1.setFaceup(); // Set them faceup.
                             c2 = c2.setFaceup(); // Set them faceup.
                             playCardStack[NUM_PLAY_DECKS-2].putFirst(c1); // Put first card in the first extra pile.
-                            table.add(FivePiles.moveCard(c1, SHOW_POS.x, SHOW_POS.y));
+                            table.add(FivePiles.moveCard(c1, SHOW_POS.x, SHOW_POS.y)); // We add the card 1's (c1) visual to our table.
                             playCardStack[NUM_PLAY_DECKS-1].putFirst(c2); // Put the second card in the second extra pile.
-                            table.add(FivePiles.moveCard(c2, SHOW_POS.x, SHOW_POS.y));
-                            c1.repaint();
-                            c2.repaint();
+                            table.add(FivePiles.moveCard(c2, SHOW_POS.x, SHOW_POS.y)); // We add the card 2's (c2) visual to our table
+                            c1.repaint(); // We repaint so they show up in the pile.
+                            c2.repaint(); // We repaint so they show up in the pile.
                         }
-                        table.repaint();
+                        table.repaint(); // We repaint the table to show updated card stacks (piles).
                     }
                 }
-                deck.showSize();
+                deck.showSize(); // Just to print our decks size after dealing out cards to our piles.
 
             }
-
-            if (newCardPlace.contains(start) && prevCard != null) {
-                movedCard = prevCard;
-            }
-
-            // FINAL (FOUNDATION) CARD OPERATIONS
-            for (int x = 0; x < NUM_FINAL_DECKS; x++) {
-
-                if (final_cards[x].contains(start)) {
-                    source = final_cards[x];
-                    card = source.getLast();
-                    transferStack.putFirst(card);
-                    break;
-                }
-            }
-            putBackOnDeck = true;
-
         }
 
+        /**
+         * Returns the time from the FivePiles class.
+         * @return
+         */
         protected static int getTime(){
             return FivePiles.time;
         }
 
+        /**
+         * Returns the score from the FivePiles class.
+         * @return
+         */
         protected static int getScore(){
             return FivePiles.score;
         }
 
         @Override
-        public void mouseReleased(MouseEvent e) {
-            checkForWin = true;
-            gameOver = false;
-            stop = e.getPoint();
+        public void mouseReleased(MouseEvent e) { // These things happen when the left mouse button is released.
+            checkForWin = true; // This is set to true to check if our move we made won the game.
+            gameOver = false; // We set this to false to ensure we don't keep the gameOver value from a previous game.
+
             // used for status bar updates
             boolean validMoveMade = false;
             String[] options = {"New Game", "Return to Menu", "Return to Game"};
             int result;
 
-            table.repaint();
+            table.repaint(); // Repaint table to refresh visual elements.
 
             // SHOWING STATUS MESSAGE IF MOVE INVALID
             if (!validMoveMade && dest != null && card != null) {
@@ -526,20 +500,21 @@ public class FivePiles // Test. Did it work?
                 }
             }
 
-            if (checkForWin && gameOver) {
-                toggleTimer();
-                JOptionPane.showMessageDialog(table, "Congratulations! You've Won!");
-                statusBox.setText("Game Over!");
+            if (checkForWin && gameOver) { // If we checked for win and gameOver is true then we won!
+                toggleTimer(); // Pause the timer since we won.
+                JOptionPane.showMessageDialog(table, "Congratulations! You've Won!"); // Shows a message with this text.
+                statusBox.setText("Game Over!"); // Updates our statusBox (but I don't think the GUI for statusBox is visible.)
             }
 
-            else if(deck.empty())
+            else if(deck.empty()) // Since we didn't win, we check if we lost instead. Firstly, we ensure the deck is empty.
             {
-                skip = false;
-                for(int i = 0; i < NUM_PLAY_DECKS - 1; i++)
+
+                for(int i = 0; i < NUM_PLAY_DECKS - 1; i++) // For every pile we have.
                 {
-                    for(int j = i + 1; j < NUM_PLAY_DECKS; j++)
+                    for(int j = i + 1; j < NUM_PLAY_DECKS; j++) // We loop through all other piles.
                     {
 
+                        // If any card adds up to 13, we have more moves.
                         if(!playCardStack[i].empty() && !playCardStack[j].empty() && playCardStack[i].getFirst().getNumericalValue() + playCardStack[j].getFirst().getNumericalValue() == 13 || !playCardStack[i].empty() && !playCardStack[j].empty() && playCardStack[i].getFirst().getNumericalValue() == 13)
                         {
                             i = NUM_PLAY_DECKS;
@@ -550,19 +525,19 @@ public class FivePiles // Test. Did it work?
 
                     if(i == NUM_PLAY_DECKS - 2)
                     {
-                        toggleTimer();
+                        toggleTimer(); // Since we lost, we toggle timer.
                         System.out.println("Game Over!");
-                        result = JOptionPane.showOptionDialog(table, "You Lost.", "Game State", 2, 1, null, options, null);
-                        statusBox.setText("Game Over!");
-                        System.out.println("result: " + result);
+                        result = JOptionPane.showOptionDialog(table, "You Lost.", "Game State", 2, 1, null, options, null); // Show a message saying you lost.
+                        statusBox.setText("Game Over!"); // Put in the status box you lost.
+                        System.out.println("result: " + result); // Print the result of the options from our optionsDialog.
 
-                        switch(result)
+                        switch(result) // Switch statement to go to the correct option. It depends on the result.
                         {
-                            case 0: playNewGame();
+                            case 0: playNewGame(); // If result = 0, we playNewGame() meaning user pressed new game.
                                 break;
-                            case 1: startProgram();
+                            case 1: startProgram(); // If result = 1, we startProgram() meaning user pressed main menu.
                                 break;
-                            case 2:
+                            case 2: // If result = 2, the user pressed to exit game.
                                 break;
                             default:
                                 break;
@@ -576,7 +551,6 @@ public class FivePiles // Test. Did it work?
             // RESET VARIABLES FOR NEXT EVENT
 
             start = null;
-            stop = null;
             source = null;
             dest = null;
             card = null;
@@ -589,34 +563,18 @@ public class FivePiles // Test. Did it work?
 
     private static void playNewGame() {
 
-        if (table.getMouseListeners().length < 1) {
+        if (table.getMouseListeners().length < 1) { // If we have 0 listeners, we add a new one. This is to avoid duplicates.
             table.addMouseListener(new CardMovementManager());
         }
-        if (table.getMouseMotionListeners().length < 1) {
+        if (table.getMouseMotionListeners().length < 1) { // If we have 0 listeners, we add a new one. This is to avoid duplicates.
             table.addMouseMotionListener(new CardMovementManager());
         }
 
-        deck = new CardStack(true); // deal 52 cards
-        deck.shuffle();
-        table.removeAll();
-        // reset stacks if user starts a new game in the middle of one
-        if (playCardStack != null && final_cards != null) {
-            for (int x = 0; x < NUM_PLAY_DECKS; x++) {
-                playCardStack[x].makeEmpty();
-            }
-            for (int x = 0; x < NUM_FINAL_DECKS; x++) {
-                final_cards[x].makeEmpty();
-            }
-        }
-        // initialize & place final (foundation) decks/stacks
-        final_cards = new FinalStack[NUM_FINAL_DECKS];
-        for (int x = 0; x < NUM_FINAL_DECKS; x++) {
-            final_cards[x] = new FinalStack();
+        deck = new CardStack(true); // Create a deck of 52 cards to deal from.
+        deck.shuffle(); // Shuffle our new deck.
+        table.removeAll(); // Clean up all the entities on our table.
 
-            final_cards[x].setXY((FINAL_POS.x + (x * Card.CARD_WIDTH)) + 10, FINAL_POS.y);
-            table.add(final_cards[x]);
 
-        }
         // place new card distribution button
         table.add(moveCard(newCardButton, DECK_POS.x, DECK_POS.y));
         // initialize & place play (tableau) decks/stacks
@@ -635,16 +593,12 @@ public class FivePiles // Test. Did it work?
             if (x < NUM_PLAY_DECKS) {
                 playCardStack[x].putFirst(c);
             }
-
-//			for (int y = x + 1; y < NUM_PLAY_DECKS; y++)
-//			{
-//				playCardStack[y].putFirst(c = deck.pop());
-//			}
         }
-        // reset time
+
+        // reset time since we are starting a new game.
         time = 0;
 
-        // reset score
+        // reset score since we are starting a new game.
         FivePiles.score = 0;
 
         if (menuButton.getActionListeners().length < 1) { // This condition is to ensure the same action happens only once per click.
@@ -660,39 +614,40 @@ public class FivePiles // Test. Did it work?
         if (newGameButton.getActionListeners().length < 1) { // This condition is to ensure the same action happens only once per click.
             newGameButton.addActionListener(new NewGameListener());
         }
-        newGameButton.setBounds(0, TABLE_HEIGHT - 70, 120, 30);
+        newGameButton.setBounds(0, TABLE_HEIGHT - 70, 120, 30); // Bounds for new game button, consisting of position and size.
 
         if (showRulesButton.getActionListeners().length < 1) { // This condition is to ensure the same action happens only once per click.
             showRulesButton.addActionListener(new ShowRulesListener());
         }
-        showRulesButton.setBounds(120, TABLE_HEIGHT - 70, 120, 30);
+        showRulesButton.setBounds(120, TABLE_HEIGHT - 70, 120, 30); // Bounds for show rules button, consisting of position and size.
 
-        gameTitle.setText(" ");//text
+        gameTitle.setText(" ");
         gameTitle.setEditable(false);
         gameTitle.setOpaque(false);
-        gameTitle.setBounds(245, 20, 100, 100);
+        gameTitle.setBounds(245, 20, 100, 100); // Bounds for game title (?), consisting of position and size.
 
-        scoreBox.setBounds(240, TABLE_HEIGHT - 70, 120, 30);
+        scoreBox.setBounds(240, TABLE_HEIGHT - 70, 120, 30); // Bounds for score box, consisting of position and size.
         scoreBox.setText("Score: 0");
         scoreBox.setEditable(false);
         scoreBox.setOpaque(false);
 
-        timeBox.setBounds(360, TABLE_HEIGHT - 70, 120, 30);
+        timeBox.setBounds(360, TABLE_HEIGHT - 70, 120, 30); // Bounds for time box, consisting of position and size.
         timeBox.setText("Seconds: 0");
         timeBox.setEditable(false);
         timeBox.setOpaque(false);
 
         startTimer();
 
-        toggleTimerButton.setBounds(480, TABLE_HEIGHT - 70, 125, 30);
+        toggleTimerButton.setBounds(480, TABLE_HEIGHT - 70, 125, 30); // Bounds for toggle timer button, consisting of position and size.
         if (toggleTimerButton.getActionListeners().length < 1) { // This condition is to ensure the same action happens only once per click.
             toggleTimerButton.addActionListener(new ToggleTimerListener());
         }
 
-        statusBox.setBounds(605, TABLE_HEIGHT - 70, 180, 30);
+        statusBox.setBounds(605, TABLE_HEIGHT - 70, 180, 30); // Bounds for status box, consisting of position and size.
         statusBox.setEditable(false);
         statusBox.setOpaque(false);
 
+        //// Adding all of our UI elements to the table for gameplay. ////
         //table.add(statusBox); // Removed as it was in the way of new UI elements.
         table.add(toggleTimerButton);
         table.add(gameTitle);
@@ -703,9 +658,11 @@ public class FivePiles // Test. Did it work?
         table.add(showRulesButton);
         table.add(scoreBox);
         table.repaint();
+        //// Adding all of our UI elements to the table for gameplay. ////
+
     }
 
-    public static void startProgram()
+    public static void startProgram() // This is the method for our main menu.
     {
 
         if (menuButton.getActionListeners().length > 1) {
@@ -748,10 +705,10 @@ public class FivePiles // Test. Did it work?
 
         Container contentPane;
 
-        frame.setSize(TABLE_WIDTH, TABLE_HEIGHT);
+        frame.setSize(TABLE_WIDTH, TABLE_HEIGHT); // The dimensions of our gameplay area.
 
         table.setLayout(null);
-        table.setBackground(new Color(0, 180, 0));
+        table.setBackground(new Color(0, 180, 0)); // The color of our "table."
 
         contentPane = frame.getContentPane();
         contentPane.add(table);
@@ -761,11 +718,8 @@ public class FivePiles // Test. Did it work?
 
         //playNewGame();
 
-//        table.addMouseListener(new CardMovementManager());
-//        table.addMouseMotionListener(new CardMovementManager());
-
-        frame.setResizable(false);
-        frame.setVisible(true);
+        frame.setResizable(false); // We don't want the user to be able to resize the window.
+        frame.setVisible(true); // We want the window visible.
 
     }
 }
