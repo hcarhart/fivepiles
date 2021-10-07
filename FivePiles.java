@@ -486,6 +486,14 @@ public class FivePiles // Test. Did it work?
 
         }
 
+        protected static int getTime(){
+            return FivePiles.time;
+        }
+
+        protected static int getScore(){
+            return FivePiles.score;
+        }
+
         @Override
         public void mouseReleased(MouseEvent e) {
             checkForWin = true;
@@ -532,7 +540,7 @@ public class FivePiles // Test. Did it work?
                     for(int j = i + 1; j < NUM_PLAY_DECKS; j++)
                     {
 
-                        if(!playCardStack[i].empty() && !playCardStack[j].empty() && playCardStack[i].getFirst().getNumericalValue() + playCardStack[j].getFirst().getNumericalValue() == 13)
+                        if(!playCardStack[i].empty() && !playCardStack[j].empty() && playCardStack[i].getFirst().getNumericalValue() + playCardStack[j].getFirst().getNumericalValue() == 13 || !playCardStack[i].empty() && !playCardStack[j].empty() && playCardStack[i].getFirst().getNumericalValue() == 13)
                         {
                             i = NUM_PLAY_DECKS;
                             j = NUM_PLAY_DECKS;
