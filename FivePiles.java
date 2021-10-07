@@ -310,7 +310,7 @@ public class FivePiles // Test. Did it work?
         private Card movedCard = null;// card moved from waste stack
         private boolean putBackOnDeck = true;// used for waste card recycling
         private boolean checkForWin = false;// should we check if game is over?
-        private boolean gameOver = true;// easier to negate this than affirm it
+        private boolean gameOver = false;// no
         private boolean skip = false;
         private Point start = null;// where mouse was clicked
         private Point stop = null;// where mouse was released
@@ -487,9 +487,13 @@ public class FivePiles // Test. Did it work?
 
         @Override
         public void mouseReleased(MouseEvent e) {
+            checkForWin = true;
+            gameOver = false;
             stop = e.getPoint();
             // used for status bar updates
             boolean validMoveMade = false;
+            String[] options = {"New Game", "Return to Menu", "Return to Game"};
+            int result;
 
             table.repaint();
 
@@ -499,20 +503,16 @@ public class FivePiles // Test. Did it work?
             }
             // CHECKING FOR WIN
             if (checkForWin) {
-                boolean gameNotOver = false;
                 int emptyPiles = 0;
                 // cycle through play decks, if they are all empty, then you beat five piles.
                 for (int x = 0; x < NUM_PLAY_DECKS; x++) {
 
-                    if (playCardStack[x].showSize() == 0) {
+                    if (playCardStack[x].empty()) {
                         emptyPiles += 1;
-                        if (emptyPiles < 5){
-                            gameNotOver = true;
-                            break;
-                        }
                     }
                 }
-                if (!gameNotOver) {
+                System.out.println("Empty piles: " + emptyPiles);
+                if (emptyPiles == 7){
                     gameOver = true;
                 }
             }
@@ -541,8 +541,21 @@ public class FivePiles // Test. Did it work?
                     if(i == NUM_PLAY_DECKS - 2)
                     {
                         System.out.println("Game Over!");
-                        JOptionPane.showMessageDialog(table, "you lost dummy");
+                        result = JOptionPane.showOptionDialog(table, "You Lost.", "Game State", 2, 1, null, options, null);
                         statusBox.setText("Game Over!");
+                        System.out.println("result: " + result);
+
+                        switch(result)
+                        {
+                            case 0: playNewGame();
+                                break;
+                            case 1: startProgram();
+                                break;
+                            case 2:
+                                break;
+                            default:
+                                break;
+                        }
                     }
 
                 }
@@ -550,6 +563,7 @@ public class FivePiles // Test. Did it work?
 
 
             // RESET VARIABLES FOR NEXT EVENT
+
             start = null;
             stop = null;
             source = null;
