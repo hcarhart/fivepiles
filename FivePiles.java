@@ -124,6 +124,7 @@ public class FivePiles // Test. Did it work?
     // GAME TIMER UTILITIES
     protected static void updateTimer() {
         FivePiles.time += 1;
+        setScore(0); // Literally just for updating score every second.
         // every 10 seconds elapsed we take away 2 points
         if (FivePiles.time % 10 == 0) {
             setScore(-2);
@@ -518,6 +519,7 @@ public class FivePiles // Test. Did it work?
             }
 
             if (checkForWin && gameOver) {
+                toggleTimer();
                 JOptionPane.showMessageDialog(table, "Congratulations! You've Won!");
                 statusBox.setText("Game Over!");
             }
@@ -540,6 +542,7 @@ public class FivePiles // Test. Did it work?
 
                     if(i == NUM_PLAY_DECKS - 2)
                     {
+                        toggleTimer();
                         System.out.println("Game Over!");
                         result = JOptionPane.showOptionDialog(table, "You Lost.", "Game State", 2, 1, null, options, null);
                         statusBox.setText("Game Over!");
