@@ -21,7 +21,7 @@ import javax.swing.JComponent;
  */
 class CardStack extends JComponent
 {
-	protected int NUM_CARDS = 12;
+	protected int NUM_CARDS = 52;
 	protected Vector<Card> v;
 	protected boolean playStack = false;
 	protected int SPREAD = 18;
