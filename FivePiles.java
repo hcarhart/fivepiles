@@ -311,6 +311,7 @@ public class FivePiles // Test. Did it work?
         private boolean putBackOnDeck = true;// used for waste card recycling
         private boolean checkForWin = false;// should we check if game is over?
         private boolean gameOver = true;// easier to negate this than affirm it
+        private boolean skip = false;
         private Point start = null;// where mouse was clicked
         private Point stop = null;// where mouse was released
         private Card card = null; // card to be moved
@@ -520,6 +521,34 @@ public class FivePiles // Test. Did it work?
                 JOptionPane.showMessageDialog(table, "Congratulations! You've Won!");
                 statusBox.setText("Game Over!");
             }
+
+            else if(deck.empty())
+            {
+                skip = false;
+                for(int i = 0; i < NUM_PLAY_DECKS - 1; i++)
+                {
+                    for(int j = i + 1; j < NUM_PLAY_DECKS; j++)
+                    {
+
+                        if(!playCardStack[i].empty() && !playCardStack[j].empty() && playCardStack[i].getFirst().getNumericalValue() + playCardStack[j].getFirst().getNumericalValue() == 13)
+                        {
+                            i = NUM_PLAY_DECKS;
+                            j = NUM_PLAY_DECKS;
+                        }
+
+                    }
+
+                    if(i == NUM_PLAY_DECKS - 2)
+                    {
+                        System.out.println("Game Over!");
+                        JOptionPane.showMessageDialog(table, "you lost dummy");
+                        statusBox.setText("Game Over!");
+                    }
+
+                }
+            }
+
+
             // RESET VARIABLES FOR NEXT EVENT
             start = null;
             stop = null;
@@ -528,6 +557,7 @@ public class FivePiles // Test. Did it work?
             card = null;
             checkForWin = false;
             gameOver = false;
+
         }// end mousePressed()
     }//end card movement manager class
 
