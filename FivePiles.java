@@ -47,7 +47,8 @@ public class FivePiles
     private static JTextField timeBox = new JTextField();// displays the time
     private static JTextField statusBox = new JTextField();// status messages
     private static final Card newCardButton = new Card();// reveal waste card
-
+    
+    private static String inputName = null; //for validating playerName
 
     private static JButton selectGameButton = new JButton("Select Game");
     private static JButton statisticsButton = new JButton("Statistics");
@@ -117,6 +118,54 @@ public class FivePiles
         scoreBox.setText(newScore); // Update the score box with our new message.
         scoreBox.repaint(); // We call repaint on the GUI element scoreBox to refresh it with our new information we gave it.
     }
+    
+    //player class
+    private static class Player{
+        
+    public static String playerName;
+    public static int playerScore = 0;
+    public static int playerTime = 0;
+    
+
+    public Player(){
+        FivePiles.inputName = playerName;
+        FivePiles.score = playerScore;
+        FivePiles.time = playerTime;
+    }
+
+        public static String getPlayerName() {
+            return playerName;
+        }
+
+        }
+        
+        public static int getPlayerTime(){
+            return FivePiles.time; 
+        }
+
+        public static void setPlayerName(String inputName) {
+            playerName = FivePiles.inputName;
+        }
+
+        public static void setPlayerScore(int score) {
+           playerScore = FivePiles.score;
+        }
+        
+        public static void setPlayerTime(int time){
+            playerTime = FivePiles.time;
+        }
+        
+        public static void resetPlayer(){
+            playerName = null;
+            playerScore = 0;
+            playerTime = 0;
+        }
+    
+    }
+    
+
+    
+    
 
     // GAME TIMER UTILITIES
     protected static void updateTimer() {
@@ -467,6 +516,10 @@ public class FivePiles
         protected static int getScore(){
             return FivePiles.score;
         }
+        
+       
+        
+        
 
         @Override
         public void mouseReleased(MouseEvent e) { // These things happen when the left mouse button is released.
@@ -562,7 +615,22 @@ public class FivePiles
 
 
     private static void playNewGame() {
-
+        
+        //checks name is not whitespace or blank
+        boolean validateName = true;
+        while(validateName){
+           inputName = (String)JOptionPane.showInputDialog("Enter player name: ");
+            if(inputName.isBlank()){
+                JOptionPane.showMessageDialog(frame, "Please enter name");
+            }
+            else{
+                validateName = false;
+            }
+        }        
+        Player.setPlayerName(inputName);   
+        System.out.println("Player: " + Player.getPlayerName());
+        
+        
         if (table.getMouseListeners().length < 1) { // If we have 0 listeners, we add a new one. This is to avoid duplicates.
             table.addMouseListener(new CardMovementManager());
         }
