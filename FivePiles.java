@@ -137,6 +137,8 @@ public class FivePiles
             return playerName;
         }
 
+        public static int getPlayerScore() {
+            return FivePiles.score;
         }
         
         public static int getPlayerTime(){
@@ -578,15 +580,19 @@ public class FivePiles
 
                     if(i == NUM_PLAY_DECKS - 2)
                     {
-                        toggleTimer(); // Since we lost, we toggle timer.
+                        toggleTimer(); // Since we lost, we toggle timer.                        
                         System.out.println("Game Over!");
+                        Player.setPlayerScore(score);//grab score and time and assign to player
+                        Player.setPlayerTime(time);
                         result = JOptionPane.showOptionDialog(table, "You Lost.", "Game State", 2, 1, null, options, null); // Show a message saying you lost.
-                        statusBox.setText("Game Over!"); // Put in the status box you lost.
+                        statusBox.setText("Game Over!"); // Put in the status box you lost.  
+                        System.out.println("Player score and time for "+ Player.getPlayerName()+ ": "+ Player.getPlayerScore() +" points in "+  Player.getPlayerTime() + " seconds");
                         System.out.println("result: " + result); // Print the result of the options from our optionsDialog.
 
                         switch(result) // Switch statement to go to the correct option. It depends on the result.
                         {
                             case 0: playNewGame(); // If result = 0, we playNewGame() meaning user pressed new game.
+                                Player.resetPlayer();
                                 break;
                             case 1: startProgram(); // If result = 1, we startProgram() meaning user pressed main menu.
                                 break;
