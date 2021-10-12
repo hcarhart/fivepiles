@@ -15,6 +15,7 @@ import java.awt.event.MouseEvent;
 import java.awt.Font;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -25,8 +26,7 @@ import javax.swing.*;
 
 public class FivePiles
 {
-    // FILES
-    public static File saveFile = new File("src\\saveFile");
+
 
     // CONSTANTS
     public static final int TABLE_HEIGHT = Card.CARD_HEIGHT * 4; //150*4 = 600
@@ -167,6 +167,12 @@ public class FivePiles
         }
         public static void setPlayerName(String inputName) {
             playerName = FivePiles.inputName;
+
+            try {
+                loadFile(playerName);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
         }
 
         public static void setPlayerScore(int score) {
@@ -195,9 +201,14 @@ public class FivePiles
         }
 
         public static String displayInfo(){
-            String display = null;
+            String display = "";
+            System.out.println(playerNameList.size());
             for(int i = 0; i < playerNameList.size(); i++) {
-                display += playerNameList.get(i) + " " + playerScoreList.get(i) + " " + playerTimeList.get(i) + " " + playerWinList.get(i) + "\n";
+                display += playerNameList.get(i) + " " + playerScoreList.get(i) + " " + playerTimeList.get(i) + " " + playerWinList.get(i);
+                if(i < playerNameList.size() - 1)
+                {
+                    display += "\n";
+                }
             }
 
             return display;
@@ -454,7 +465,6 @@ public class FivePiles
             // if that is 13, add twenty points.
             if (card != null) { // When we use a card, it's important to check that it exists first.
                 int value = card.getNumericalValue(); // Gets the value of the card clicked on.
-                //System.out.println("Card value of " + card.getValue() + ": " + value);
                 if (ChosenCards.getFirst() != null) { // If the first card in our temporary pile isn't null, it means we selected 2 cards and should combine their values.
                     value += ChosenCards.getFirst().getNumericalValue(); // Combine the values of our two selected cards.
                     System.out.println("Added value: " + value);
@@ -548,29 +558,6 @@ public class FivePiles
             }
         }
 
-        /**
-         * Returns the time from the FivePiles class.
-         * @return
-         */
-        protected static int getTime(){
-            return FivePiles.time;
-        }
-
-        /**
-         * Returns the score from the FivePiles class.
-         * @return
-         */
-        protected static int getScore(){
-            return FivePiles.score;
-        }
-        /**
-         * Returns the win state from the FivePiles class.
-         * @return
-         */
-        protected static int getWin(){
-            return FivePiles.win;
-        }
-
 
 
         @Override
@@ -609,7 +596,10 @@ public class FivePiles
                 toggleTimer(); // Pause the timer since we won.
                 JOptionPane.showMessageDialog(table, "Congratulations! You've Won!"); // Shows a message with this text.
                 statusBox.setText("Game Over!"); // Updates our statusBox (but I don't think the GUI for statusBox is visible.)
+                Player.setPlayerScore(score);//grab score and time and assign to player
+                Player.setPlayerTime(time);
                 Player.setPlayerWin(1);
+                Player.updateLists(Player.getPlayerName(), Player.getPlayerScore(), Player.getPlayerTime(), Player.getPlayerWin());
                 try
                 {
                     saveGame();
@@ -649,6 +639,7 @@ public class FivePiles
                         Player.setPlayerScore(score);//grab score and time and assign to player
                         Player.setPlayerTime(time);
                         Player.setPlayerWin(0);
+                        Player.updateLists(Player.getPlayerName(), Player.getPlayerScore(), Player.getPlayerTime(), Player.getPlayerWin());
                         result = JOptionPane.showOptionDialog(table, "You Lost.", "Game State", 2, 1, null, options, null); // Show a message saying you lost.
                         statusBox.setText("Game Over!"); // Put in the status box you lost.
                         System.out.println("Player score and time for "+ Player.getPlayerName()+ ": "+ Player.getPlayerScore() +" points in "+  Player.getPlayerTime() + " seconds");
@@ -658,7 +649,7 @@ public class FivePiles
                             saveGame();
                         } catch (FileNotFoundException ex)
                         {
-                            //System.out.println("Something went wrong.")
+
                         }
 
                         switch(result) // Switch statement to go to the correct option. It depends on the result.
@@ -858,38 +849,47 @@ public class FivePiles
     }
 
     public static void saveGame() throws FileNotFoundException{
-        PrintWriter out = new PrintWriter("saveFile");
-        out.println("File");
-        out.println(Player.displayInfo());
-
-    }
-
-    public static void loadFile() throws FileNotFoundException{
-
-        int loop = 0;
-        Scanner in = new Scanner(saveFile);
-        while(in.hasNextLine())
-        {
-            if(loop == 0)
-            {
-                String waste = in.next();
-            }
-            else
-            {
-                String fileName = in.next();
-                int fileScore = in.nextInt();
-                int fileTime = in.nextInt();
-                int fileWin = in.nextInt();
-                Player.updateLists(fileName, fileScore, fileTime, fileWin);
-            }
+        try (PrintWriter out = new PrintWriter(Player.getPlayerName())) {
+            out.println("FivePiles");
+            out.print(Player.displayInfo());
 
         }
+    }
 
+    public static void loadFile(String filePath) throws FileNotFoundException{
+
+        int loop = 0;
+        File saveFile = new File(filePath);
+
+        if (saveFile.exists()) {
+            Scanner in = new Scanner(saveFile);
+            while (in.hasNextLine()) {
+                if(loop == 0)
+                {
+                    String waste = in.next();
+                    loop++;
+                }
+
+                else {
+                    String fileName = in.next();
+                    int fileScore = in.nextInt();
+                    int fileTime = in.nextInt();
+                    int fileWin = in.nextInt();
+                    Player.updateLists(fileName, fileScore, fileTime, fileWin);
+                }
+
+            }
+        }else {
+            try {
+                saveFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public static void main(String[] args) throws FileNotFoundException {
 
-        loadFile();
 
         Container contentPane;
 
@@ -903,8 +903,6 @@ public class FivePiles
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         startProgram();
-
-        //playNewGame();
 
         frame.setResizable(false); // We don't want the user to be able to resize the window.
         frame.setVisible(true); // We want the window visible.
