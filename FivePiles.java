@@ -702,8 +702,10 @@ public class FivePiles
                 validateName = false;
             }
         }
-        Player.setPlayerName(inputName);
-        System.out.println("Player: " + Player.getPlayerName());
+        if (!(Player.playerName == inputName)) {
+            Player.setPlayerName(inputName);
+            System.out.println("Player: " + Player.getPlayerName());
+        }
 
 
         if (table.getMouseListeners().length < 1) { // If we have 0 listeners, we add a new one. This is to avoid duplicates.
