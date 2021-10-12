@@ -171,12 +171,22 @@ public class FivePiles
         }
 
         public static int getNumberOfGamesWon(){
-            return playerWinList.size();
+            int wins = 0;
+
+            for (int i=0; i<playerWinList.size(); i++){
+                if (playerWinList.get(i) == 1){
+                    wins++;
+                }
+            }
+
+            return wins;
         }
 
         public static double getWinRatio(){
             if (getNumberOfGamesPlayed() > 0) {
                 return getNumberOfGamesWon() / getNumberOfGamesPlayed();
+            }else {
+                return 0;
             }
         }
 
@@ -203,7 +213,7 @@ public class FivePiles
 
             for (int i=0; i<playerTimeList.size(); i++){
 
-                    current = Integer.min(current, playerScoreList.get(i));
+                    current = Integer.min(current, playerTimeList.get(i));
 
             }
 
@@ -218,6 +228,14 @@ public class FivePiles
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
+            System.out.println("Stats for player " + playerName + ": ");
+            System.out.println("Number of games played: " + getNumberOfGamesPlayed());
+            System.out.println("Number of games won: " + getNumberOfGamesWon());
+            System.out.println("Highest game score: " + getHighestGameScore());
+            System.out.println("Last elapsed time: " + getLastElapsedTime());
+            System.out.println("Last game score: " + getLastGameScore());
+            System.out.println("Win/Loss ratio: " + getWinRatio());
+            System.out.println("Shortest elapsed time: " + getShortestElapsedTime());
         }
 
         public static void setPlayerScore(int score) {
