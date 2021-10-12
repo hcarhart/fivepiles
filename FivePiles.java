@@ -220,14 +220,7 @@ public class FivePiles
             return current;
         }
 
-        public static void setPlayerName(String inputName) {
-            playerName = FivePiles.inputName.toLowerCase();
-
-            try {
-                loadFile(playerName);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
+        public static void outputStatsInfo(){
             System.out.println("Stats for player " + playerName + ": ");
             System.out.println("Number of games played: " + getNumberOfGamesPlayed());
             System.out.println("Number of games won: " + getNumberOfGamesWon());
@@ -236,6 +229,17 @@ public class FivePiles
             System.out.println("Last game score: " + getLastGameScore());
             System.out.println("Win/Loss ratio: " + getWinRatio());
             System.out.println("Shortest elapsed time: " + getShortestElapsedTime());
+        }
+
+        public static void setPlayerName(String inputName) {
+            playerName = FivePiles.inputName.toLowerCase();
+
+            try {
+                loadFile(playerName);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            outputStatsInfo();
         }
 
         public static void setPlayerScore(int score) {
