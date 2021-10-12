@@ -171,7 +171,7 @@ public class FivePiles
         }
 
         public static void setPlayerName(String inputName) {
-            playerName = FivePiles.inputName;
+            playerName = FivePiles.inputName.toLowerCase();
 
             try {
                 loadFile(playerName);
