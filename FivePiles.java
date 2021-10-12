@@ -175,7 +175,9 @@ public class FivePiles
         }
 
         public static double getWinRatio(){
-            return getNumberOfGamesPlayed() / getNumberOfGamesWon();
+            if (getNumberOfGamesPlayed() > 0) {
+                return getNumberOfGamesWon() / getNumberOfGamesPlayed();
+            }
         }
 
         public static int getLastGameScore(){
