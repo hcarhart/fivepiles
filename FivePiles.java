@@ -13,13 +13,21 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.Font;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.ArrayList;
+import java.util.Scanner;
 import javax.swing.*;
 ///////////////////////////////////////// Imports /////////////////////////////////////////
 
 public class FivePiles
 {
+    // FILES
+    public static File saveFile = new File("src\\saveFile");
+
     // CONSTANTS
     public static final int TABLE_HEIGHT = Card.CARD_HEIGHT * 4; //150*4 = 600
     public static final int TABLE_WIDTH = (Card.CARD_WIDTH * 7) + 100; //100 * 7 = 700
@@ -47,7 +55,7 @@ public class FivePiles
     private static JTextField timeBox = new JTextField();// displays the time
     private static JTextField statusBox = new JTextField();// status messages
     private static final Card newCardButton = new Card();// reveal waste card
-    
+
     private static String inputName = null; //for validating playerName
 
     private static JButton selectGameButton = new JButton("Select Game");
@@ -61,8 +69,10 @@ public class FivePiles
 
     // MISC TRACKING VARIABLES
     private static boolean timeRunning = false;// timer running?
+    private static boolean gameLive = false; //is the game currently running?
     private static int score = 0;// keep track of the score
     private static int time = 0;// keep track of seconds elapsed
+    private static int win = 0;// keep track of whether the game was won or lost
 
     // moves a card to absolute location within a component
     protected static Card moveCard(Card c, int x, int y) {
@@ -118,20 +128,27 @@ public class FivePiles
         scoreBox.setText(newScore); // Update the score box with our new message.
         scoreBox.repaint(); // We call repaint on the GUI element scoreBox to refresh it with our new information we gave it.
     }
-    
+
     //player class
     private static class Player{
-        
-    public static String playerName;
-    public static int playerScore = 0;
-    public static int playerTime = 0;
-    
 
-    public Player(){
-        FivePiles.inputName = playerName;
-        FivePiles.score = playerScore;
-        FivePiles.time = playerTime;
-    }
+        public static String playerName;
+        public static int playerScore = 0;
+        public static int playerTime = 0;
+        public static int playerWin = 0;
+
+        static ArrayList<String> playerNameList = new ArrayList<>();
+        static ArrayList<Integer> playerScoreList = new ArrayList<>();
+        static ArrayList<Integer> playerTimeList = new ArrayList<>();
+        static ArrayList<Integer> playerWinList = new ArrayList<>();
+
+        public Player(){
+
+
+            FivePiles.inputName = playerName;
+            FivePiles.score = playerScore;
+            FivePiles.time = playerTime;
+        }
 
         public static String getPlayerName() {
             return playerName;
@@ -140,34 +157,62 @@ public class FivePiles
         public static int getPlayerScore() {
             return FivePiles.score;
         }
-        
+
         public static int getPlayerTime(){
-            return FivePiles.time; 
+            return FivePiles.time;
         }
 
+        public static int getPlayerWin(){
+            return FivePiles.win;
+        }
         public static void setPlayerName(String inputName) {
             playerName = FivePiles.inputName;
         }
 
         public static void setPlayerScore(int score) {
-           playerScore = FivePiles.score;
+            playerScore = FivePiles.score;
         }
-        
+
         public static void setPlayerTime(int time){
             playerTime = FivePiles.time;
         }
-        
+
+        public static void setPlayerWin(int win){
+            playerWin = win;
+        }
+        public static void updateLists(String fileName, int fileScore, int fileTime, int fileWin)
+        {
+            playerNameList.add(fileName);
+            playerScoreList.add(fileScore);
+            playerTimeList.add(fileTime);
+            playerWinList.add(fileWin);
+        }
+
         public static void resetPlayer(){
             playerName = null;
             playerScore = 0;
             playerTime = 0;
         }
-    
-    }
-    
 
-    
-    
+        public static String displayInfo(){
+            String display = null;
+            for(int i = 0; i < playerNameList.size(); i++) {
+                display += playerNameList.get(i) + " " + playerScoreList.get(i) + " " + playerTimeList.get(i) + " " + playerWinList.get(i) + "\n";
+            }
+
+            return display;
+        }
+
+    }
+
+
+
+    public static void updateGameState(boolean newGameState)
+    {
+        gameLive = newGameState;
+    }
+
+
 
     // GAME TIMER UTILITIES
     protected static void updateTimer() {
@@ -518,10 +563,15 @@ public class FivePiles
         protected static int getScore(){
             return FivePiles.score;
         }
-        
-       
-        
-        
+        /**
+         * Returns the win state from the FivePiles class.
+         * @return
+         */
+        protected static int getWin(){
+            return FivePiles.win;
+        }
+
+
 
         @Override
         public void mouseReleased(MouseEvent e) { // These things happen when the left mouse button is released.
@@ -559,16 +609,29 @@ public class FivePiles
                 toggleTimer(); // Pause the timer since we won.
                 JOptionPane.showMessageDialog(table, "Congratulations! You've Won!"); // Shows a message with this text.
                 statusBox.setText("Game Over!"); // Updates our statusBox (but I don't think the GUI for statusBox is visible.)
+                Player.setPlayerWin(1);
+                try
+                {
+                    saveGame();
+                } catch (FileNotFoundException ex)
+                {
+                    //System.out.println("Something went wrong.")
+                }
+                updateGameState(false);//this is to show that the game has ended.
             }
 
-            else if(deck.empty()) // Since we didn't win, we check if we lost instead. Firstly, we ensure the deck is empty.
+            else if(deck.empty() && gameLive) // Since we didn't win, we check if we lost instead. Firstly, we ensure the deck is empty and the game is actually running.
             {
 
-                for(int i = 0; i < NUM_PLAY_DECKS - 1; i++) // For every pile we have.
+                for(int i = 0; i < NUM_PLAY_DECKS; i++) // For every pile we have.
                 {
                     for(int j = i + 1; j < NUM_PLAY_DECKS; j++) // We loop through all other piles.
                     {
-
+                        if(i != NUM_PLAY_DECKS - 1)
+                        {
+                        } else {
+                            j = 0;
+                        }
                         // If any card adds up to 13, we have more moves.
                         if(!playCardStack[i].empty() && !playCardStack[j].empty() && playCardStack[i].getFirst().getNumericalValue() + playCardStack[j].getFirst().getNumericalValue() == 13 || !playCardStack[i].empty() && !playCardStack[j].empty() && playCardStack[i].getFirst().getNumericalValue() == 13)
                         {
@@ -580,14 +643,23 @@ public class FivePiles
 
                     if(i == NUM_PLAY_DECKS - 2)
                     {
-                        toggleTimer(); // Since we lost, we toggle timer.                        
+                        toggleTimer(); // Since we lost, we toggle timer.
                         System.out.println("Game Over!");
+                        updateGameState(false); //this is to show that the game has ended.
                         Player.setPlayerScore(score);//grab score and time and assign to player
                         Player.setPlayerTime(time);
+                        Player.setPlayerWin(0);
                         result = JOptionPane.showOptionDialog(table, "You Lost.", "Game State", 2, 1, null, options, null); // Show a message saying you lost.
-                        statusBox.setText("Game Over!"); // Put in the status box you lost.  
+                        statusBox.setText("Game Over!"); // Put in the status box you lost.
                         System.out.println("Player score and time for "+ Player.getPlayerName()+ ": "+ Player.getPlayerScore() +" points in "+  Player.getPlayerTime() + " seconds");
                         System.out.println("result: " + result); // Print the result of the options from our optionsDialog.
+                        try
+                        {
+                            saveGame();
+                        } catch (FileNotFoundException ex)
+                        {
+                            //System.out.println("Something went wrong.")
+                        }
 
                         switch(result) // Switch statement to go to the correct option. It depends on the result.
                         {
@@ -621,22 +693,28 @@ public class FivePiles
 
 
     private static void playNewGame() {
-        
+
+        updateGameState(true);
+
         //checks name is not whitespace or blank
         boolean validateName = true;
+        if(Player.playerName != null)
+        {
+            validateName = false;
+        }
         while(validateName){
-           inputName = (String)JOptionPane.showInputDialog("Enter player name: ");
-            if(inputName.isBlank()){
+            inputName = (String)JOptionPane.showInputDialog("Enter player name: ");
+            if(inputName.isEmpty()){
                 JOptionPane.showMessageDialog(frame, "Please enter name");
             }
             else{
                 validateName = false;
             }
-        }        
-        Player.setPlayerName(inputName);   
+        }
+        Player.setPlayerName(inputName);
         System.out.println("Player: " + Player.getPlayerName());
-        
-        
+
+
         if (table.getMouseListeners().length < 1) { // If we have 0 listeners, we add a new one. This is to avoid duplicates.
             table.addMouseListener(new CardMovementManager());
         }
@@ -739,6 +817,9 @@ public class FivePiles
     public static void startProgram() // This is the method for our main menu.
     {
 
+
+        updateGameState(false);//this is to show that the game has ended.
+
         if (menuButton.getActionListeners().length > 1) {
             for (int i=0; i<menuButton.getActionListeners().length; i++) {
                 menuButton.removeActionListener(menuButton.getActionListeners()[i]);
@@ -775,7 +856,40 @@ public class FivePiles
 
 
     }
-    public static void main(String[] args) {
+
+    public static void saveGame() throws FileNotFoundException{
+        PrintWriter out = new PrintWriter("saveFile");
+        out.println("File");
+        out.println(Player.displayInfo());
+
+    }
+
+    public static void loadFile() throws FileNotFoundException{
+
+        int loop = 0;
+        Scanner in = new Scanner(saveFile);
+        while(in.hasNextLine())
+        {
+            if(loop == 0)
+            {
+                String waste = in.next();
+            }
+            else
+            {
+                String fileName = in.next();
+                int fileScore = in.nextInt();
+                int fileTime = in.nextInt();
+                int fileWin = in.nextInt();
+                Player.updateLists(fileName, fileScore, fileTime, fileWin);
+            }
+
+        }
+
+    }
+
+    public static void main(String[] args) throws FileNotFoundException {
+
+        loadFile();
 
         Container contentPane;
 
