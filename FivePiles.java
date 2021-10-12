@@ -165,6 +165,11 @@ public class FivePiles
         public static int getPlayerWin(){
             return FivePiles.win;
         }
+
+        public static int getNumberOfGamesPlayed(){
+            return playerScoreList.size();
+        }
+
         public static void setPlayerName(String inputName) {
             playerName = FivePiles.inputName;
 
@@ -640,10 +645,6 @@ public class FivePiles
                         Player.setPlayerTime(time);
                         Player.setPlayerWin(0);
                         Player.updateLists(Player.getPlayerName(), Player.getPlayerScore(), Player.getPlayerTime(), Player.getPlayerWin());
-                        result = JOptionPane.showOptionDialog(table, "You Lost.", "Game State", 2, 1, null, options, null); // Show a message saying you lost.
-                        statusBox.setText("Game Over!"); // Put in the status box you lost.
-                        System.out.println("Player score and time for "+ Player.getPlayerName()+ ": "+ Player.getPlayerScore() +" points in "+  Player.getPlayerTime() + " seconds");
-                        System.out.println("result: " + result); // Print the result of the options from our optionsDialog.
                         try
                         {
                             saveGame();
@@ -651,6 +652,11 @@ public class FivePiles
                         {
 
                         }
+                        result = JOptionPane.showOptionDialog(table, "You Lost.", "Game State", 2, 1, null, options, null); // Show a message saying you lost.
+                        statusBox.setText("Game Over!"); // Put in the status box you lost.
+                        System.out.println("Player score and time for "+ Player.getPlayerName()+ ": "+ Player.getPlayerScore() +" points in "+  Player.getPlayerTime() + " seconds");
+                        System.out.println("result: " + result); // Print the result of the options from our optionsDialog.
+
 
                         switch(result) // Switch statement to go to the correct option. It depends on the result.
                         {
@@ -702,7 +708,7 @@ public class FivePiles
                 validateName = false;
             }
         }
-        if (!(Player.playerName == inputName)) {
+        if (Player.playerName != inputName) {
             Player.setPlayerName(inputName);
             System.out.println("Player: " + Player.getPlayerName());
         }
@@ -851,7 +857,7 @@ public class FivePiles
     }
 
     public static void saveGame() throws FileNotFoundException{
-        try (PrintWriter out = new PrintWriter(Player.getPlayerName())) {
+        try (PrintWriter out = new PrintWriter("users\\" + Player.getPlayerName())) {
             out.println("FivePiles");
             out.print(Player.displayInfo());
 
@@ -861,7 +867,14 @@ public class FivePiles
     public static void loadFile(String filePath) throws FileNotFoundException{
 
         int loop = 0;
-        File saveFile = new File(filePath);
+
+        File usersFile = new File("users");
+        if(!usersFile.exists())
+        {
+            usersFile.mkdir();
+        }
+        File saveFile = new File("users\\" + filePath);
+
 
         if (saveFile.exists()) {
             Scanner in = new Scanner(saveFile);
