@@ -170,6 +170,44 @@ public class FivePiles
             return playerScoreList.size();
         }
 
+        public static int getNumberOfGamesWon(){
+            return playerWinList.size();
+        }
+
+        public static double getWinRatio(){
+            return getNumberOfGamesPlayed() / getNumberOfGamesWon();
+        }
+
+        public static int getLastGameScore(){
+            return playerScoreList.get(playerScoreList.size()-1);
+        }
+
+        public static int getHighestGameScore(){
+            int current = 0;
+
+            for (int i=0; i<playerScoreList.size(); i++){
+                current = Integer.max(current, playerScoreList.get(i));
+            }
+
+            return current;
+        }
+
+        public static int getLastElapsedTime(){
+            return playerTimeList.get(playerTimeList.size() - 1);
+        }
+
+        public static int getShortestElapsedTime(){
+            int current = 999999;
+
+            for (int i=0; i<playerTimeList.size(); i++){
+
+                    current = Integer.min(current, playerScoreList.get(i));
+
+            }
+
+            return current;
+        }
+
         public static void setPlayerName(String inputName) {
             playerName = FivePiles.inputName.toLowerCase();
 
