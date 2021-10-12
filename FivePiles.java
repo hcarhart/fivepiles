@@ -773,6 +773,15 @@ public class FivePiles
         }// end mousePressed()
     }//end card movement manager class
 
+    private static boolean containsInvalidCharacter(String c) {
+        String[] invalidCharacters = {"!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "[", "]", "{", "}", ":", ";", "'", "<", ">", ",", ".", "?", "/", "\\", "~", "`", "|",};
+        for (int i = 0; i < invalidCharacters.length; i++) {
+            if (c.contains(invalidCharacters[i])){
+                return true;
+            }
+        }
+        return false;
+    }
 
     private static void playNewGame() {
 
@@ -786,7 +795,7 @@ public class FivePiles
         }
         while(validateName){
             inputName = (String)JOptionPane.showInputDialog("Enter player name: ");
-            if(inputName.isEmpty()){
+            if (inputName.isEmpty() || containsInvalidCharacter(inputName)){
                 JOptionPane.showMessageDialog(frame, "Please enter name");
             }
             else{
