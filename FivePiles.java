@@ -167,19 +167,27 @@ public class FivePiles
         }
 
         public static int getNumberOfGamesPlayed(){
-            return playerScoreList.size();
+            if (playerScoreList != null) {
+                return playerScoreList.size();
+            }
+            else {
+                return 0;
+            }
         }
 
         public static int getNumberOfGamesWon(){
             int wins = 0;
-
-            for (int i=0; i<playerWinList.size(); i++){
-                if (playerWinList.get(i) == 1){
-                    wins++;
+            if (playerWinList != null && playerWinList.size() > 0) {
+                for (int i = 0; i < playerWinList.size(); i++) {
+                    if (playerWinList.get(i) == 1) {
+                        wins++;
+                    }
                 }
-            }
 
-            return wins;
+                return wins;
+            }else {
+                return 0;
+            }
         }
 
         public static double getWinRatio(){
@@ -191,33 +199,48 @@ public class FivePiles
         }
 
         public static int getLastGameScore(){
-            return playerScoreList.get(playerScoreList.size()-1);
+            if (playerScoreList != null && playerScoreList.size() > 0) {
+                return playerScoreList.get(playerScoreList.size() - 1);
+            }else {
+                return 0;
+            }
         }
 
         public static int getHighestGameScore(){
             int current = 0;
+            if (playerScoreList != null && playerScoreList.size() > 0) {
+                for (int i = 0; i < playerScoreList.size(); i++) {
+                    current = Integer.max(current, playerScoreList.get(i));
+                }
 
-            for (int i=0; i<playerScoreList.size(); i++){
-                current = Integer.max(current, playerScoreList.get(i));
+                return current;
+            }else {
+                return 0;
             }
-
-            return current;
         }
 
         public static int getLastElapsedTime(){
-            return playerTimeList.get(playerTimeList.size() - 1);
+            if (playerTimeList != null && playerTimeList.size() > 0) {
+                return playerTimeList.get(playerTimeList.size() - 1);
+            }else {
+                return 0;
+            }
         }
 
         public static int getShortestElapsedTime(){
             int current = 999999;
 
-            for (int i=0; i<playerTimeList.size(); i++){
+            if (playerTimeList != null && playerTimeList.size() > 0) {
+                for (int i = 0; i < playerTimeList.size(); i++) {
 
                     current = Integer.min(current, playerTimeList.get(i));
 
-            }
+                }
 
-            return current;
+                return current;
+            }else {
+                return 0;
+            }
         }
 
         public static void outputStatsInfo(){
