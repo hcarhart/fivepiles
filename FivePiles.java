@@ -897,68 +897,58 @@ public class FivePiles
 
             else if(deck.empty() && gameLive) // Since we didn't win, we check if we lost instead. Firstly, we ensure the deck is empty and the game is actually running.
             {
+                boolean noValidMoves = true; // This starts as true because we're assuming we have no valid moves.
 
-                for(int i = 0; i < NUM_PLAY_DECKS; i++) // For every pile we have.
-                {
-                    for(int j = i + 1; j < NUM_PLAY_DECKS; j++) // We loop through all other piles.
-                    {
-                        if(i != NUM_PLAY_DECKS - 1)
-                        {
-                        } else {
-                            j = 0;
-                        }
-                        // If any card adds up to 13, we have more moves.
-                        if(!playCardStack[i].empty() && !playCardStack[j].empty() && playCardStack[i].getFirst().getNumericalValue() + playCardStack[j].getFirst().getNumericalValue() == 13 || !playCardStack[i].empty() && !playCardStack[j].empty() && playCardStack[i].getFirst().getNumericalValue() == 13)
-                        {
-                            i = NUM_PLAY_DECKS;
-                            j = NUM_PLAY_DECKS;
-                        }
-
-                    }
-
-                    if(i == NUM_PLAY_DECKS - 2)
-                    {
-                        toggleTimer(); // Since we lost, we toggle timer.
-                        System.out.println("Game Over!");
-                        updateGameState(false); //this is to show that the game has ended.
-                        Player.setPlayerScore(score);//grab score and time and assign to player
-                        Player.setPlayerTime(time);
-                        Player.setPlayerWin(0);
-                        Player.updateLists(Player.getPlayerName(), Player.getPlayerScore(), Player.getPlayerTime(), Player.getPlayerWin());
-                        try {
-                            Player.insertTopPlayer(Player.getPlayerScore());
-                        } catch (FileNotFoundException ex) {
-                            System.out.println("insert top player didn't work for game loss.");
-                        }
-                        try
-                        {
-                            saveGame();
-                            System.out.println("saving game from game loss");
-                        } catch (FileNotFoundException ex)
-                        {
-                            System.out.println("save game didn't work from game lose");
-                        }
-                        result = JOptionPane.showOptionDialog(table, "You Lost.", "Game State", 2, 1, null, options, null); // Show a message saying you lost.
-                        statusBox.setText("Game Over!"); // Put in the status box you lost.
-                        System.out.println("Player score and time for "+ Player.getPlayerName()+ ": "+ Player.getPlayerScore() +" points in "+  Player.getPlayerTime() + " seconds");
-                        System.out.println("result: " + result); // Print the result of the options from our optionsDialog.
-
-
-                        switch(result) // Switch statement to go to the correct option. It depends on the result.
-                        {
-                            case 0: playNewGame(); // If result = 0, we playNewGame() meaning user pressed new game.
-                                Player.resetPlayerStats();
-                                break;
-                            case 1: startProgram(); // If result = 1, we startProgram() meaning user pressed main menu.
-                                //Player.resetPlayer();
-                                break;
-                            case 2: // If result = 2, the user pressed to exit game.
-                                break;
-                            default:
-                                break;
+                for (int i=0; i<NUM_PLAY_DECKS;  i++){ // Loop through all piles.
+                    for (int j=0; j<NUM_PLAY_DECKS; j++){ // For each loop through all piles, loop again.
+                        if (playCardStack[i].getFirst() != null && playCardStack[j].getFirst() != null) { // If neither top card is null then continue.
+                            if (isValidPair(playCardStack[i].getFirst(), playCardStack[j].getFirst()) || playCardStack[i].getFirst().getNumericalValue() == 13 || playCardStack[j].getFirst().getNumericalValue() == 13) { // If the pair of cards looped through i, j is valid (13 and on top) or we have a king in either i or j then...
+                                noValidMoves = false; // therefore, valid moves exist.
+                            }
                         }
                     }
+                }
 
+                if (noValidMoves){ // If no valid moves exist, as previously determined, we lose.
+                    toggleTimer(); // Since we lost, we toggle timer.
+                    System.out.println("Game Over!");
+                    updateGameState(false); //this is to show that the game has ended.
+                    Player.setPlayerScore(score);//grab score and time and assign to player
+                    Player.setPlayerTime(time);
+                    Player.setPlayerWin(0);
+                    Player.updateLists(Player.getPlayerName(), Player.getPlayerScore(), Player.getPlayerTime(), Player.getPlayerWin());
+                    try {
+                        Player.insertTopPlayer(Player.getPlayerScore());
+                    } catch (FileNotFoundException ex) {
+                        System.out.println("insert top player didn't work for game loss.");
+                    }
+                    try
+                    {
+                        saveGame();
+                        System.out.println("saving game from game loss");
+                    } catch (FileNotFoundException ex)
+                    {
+                        System.out.println("save game didn't work from game lose");
+                    }
+                    result = JOptionPane.showOptionDialog(table, "You Lost.", "Game State", 2, 1, null, options, null); // Show a message saying you lost.
+                    statusBox.setText("Game Over!"); // Put in the status box you lost.
+                    System.out.println("Player score and time for "+ Player.getPlayerName()+ ": "+ Player.getPlayerScore() +" points in "+  Player.getPlayerTime() + " seconds");
+                    System.out.println("result: " + result); // Print the result of the options from our optionsDialog.
+
+
+                    switch(result) // Switch statement to go to the correct option. It depends on the result.
+                    {
+                        case 0: playNewGame(); // If result = 0, we playNewGame() meaning user pressed new game.
+                            Player.resetPlayerStats();
+                            break;
+                        case 1: startProgram(); // If result = 1, we startProgram() meaning user pressed main menu.
+                            //Player.resetPlayer();
+                            break;
+                        case 2: // If result = 2, the user pressed to exit game.
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
 
@@ -1178,6 +1168,8 @@ public class FivePiles
         Player.playerScoreList.clear();
         Player.playerTimeList.clear();
         Player.playerWinList.clear();
+        // These lines are to ensure we start with a clean score list when loading a new player's info.
+
         int loop = 0;
 
         File usersFile = new File("users");
