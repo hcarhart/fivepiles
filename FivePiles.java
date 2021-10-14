@@ -950,7 +950,7 @@ public class FivePiles
                                 Player.resetPlayerStats();
                                 break;
                             case 1: startProgram(); // If result = 1, we startProgram() meaning user pressed main menu.
-                                Player.resetPlayer();
+                                //Player.resetPlayer();
                                 break;
                             case 2: // If result = 2, the user pressed to exit game.
                                 break;
