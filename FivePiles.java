@@ -1,6 +1,7 @@
 package fivepiles;
 
 ///////////////////////////////////////// Imports /////////////////////////////////////////
+import java.awt.BorderLayout;
 import java.awt.event.WindowEvent;
 import java.awt.Color;
 import java.awt.Component;
@@ -20,7 +21,10 @@ import java.io.PrintWriter;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 ///////////////////////////////////////// Imports /////////////////////////////////////////
 
@@ -51,9 +55,12 @@ public class FivePiles
     private static JButton menuButton = new JButton("Menu"); // Returns player to main platform/menu.
     private static JButton menuSureButton = new JButton("Are you sure? You will lose any progress.");
     private static JButton toggleTimerButton = new JButton("Pause Timer");
+    private static JButton exitStatistics = new JButton("Return to Menu");
     private static JTextField scoreBox = new JTextField();// displays the score
     private static JTextField timeBox = new JTextField();// displays the time
     private static JTextField statusBox = new JTextField();// status messages
+    private static JTextArea statisticsTextDisplay = new JTextArea(); //formats the statistics text
+    private static JTextArea topStatisticsTextDisplay = new JTextArea(); //formats the top statistics text
     private static final Card newCardButton = new Card();// reveal waste card
 
     private static String inputName = null; //for validating playerName
@@ -142,16 +149,40 @@ public class FivePiles
         static ArrayList<Integer> playerTimeList = new ArrayList<>();
         static ArrayList<Integer> playerWinList = new ArrayList<>();
 
+        static ArrayList<String> topPlayerNameList = new ArrayList<>();
+        static ArrayList<Integer> topPlayerScoreList = new ArrayList<>();
+        static ArrayList<Integer> topPlayerTimeList = new ArrayList<>();
+        static ArrayList<Integer> topPlayerWinList = new ArrayList<>();
+
+        //static ArrayList<Player> topPlayers = new ArrayList<>();
+        //static Player[] topPlayers = new Player[5];
+
         public Player(){
 
+            playerName = playerName.substring(0, 1).toUpperCase() + playerName.substring(1);
+            playerName = playerName.replace(" ", "_");
+            FivePiles.inputName = playerName;
+            FivePiles.score = playerScore;
+            FivePiles.time = playerTime;
+            FivePiles.win = playerWin;
+        }
+
+        public Player(String playerName, int playerScore, int playerTime, int playerWin) {
+            playerName = playerName.substring(0, 1).toUpperCase() + playerName.substring(1);
+            playerName = playerName.replace(" ", "_");
+            Player.playerName = playerName;
+            Player.playerScore = playerScore;
+            Player.playerTime = playerTime;
+            Player.playerWin = playerWin;
 
             FivePiles.inputName = playerName;
             FivePiles.score = playerScore;
             FivePiles.time = playerTime;
+            FivePiles.win = playerWin;
         }
 
         public static String getPlayerName() {
-            return playerName;
+            return FivePiles.inputName;
         }
 
         public static int getPlayerScore() {
@@ -243,19 +274,50 @@ public class FivePiles
             }
         }
 
-        public static void outputStatsInfo(){
-            System.out.println("Stats for player " + playerName + ": ");
-            System.out.println("Number of games played: " + getNumberOfGamesPlayed());
-            System.out.println("Number of games won: " + getNumberOfGamesWon());
-            System.out.println("Highest game score: " + getHighestGameScore());
-            System.out.println("Last elapsed time: " + getLastElapsedTime());
-            System.out.println("Last game score: " + getLastGameScore());
-            System.out.println("Win/Loss ratio: " + getWinRatio());
-            System.out.println("Shortest elapsed time: " + getShortestElapsedTime());
+        public static String outputStatsInfo(){
+
+            String returnedStats = "Stats for player " + playerName + ": \n"
+                    + "Number of games played: " + getNumberOfGamesPlayed() + " \n"
+                    + "Number of games won: " + getNumberOfGamesWon() + " \n"
+                    + "Highest game score: " + getHighestGameScore() + " \n"
+                    + "Last elapsed time: " + getLastElapsedTime() + " \n"
+                    + "Last game score: " + getLastGameScore() + " \n"
+                    + "Win/Loss ratio: " + getWinRatio() + " \n"
+                    + "Shortest elapsed time: " + getShortestElapsedTime();
+
+            return returnedStats;
+
+        }
+
+        public static String outputTopStatsInfo() {
+
+            String returnedStats = "Top Statistics \n";
+
+            for(int i = 0; i < topPlayerScoreList.size(); i++) {
+                switch(i)
+                {
+                    case 0: returnedStats += "First place: ";
+                        break;
+                    case 1: returnedStats += "Second place: ";
+                        break;
+                    case 2: returnedStats += "Third place: ";
+                        break;
+                    case 3: returnedStats += "Fourth place: ";
+                        break;
+                    case 4: returnedStats += "Fifth place: ";
+                        break;
+                }
+                returnedStats += topPlayerNameList.get(i) + " " + topPlayerScoreList.get(i) + " " + topPlayerTimeList.get(i) + " " + topPlayerWinList.get(i) + "\n";
+            }
+
+
+            return returnedStats;
         }
 
         public static void setPlayerName(String inputName) {
             playerName = FivePiles.inputName.toLowerCase();
+            playerName = playerName.replace(" ", "_");
+            playerName = playerName.substring(0, 1).toUpperCase() + playerName.substring(1);
 
             try {
                 loadFile(playerName);
@@ -284,8 +346,93 @@ public class FivePiles
             playerWinList.add(fileWin);
         }
 
+        /**
+         * This method updates the Player class with the top players from the scores file.
+         * @return
+         * @throws FileNotFoundException
+         */
+        public static void updateTopPlayers() throws FileNotFoundException {
+
+            int loop = 0;
+            File topScoresFile = new File("scores");
+            if (topScoresFile.exists()) {
+                Scanner in = new Scanner(topScoresFile);
+                while (in.hasNextLine()) {
+                    if(loop == 0)
+                    {
+                        String waste = in.next();
+                        loop++;
+                    }
+
+                    else {
+                        String fileName = in.next();
+                        int fileScore = in.nextInt();
+                        int fileTime = in.nextInt();
+                        int fileWin = in.nextInt();
+
+                        topPlayerNameList.add(fileName);
+                        topPlayerScoreList.add(fileScore);
+                        topPlayerTimeList.add(fileTime);
+                        topPlayerWinList.add(fileWin);
+
+                    }
+
+                }
+            }else {
+                try {
+                    topScoresFile.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+
+        public static void insertTopPlayer(int currentGameScore) throws FileNotFoundException {
+
+            boolean wasEmpty = false;
+
+            if(topPlayerScoreList.isEmpty()) {
+                wasEmpty = true;
+                topPlayerNameList.add(getPlayerName());
+                topPlayerScoreList.add(getPlayerScore());
+                topPlayerTimeList.add(getPlayerTime());
+                topPlayerWinList.add(getPlayerWin());
+            }
+
+            for(int i = 0; i < topPlayerScoreList.size(); i++) {
+
+                if(currentGameScore >= topPlayerScoreList.get(i) && !wasEmpty)
+                {
+
+                    //These next four insert the values into the correct spot
+                    topPlayerNameList.add(i, getPlayerName());
+                    topPlayerScoreList.add(i, getPlayerScore());
+                    topPlayerTimeList.add(i, getPlayerTime());
+                    topPlayerWinList.add(i, getPlayerWin());
+
+                    if(topPlayerScoreList.size() > 5) {
+                        topPlayerNameList.remove(5);
+                        topPlayerScoreList.remove(5);
+                        topPlayerTimeList.remove(5);
+                        topPlayerWinList.remove(5);
+                    }
+                    i = topPlayerScoreList.size();
+
+                }
+
+            }
+            System.out.println("top players size: " + topPlayerScoreList.size());
+            updateTopScoresFile();
+        }
+
         public static void resetPlayer(){
             playerName = null;
+            playerScore = 0;
+            playerTime = 0;
+        }
+
+        public static void resetPlayerStats(){
             playerScore = 0;
             playerTime = 0;
         }
@@ -397,8 +544,39 @@ public class FivePiles
     {
 
         @Override
-        public void actionPerformed(ActionEvent ae) {
+        public void actionPerformed(ActionEvent e) {
 
+            // We remove the several buttons since we selected game, and are therefore changing visuals.
+            table.remove(selectGameButton);
+            table.remove(statisticsButton);
+            table.remove(exitMenuButton);
+            table.repaint(); // This is to refresh our table (the primary GUI element that holds all our others).
+            //
+
+            statisticsTextDisplay.setText(Player.outputStatsInfo());
+            statisticsTextDisplay.setFont(new Font("Courier", Font.BOLD, 20));
+            statisticsTextDisplay.setBounds(50, (TABLE_HEIGHT/2)-250, 350, 1300);
+            statisticsTextDisplay.setBackground(new Color(0, 180, 0));
+            statisticsTextDisplay.setVisible(true);
+            statisticsTextDisplay.setEditable(false);
+
+            topStatisticsTextDisplay.setText(Player.outputTopStatsInfo());
+            topStatisticsTextDisplay.setFont(new Font("Courier", Font.BOLD, 20));
+            topStatisticsTextDisplay.setBounds(450, (TABLE_HEIGHT/2)-250, 1000, 1300);
+            topStatisticsTextDisplay.setBackground(new Color(0, 180, 0));
+            topStatisticsTextDisplay.setVisible(true);
+            topStatisticsTextDisplay.setEditable(false);
+
+            if (exitStatistics.getActionListeners().length < 1) { // This condition is to ensure the same action happens only once per click.
+                exitStatistics.addActionListener(new menuReturnConfirmation());
+            }
+            exitStatistics.setBounds((TABLE_WIDTH/2)-75, (TABLE_HEIGHT/2)+65, 150, 50);
+
+
+            table.add(exitStatistics);
+            table.add(statisticsTextDisplay);
+            table.add(topStatisticsTextDisplay);
+            table.repaint();
         }
 
     }
@@ -445,6 +623,7 @@ public class FivePiles
         @Override
         public void actionPerformed(ActionEvent e) { // This is what happens if we click the button.
             menuSureButton.hide(); // We hide ethe menu confirmation button.
+            Player.resetPlayerStats();
             startProgram(); // And startProgram() which returns us to the main menu.
         }
 
@@ -462,6 +641,16 @@ public class FivePiles
             }
         }
 
+    }
+
+    private static boolean containsInvalidCharacter(String c) {
+        String[] invalidCharacters = {"!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "[", "]", "{", "}", ":", ";", "'", "<", ">", ",", ".", "?", "/", "\\", "~", "`", "|",};
+        for (int i = 0; i < invalidCharacters.length; i++) {
+            if (c.contains(invalidCharacters[i])){
+                return true;
+            }
+        }
+        return false;
     }
 
     private static class ShowRulesListener implements ActionListener {
@@ -690,12 +879,18 @@ public class FivePiles
                 Player.setPlayerTime(time);
                 Player.setPlayerWin(1);
                 Player.updateLists(Player.getPlayerName(), Player.getPlayerScore(), Player.getPlayerTime(), Player.getPlayerWin());
+                try {
+                    Player.insertTopPlayer(Player.getPlayerScore());
+                } catch (FileNotFoundException ex) {
+                    System.out.println("insert top player didn't work");
+                }
                 try
                 {
                     saveGame();
+                    System.out.println("saving game from game won");
                 } catch (FileNotFoundException ex)
                 {
-                    //System.out.println("Something went wrong.")
+
                 }
                 updateGameState(false);//this is to show that the game has ended.
             }
@@ -730,12 +925,18 @@ public class FivePiles
                         Player.setPlayerTime(time);
                         Player.setPlayerWin(0);
                         Player.updateLists(Player.getPlayerName(), Player.getPlayerScore(), Player.getPlayerTime(), Player.getPlayerWin());
+                        try {
+                            Player.insertTopPlayer(Player.getPlayerScore());
+                        } catch (FileNotFoundException ex) {
+                            System.out.println("insert top player didn't work for game loss.");
+                        }
                         try
                         {
                             saveGame();
+                            System.out.println("saving game from game loss");
                         } catch (FileNotFoundException ex)
                         {
-
+                            System.out.println("save game didn't work from game lose");
                         }
                         result = JOptionPane.showOptionDialog(table, "You Lost.", "Game State", 2, 1, null, options, null); // Show a message saying you lost.
                         statusBox.setText("Game Over!"); // Put in the status box you lost.
@@ -746,9 +947,10 @@ public class FivePiles
                         switch(result) // Switch statement to go to the correct option. It depends on the result.
                         {
                             case 0: playNewGame(); // If result = 0, we playNewGame() meaning user pressed new game.
-                                Player.resetPlayer();
+                                Player.resetPlayerStats();
                                 break;
                             case 1: startProgram(); // If result = 1, we startProgram() meaning user pressed main menu.
+                                Player.resetPlayer();
                                 break;
                             case 2: // If result = 2, the user pressed to exit game.
                                 break;
@@ -773,15 +975,6 @@ public class FivePiles
         }// end mousePressed()
     }//end card movement manager class
 
-    private static boolean containsInvalidCharacter(String c) {
-        String[] invalidCharacters = {"!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "[", "]", "{", "}", ":", ";", "'", "<", ">", ",", ".", "?", "/", "\\", "~", "`", "|",};
-        for (int i = 0; i < invalidCharacters.length; i++) {
-            if (c.contains(invalidCharacters[i])){
-                return true;
-            }
-        }
-        return false;
-    }
 
     private static void playNewGame() {
 
@@ -792,10 +985,11 @@ public class FivePiles
         if(Player.playerName != null)
         {
             validateName = false;
+            Player.setPlayerName(Player.playerName);
         }
         while(validateName){
             inputName = (String)JOptionPane.showInputDialog("Enter player name: ");
-            if (inputName.isEmpty() || containsInvalidCharacter(inputName)){
+            if(inputName.isEmpty() || containsInvalidCharacter(inputName)){
                 JOptionPane.showMessageDialog(frame, "Please enter name");
             }
             else{
@@ -803,6 +997,7 @@ public class FivePiles
             }
         }
         if (Player.playerName != inputName) {
+            inputName = inputName.replace(" ", "_");
             Player.setPlayerName(inputName);
             System.out.println("Player: " + Player.getPlayerName());
         }
@@ -912,6 +1107,7 @@ public class FivePiles
 
 
         updateGameState(false);//this is to show that the game has ended.
+        Player.resetPlayerStats();
 
         if (menuButton.getActionListeners().length > 1) {
             for (int i=0; i<menuButton.getActionListeners().length; i++) {
@@ -948,6 +1144,25 @@ public class FivePiles
         table.add(exitMenuButton);
 
 
+    }
+
+    /**
+     * This method updates the file as the program is closed to save the top players.
+     * @throws FileNotFoundException
+     */
+
+    public static void updateTopScoresFile() throws FileNotFoundException{
+        try (PrintWriter out = new PrintWriter("scores")) {
+            out.println("Players:");
+            for(int i = 0; i < Player.topPlayerScoreList.size(); i++) {
+                if(i == Player.topPlayerScoreList.size() - 1) {
+                    out.print(Player.topPlayerNameList.get(i) + " " + Player.topPlayerScoreList.get(i) + " " + Player.topPlayerTimeList.get(i) + " " + Player.topPlayerWinList.get(i));
+                }
+                else {
+                    out.println(Player.topPlayerNameList.get(i) + " " + Player.topPlayerScoreList.get(i) + " " + Player.topPlayerTimeList.get(i) + " " + Player.topPlayerWinList.get(i));
+                }
+            }
+        }
     }
 
     public static void saveGame() throws FileNotFoundException{
@@ -1001,6 +1216,8 @@ public class FivePiles
 
 
         Container contentPane;
+
+        Player.updateTopPlayers();
 
         frame.setSize(TABLE_WIDTH, TABLE_HEIGHT); // The dimensions of our gameplay area.
 
