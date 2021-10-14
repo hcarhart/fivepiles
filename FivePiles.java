@@ -985,7 +985,7 @@ public class FivePiles
         if(Player.playerName != null)
         {
             validateName = false;
-            Player.setPlayerName(Player.playerName);
+            Player.setPlayerName(Player.playerName); // Possibly an issue duplicating player scores.
         }
         while(validateName){
             inputName = (String)JOptionPane.showInputDialog("Enter player name: ");
@@ -1174,7 +1174,10 @@ public class FivePiles
     }
 
     public static void loadFile(String filePath) throws FileNotFoundException{
-
+        Player.playerNameList.clear();
+        Player.playerScoreList.clear();
+        Player.playerTimeList.clear();
+        Player.playerWinList.clear();
         int loop = 0;
 
         File usersFile = new File("users");
