@@ -14,10 +14,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.Font;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.ArrayList;
@@ -56,6 +53,7 @@ public class FivePiles
     private static JButton menuSureButton = new JButton("Are you sure? You will lose any progress.");
     private static JButton toggleTimerButton = new JButton("Pause Timer");
     private static JButton exitStatistics = new JButton("Return to Menu");
+    private static JButton resetStatistics = new JButton("Reset Score File");
     private static JTextField scoreBox = new JTextField();// displays the score
     private static JTextField timeBox = new JTextField();// displays the time
     private static JTextField statusBox = new JTextField();// status messages
@@ -352,9 +350,13 @@ public class FivePiles
          * @throws FileNotFoundException
          */
         public static void updateTopPlayers() throws FileNotFoundException {
-
             int loop = 0;
             File topScoresFile = new File("scores");
+            topPlayerNameList.removeAll(topPlayerNameList);
+            topPlayerScoreList.removeAll(topPlayerScoreList);
+            topPlayerTimeList.removeAll(topPlayerTimeList);
+            topPlayerWinList.removeAll(topPlayerWinList);
+
             if (topScoresFile.exists()) {
                 Scanner in = new Scanner(topScoresFile);
                 while (in.hasNextLine()) {
@@ -495,6 +497,24 @@ public class FivePiles
         }
     }
 
+    protected static void updateStatisticsVisuals(){
+        statisticsTextDisplay.setText(Player.outputStatsInfo());
+        statisticsTextDisplay.setFont(new Font("Courier", Font.BOLD, 20));
+        statisticsTextDisplay.setBounds(50, (TABLE_HEIGHT/2)-250, 350, 1300);
+        statisticsTextDisplay.setBackground(new Color(0, 180, 0));
+        statisticsTextDisplay.setVisible(true);
+        statisticsTextDisplay.setEditable(false);
+
+        topStatisticsTextDisplay.setText(Player.outputTopStatsInfo());
+        topStatisticsTextDisplay.setFont(new Font("Courier", Font.BOLD, 20));
+        topStatisticsTextDisplay.setBounds(450, (TABLE_HEIGHT/2)-250, 1000, 1300);
+        topStatisticsTextDisplay.setBackground(new Color(0, 180, 0));
+        topStatisticsTextDisplay.setVisible(true);
+        topStatisticsTextDisplay.setEditable(false);
+
+        table.repaint();
+    }
+
     private static class ScoreClock extends TimerTask {
 
         @Override
@@ -546,6 +566,13 @@ public class FivePiles
         @Override
         public void actionPerformed(ActionEvent e) {
 
+            try {
+                Player.updateTopPlayers(); // Update the top scores info for our player class every time we open statistics.
+            } catch (FileNotFoundException ex) {
+                ex.printStackTrace();
+            }
+
+
             // We remove the several buttons since we selected game, and are therefore changing visuals.
             table.remove(selectGameButton);
             table.remove(statisticsButton);
@@ -572,8 +599,13 @@ public class FivePiles
             }
             exitStatistics.setBounds((TABLE_WIDTH/2)-75, (TABLE_HEIGHT/2)+65, 150, 50);
 
+            if (resetStatistics.getActionListeners().length < 1){
+                resetStatistics.addActionListener(new resetPlayerStatistics());
+            }
+            resetStatistics.setBounds((TABLE_WIDTH)-175, (TABLE_HEIGHT)-96, 150, 50);
 
             table.add(exitStatistics);
+            table.add(resetStatistics);
             table.add(statisticsTextDisplay);
             table.add(topStatisticsTextDisplay);
             table.repaint();
@@ -625,6 +657,61 @@ public class FivePiles
             menuSureButton.hide(); // We hide ethe menu confirmation button.
             Player.resetPlayerStats();
             startProgram(); // And startProgram() which returns us to the main menu.
+        }
+
+    }
+
+    private static class resetPlayerStatistics implements ActionListener {
+
+        private static boolean fontset = false;
+
+        public resetPlayerStatistics(){
+            if (!fontset) { // I changed the font size to be smaller to fit the button.
+                menuSureButton.setFont(new Font("Arial", Font.PLAIN, 8));
+                fontset = true;
+            }
+
+            if (menuSureButton.isVisible()) { // We want to ensure the button isn't visible when created. It pops up when we click return to menu button.
+                menuSureButton.hide();
+            }
+
+        }
+        @Override
+        public void actionPerformed(ActionEvent e) { // This is what happens if we click the button.
+            File scoreFile = new File("users\\" + Player.getPlayerName()); // Our player's score file.
+            File topScoreFile = new File("scores"); // Our top score file.
+            String temp = ""; // A temporary string to hold the top score info.
+
+            try {
+                if (topScoreFile.exists() && topScoreFile != null){ // If the top score file exists then
+                    Scanner s = new Scanner(topScoreFile); // We start a scanner for the top score file
+
+
+                    while (s.hasNextLine()){ // We loop through every line
+                        String comparedWith = s.nextLine(); // Store the line
+                        temp = temp + (comparedWith.contains(Player.getPlayerName() + " ") ? "" : comparedWith + (s.hasNextLine() ? "\n" : "")); // If the line contains the player's name with a space after it, then do not include it in the temp string.
+                    }
+
+                    s.close(); // Close our scanner so other processes can read/write.
+
+                    PrintWriter out = new PrintWriter(topScoreFile); // Create a printwriter for our top score file so we can update its contents.
+                    if (temp.length() > 0) { // Ensure the temporary strings length is more than one, otherwise no need to update.
+                        out.print(temp); // Print the contents of our temp string to our top scores file.
+                    }
+
+                    out.close(); // Close our print writer so other processes can read/write.
+                    Player.updateTopPlayers(); // Update the top scores info for our player class.
+                    updateStatisticsVisuals(); // Update the statistics visuals.
+                }
+
+                if (scoreFile.exists()) { // If our player's score file exists then
+                    scoreFile.delete(); // we just delete it.
+                }else { // otherwise
+                    System.out.println("Score file for player (" + Player.getPlayerName() + ") does not exist and therefore cannot be deleted/reset.");
+                }
+            } catch (FileNotFoundException ex) { // We put it in a try/catch to ensure we can handle file not found exceptions.
+                ex.printStackTrace();
+            }
         }
 
     }
@@ -850,6 +937,7 @@ public class FivePiles
             int result;
 
             table.repaint(); // Repaint table to refresh visual elements.
+            setScore(0); // Update score.
 
             // SHOWING STATUS MESSAGE IF MOVE INVALID
             if (!validMoveMade && dest != null && card != null) {
