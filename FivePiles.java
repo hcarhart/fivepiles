@@ -690,11 +690,6 @@ public class FivePiles
                     while (s.hasNextLine()){ // We loop through every line
                         String wholeLine = s.nextLine().replaceAll("\\R", "");
                         String comparedWith = wholeLine.split(" ")[0];
-                        System.out.println("Whole line: " + wholeLine);
-                        System.out.println("Compared: " + comparedWith);
-                        System.out.println("Player name: " + Player.getPlayerName());
-                        System.out.println("Equals is : " + (comparedWith.equals(Player.getPlayerName())));
-
 
                         if (!(comparedWith.equals(Player.getPlayerName()))){ // If the first name is the same as the player's name
                             if (!first){ // If it isn't our first line through this file
