@@ -764,24 +764,24 @@ public class FivePiles
             JScrollPane scroll;
             JEditorPane rulesTextPane = new JEditorPane("text/html", ""); // The actual text/content.
             rulesTextPane.setEditable(false); // Make the text not editable.
-            String rulesText = "<b>File Piles Solitaire</b>" // The rules for Five Piles.
-                    + "<br>(From bvssolitaire.com/rules/five-piles.htm) 1 deck. Easy. No redeal.<br> "+
+            String rulesText = "<b><h2>File Piles Solitaire</h2></b>" // The rules for Five Piles.
+                    +  "<br>(From bvssolitaire.com/rules/five-piles.htm) \n 1 deck. Easy. No redeal.<br> "+
                     "" +
                     "<br>Five Piles Solitaire uses one deck (52 cards). You have 5 tableau piles.\n<br>" +
                     "" +
-                    "<br>The object of the game:\n" +
+                    "<br><h3>The object of the game:\n</h3>" +
                     "<br>To discard pairs of cards whose ranks add up to 13.\n <br>" +
                     "<br>Here is a list of valid pairs:" +
-                    "Queen-Ace, Jack-Two, 10-3, 9-4, etc." +
-                    "<br>Kings are discarded singularly, To discard a King, just click it.\n<br>" +
-                    "<br>The rules:\n" +
-                    "<br>Only the top card of each tableau pile is available for play on the foundations.\n<br>" +
+                    "<ul><li>Queen+Ace</li> <li>Jack+2</li> <li>10+3</li> <li>9+4</li> <li>8+5</li> <li>7+6</li> <li>6+7</li> <li>5+8</li> <li>4+9</li>  <li>3+10</li>  <li>2+Jack</li> <li>Ace+Queen</li> </ul>" +
+                    "<br>\n Kings are discarded singularly, To discard a King, just click it.\n<br>" +
+                    "<br><h3>The rules:\n</h3>" +
+                    "<br><ol> <li>Only the top card of each tableau pile is available for play on the foundations.\n</li> <br>" +
                     "\n" +
-                    "<br>When you have made all the moves initially available, click on the stock pile to deal one card on each tableau pile. You cannot move cards from one tableau pile to another. The last 2 cards in the stock are dealt separately from the tableau and can be discarded in a pair with cards from any of the 5 tableau piles.\n<br>" +
+                    "<br><li>When you have made all the moves initially available, click on the stock pile to deal one card on each tableau pile. \n</li><<br>" + "<br><li>You cannot move cards from one tableau pile to another. \n</li><br>"   + "<br><li>\n The last 2 cards in the stock are dealt separately from the tableau and can be discarded in a pair with cards from any of the 5 tableau piles.\n</li> <br>" +
                     "\n" +
-                    "<br>Wins are rare.\n<br>" +
+                    "<br><li>Wins are rare.\n</li><br>" +
                     "\n" +
-                    "<br>There is no redeal.<br>";
+                    "<br><li>There is no redeal. </li> </ol><br>";
             rulesTextPane.setText(rulesText); // Sets the text for our text GUI element to the rules string above.
             ruleFrame.add(scroll = new JScrollPane(rulesTextPane));
 
