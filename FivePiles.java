@@ -590,19 +590,54 @@ public class FivePiles
     }
 
     protected static void updateStatisticsVisuals(){
-        statisticsTextDisplay.setText(Player.outputStatsInfo());
+        statisticsTextDisplay.setText(Player.outputStatsText());
         statisticsTextDisplay.setFont(new Font("Courier", Font.BOLD, 20));
-        statisticsTextDisplay.setBounds(50, (TABLE_HEIGHT/2)-250, 350, 1300);
+        statisticsTextDisplay.setBounds(50, (TABLE_HEIGHT/2)-250, 250, 300);
         statisticsTextDisplay.setBackground(new Color(0, 180, 0));
         statisticsTextDisplay.setVisible(true);
         statisticsTextDisplay.setEditable(false);
 
-        topStatisticsTextDisplay.setText(Player.outputTopStatsInfo());
+        statisticsNumbersDisplay.setText(Player.outputStatsNumbers());
+        statisticsNumbersDisplay.setFont(new Font("Courier", Font.BOLD, 20));
+        statisticsNumbersDisplay.setBounds(300, (TABLE_HEIGHT/2)-249, 50, 300);
+        statisticsNumbersDisplay.setBackground(new Color(0, 180, 0));
+        statisticsNumbersDisplay.setVisible(true);
+        statisticsNumbersDisplay.setEditable(false);
+
+        topStatisticsTextDisplay.setText(Player.outputTopStatsText());
         topStatisticsTextDisplay.setFont(new Font("Courier", Font.BOLD, 20));
-        topStatisticsTextDisplay.setBounds(450, (TABLE_HEIGHT/2)-250, 1000, 1300);
+        topStatisticsTextDisplay.setBounds(400, (TABLE_HEIGHT/2)-250, 150, 300);
         topStatisticsTextDisplay.setBackground(new Color(0, 180, 0));
         topStatisticsTextDisplay.setVisible(true);
         topStatisticsTextDisplay.setEditable(false);
+
+        topStatisticsNamesDisplay.setText(Player.outputTopStatsNames());
+        topStatisticsNamesDisplay.setFont(new Font("Courier", Font.BOLD, 20));
+        topStatisticsNamesDisplay.setBounds(550, (TABLE_HEIGHT/2)-225, 100, 300);
+        topStatisticsNamesDisplay.setBackground(new Color(0, 180, 0));
+        topStatisticsNamesDisplay.setVisible(true);
+        topStatisticsNamesDisplay.setEditable(false);
+
+        topStatisticsScoresDisplay.setText(Player.outputTopStatsScores());
+        topStatisticsScoresDisplay.setFont(new Font("Courier", Font.BOLD, 20));
+        topStatisticsScoresDisplay.setBounds(650, (TABLE_HEIGHT/2)-225, 50, 300);
+        topStatisticsScoresDisplay.setBackground(new Color(0, 180, 0));
+        topStatisticsScoresDisplay.setVisible(true);
+        topStatisticsScoresDisplay.setEditable(false);
+
+        topStatisticsTimesDisplay.setText(Player.outputTopStatsTimes());
+        topStatisticsTimesDisplay.setFont(new Font("Courier", Font.BOLD, 20));
+        topStatisticsTimesDisplay.setBounds(700, (TABLE_HEIGHT/2)-225, 50, 300);
+        topStatisticsTimesDisplay.setBackground(new Color(0, 180, 0));
+        topStatisticsTimesDisplay.setVisible(true);
+        topStatisticsTimesDisplay.setEditable(false);
+
+        topStatisticsWinsDisplay.setText(Player.outputTopStatsWins());
+        topStatisticsWinsDisplay.setFont(new Font("Courier", Font.BOLD, 20));
+        topStatisticsWinsDisplay.setBounds(750, (TABLE_HEIGHT/2)-225, 50, 300);
+        topStatisticsWinsDisplay.setBackground(new Color(0, 180, 0));
+        topStatisticsWinsDisplay.setVisible(true);
+        topStatisticsWinsDisplay.setEditable(false);
 
         table.repaint();
     }
@@ -1001,7 +1036,9 @@ public class FivePiles
                         if (old != null && playCardStack[x].getFirst() != null) { // If the first card in the play deck exists and the previously clicked card exists
                             if (playCardStack[x].getFirst().getXY().equals(old.getXY()) && playCardStack[x].getFirst().getID().equals(old.getID())) { // Check if it is the same card as the one we PREVIOUSLY clicked on.
                                 System.out.println("Popped and removed/repainted.");
+
                                 Card c = playCardStack[x].popFirst(); // We pop the card from the play deck, since it added to 13.
+
                                 if (c != null) {
                                     table.remove(FivePiles.moveCard(c, SHOW_POS.x, SHOW_POS.y)); // We remove the card from the table.
 
