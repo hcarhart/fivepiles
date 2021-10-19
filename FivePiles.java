@@ -686,10 +686,24 @@ public class FivePiles
                 if (topScoreFile.exists() && topScoreFile != null){ // If the top score file exists then
                     Scanner s = new Scanner(topScoreFile); // We start a scanner for the top score file
 
-
+                    boolean first = true;
                     while (s.hasNextLine()){ // We loop through every line
-                        String comparedWith = s.nextLine(); // Store the line
-                        temp = temp + (comparedWith.contains(Player.getPlayerName() + " ") ? "" : comparedWith + (s.hasNextLine() ? "\n" : "")); // If the line contains the player's name with a space after it, then do not include it in the temp string.
+                        String wholeLine = s.nextLine().replaceAll("\\R", "");
+                        String comparedWith = wholeLine.split(" ")[0];
+                        System.out.println("Whole line: " + wholeLine);
+                        System.out.println("Compared: " + comparedWith);
+                        System.out.println("Player name: " + Player.getPlayerName());
+                        System.out.println("Equals is : " + (comparedWith.equals(Player.getPlayerName())));
+
+
+                        if (!(comparedWith.equals(Player.getPlayerName()))){ // If the first name is the same as the player's name
+                            if (!first){ // If it isn't our first line through this file
+                                temp += "\n" + wholeLine; // We add a line break, since there will be another line.
+                            }else { // otherwise
+                                temp += wholeLine; // We just add the line, since it's our first line and we don't want to line break before it.
+                                first = false; // Set first to false since it is no longe our first line.
+                            }
+                        }
                     }
 
                     s.close(); // Close our scanner so other processes can read/write.
