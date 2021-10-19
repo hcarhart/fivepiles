@@ -58,7 +58,12 @@ public class FivePiles
     private static JTextField timeBox = new JTextField();// displays the time
     private static JTextField statusBox = new JTextField();// status messages
     private static JTextArea statisticsTextDisplay = new JTextArea(); //formats the statistics text
+    private static JTextArea statisticsNumbersDisplay = new JTextArea(); //formats the statistics values
     private static JTextArea topStatisticsTextDisplay = new JTextArea(); //formats the top statistics text
+    private static JTextArea topStatisticsNamesDisplay = new JTextArea(); //formats the top statistics names
+    private static JTextArea topStatisticsScoresDisplay = new JTextArea(); //formats the top statistics scores
+    private static JTextArea topStatisticsTimesDisplay = new JTextArea(); //formats the top statistics times
+    private static JTextArea topStatisticsWinsDisplay = new JTextArea(); //formats the top statistics wins
     private static final Card newCardButton = new Card();// reveal waste card
 
     private static String inputName = null; //for validating playerName
@@ -274,17 +279,49 @@ public class FivePiles
 
         public static String outputStatsInfo(){
 
-            String returnedStats = "Stats for player " + playerName + ": \n"
-                    + "Number of games played: " + getNumberOfGamesPlayed() + " \n"
-                    + "Number of games won: " + getNumberOfGamesWon() + " \n"
-                    + "Highest game score: " + getHighestGameScore() + " \n"
-                    + "Last elapsed time: " + getLastElapsedTime() + " \n"
-                    + "Last game score: " + getLastGameScore() + " \n"
-                    + "Win/Loss ratio: " + getWinRatio() + " \n"
-                    + "Shortest elapsed time: " + getShortestElapsedTime();
+
+            String returnedStats = "Stats for player " + playerName + "\n"
+                    + "Number of games played:     " + getNumberOfGamesPlayed() + " \n"
+                    + "Number of games won:         " + getNumberOfGamesWon() + " \n"
+                    + "Highest game score:           " + getHighestGameScore() + " \n"
+                    + "Last elapsed time:            " + getLastElapsedTime() + " \n"
+                    + "Last game score:              " + getLastGameScore() + " \n"
+                    + "Win/Loss ratio:               " + getWinRatio() + " \n"
+                    + "Shortest elapsed time:        " + getShortestElapsedTime();
+
 
             return returnedStats;
 
+        }
+
+        public static String outputStatsNumbers() {
+
+
+            String returnedStats = "\n"
+                    + getNumberOfGamesPlayed() + " \n"
+                    + getNumberOfGamesWon() + " \n"
+                    + getHighestGameScore() + " \n"
+                    + getLastElapsedTime() + " \n"
+                    + getLastGameScore() + " \n"
+                    + getWinRatio() + " \n"
+                    + getShortestElapsedTime();
+
+
+            return returnedStats;
+
+        }
+
+        public static String outputStatsText() {
+            String returnedText = "Stats for player " + playerName + ":\n"
+                    + "Number of games played:\n"
+                    + "Number of games won:\n"
+                    + "Highest game score:\n"
+                    + "Last elapsed time:\n"
+                    + "Last game score:\n"
+                    + "Win/Loss ratio:\n"
+                    + "Shortest elapsed time:";
+
+            return returnedText;
         }
 
         public static String outputTopStatsInfo() {
@@ -308,7 +345,62 @@ public class FivePiles
                 returnedStats += topPlayerNameList.get(i) + " " + topPlayerScoreList.get(i) + " " + topPlayerTimeList.get(i) + " " + topPlayerWinList.get(i) + "\n";
             }
 
+            return returnedStats;
+        }
 
+        public static String outputTopStatsText() {
+
+            String returnedStats = "Top Statistics \n"
+                    + "First place: \n"
+                    + "Second place: \n"
+                    + "Third place: \n"
+                    + "Fourth place: \n"
+                    + "Fifth place: ";
+
+            return returnedStats;
+        }
+
+        public static String outputTopStatsNames() {
+            String returnedStats = "";
+            for(int i = 0; i < topPlayerNameList.size(); i++) {
+                returnedStats += topPlayerNameList.get(i);
+                if(i != topPlayerNameList.size() - 1) {
+                    returnedStats += "\n";
+                }
+            }
+            return returnedStats;
+        }
+
+        public static String outputTopStatsScores() {
+            String returnedStats = "";
+            for(int i = 0; i < topPlayerScoreList.size(); i++) {
+                returnedStats += topPlayerScoreList.get(i);
+                if(i != topPlayerScoreList.size() - 1) {
+                    returnedStats += "\n";
+                }
+            }
+            return returnedStats;
+        }
+
+        public static String outputTopStatsTimes() {
+            String returnedStats = "";
+            for(int i = 0; i < topPlayerTimeList.size(); i++) {
+                returnedStats += topPlayerTimeList.get(i);
+                if(i != topPlayerTimeList.size() - 1) {
+                    returnedStats += "\n";
+                }
+            }
+            return returnedStats;
+        }
+
+        public static String outputTopStatsWins() {
+            String returnedStats = "";
+            for(int i = 0; i < topPlayerWinList.size(); i++) {
+                returnedStats += topPlayerWinList.get(i);
+                if(i != topPlayerWinList.size() - 1) {
+                    returnedStats += "\n";
+                }
+            }
             return returnedStats;
         }
 
@@ -580,19 +672,56 @@ public class FivePiles
             table.repaint(); // This is to refresh our table (the primary GUI element that holds all our others).
             //
 
-            statisticsTextDisplay.setText(Player.outputStatsInfo());
+            statisticsTextDisplay.setText(Player.outputStatsText());
             statisticsTextDisplay.setFont(new Font("Courier", Font.BOLD, 20));
-            statisticsTextDisplay.setBounds(50, (TABLE_HEIGHT/2)-250, 350, 1300);
+            statisticsTextDisplay.setBounds(50, (TABLE_HEIGHT/2)-250, 250, 300);
             statisticsTextDisplay.setBackground(new Color(0, 180, 0));
             statisticsTextDisplay.setVisible(true);
             statisticsTextDisplay.setEditable(false);
 
-            topStatisticsTextDisplay.setText(Player.outputTopStatsInfo());
+            statisticsNumbersDisplay.setText(Player.outputStatsNumbers());
+            statisticsNumbersDisplay.setFont(new Font("Courier", Font.BOLD, 20));
+            statisticsNumbersDisplay.setBounds(300, (TABLE_HEIGHT/2)-249, 50, 300);
+            statisticsNumbersDisplay.setBackground(new Color(0, 180, 0));
+            statisticsNumbersDisplay.setVisible(true);
+            statisticsNumbersDisplay.setEditable(false);
+
+            topStatisticsTextDisplay.setText(Player.outputTopStatsText());
             topStatisticsTextDisplay.setFont(new Font("Courier", Font.BOLD, 20));
-            topStatisticsTextDisplay.setBounds(450, (TABLE_HEIGHT/2)-250, 1000, 1300);
+            topStatisticsTextDisplay.setBounds(400, (TABLE_HEIGHT/2)-250, 150, 300);
             topStatisticsTextDisplay.setBackground(new Color(0, 180, 0));
             topStatisticsTextDisplay.setVisible(true);
             topStatisticsTextDisplay.setEditable(false);
+
+            topStatisticsNamesDisplay.setText(Player.outputTopStatsNames());
+            topStatisticsNamesDisplay.setFont(new Font("Courier", Font.BOLD, 20));
+            topStatisticsNamesDisplay.setBounds(550, (TABLE_HEIGHT/2)-225, 100, 300);
+            topStatisticsNamesDisplay.setBackground(new Color(0, 180, 0));
+            topStatisticsNamesDisplay.setVisible(true);
+            topStatisticsNamesDisplay.setEditable(false);
+
+            topStatisticsScoresDisplay.setText(Player.outputTopStatsScores());
+            topStatisticsScoresDisplay.setFont(new Font("Courier", Font.BOLD, 20));
+            topStatisticsScoresDisplay.setBounds(650, (TABLE_HEIGHT/2)-225, 50, 300);
+            topStatisticsScoresDisplay.setBackground(new Color(0, 180, 0));
+            topStatisticsScoresDisplay.setVisible(true);
+            topStatisticsScoresDisplay.setEditable(false);
+
+            topStatisticsTimesDisplay.setText(Player.outputTopStatsTimes());
+            topStatisticsTimesDisplay.setFont(new Font("Courier", Font.BOLD, 20));
+            topStatisticsTimesDisplay.setBounds(700, (TABLE_HEIGHT/2)-225, 50, 300);
+            topStatisticsTimesDisplay.setBackground(new Color(0, 180, 0));
+            topStatisticsTimesDisplay.setVisible(true);
+            topStatisticsTimesDisplay.setEditable(false);
+
+            topStatisticsWinsDisplay.setText(Player.outputTopStatsWins());
+            topStatisticsWinsDisplay.setFont(new Font("Courier", Font.BOLD, 20));
+            topStatisticsWinsDisplay.setBounds(750, (TABLE_HEIGHT/2)-225, 50, 300);
+            topStatisticsWinsDisplay.setBackground(new Color(0, 180, 0));
+            topStatisticsWinsDisplay.setVisible(true);
+            topStatisticsWinsDisplay.setEditable(false);
+
+            //topStatisticsNumbersDisplay.setText
 
             if (exitStatistics.getActionListeners().length < 1) { // This condition is to ensure the same action happens only once per click.
                 exitStatistics.addActionListener(new menuReturnConfirmation());
@@ -607,7 +736,12 @@ public class FivePiles
             table.add(exitStatistics);
             table.add(resetStatistics);
             table.add(statisticsTextDisplay);
+            table.add(statisticsNumbersDisplay);
             table.add(topStatisticsTextDisplay);
+            table.add(topStatisticsNamesDisplay);
+            table.add(topStatisticsScoresDisplay);
+            table.add(topStatisticsTimesDisplay);
+            table.add(topStatisticsWinsDisplay);
             table.repaint();
         }
 
@@ -686,19 +820,10 @@ public class FivePiles
                 if (topScoreFile.exists() && topScoreFile != null){ // If the top score file exists then
                     Scanner s = new Scanner(topScoreFile); // We start a scanner for the top score file
 
-                    boolean first = true;
-                    while (s.hasNextLine()){ // We loop through every line
-                        String wholeLine = s.nextLine().replaceAll("\\R", "");
-                        String comparedWith = wholeLine.split(" ")[0];
 
-                        if (!(comparedWith.equals(Player.getPlayerName()))){ // If the first name is the same as the player's name
-                            if (!first){ // If it isn't our first line through this file
-                                temp += "\n" + wholeLine; // We add a line break, since there will be another line.
-                            }else { // otherwise
-                                temp += wholeLine; // We just add the line, since it's our first line and we don't want to line break before it.
-                                first = false; // Set first to false since it is no longe our first line.
-                            }
-                        }
+                    while (s.hasNextLine()){ // We loop through every line
+                        String comparedWith = s.nextLine(); // Store the line
+                        temp = temp + (comparedWith.contains(Player.getPlayerName() + " ") ? "" : comparedWith + (s.hasNextLine() ? "\n" : "")); // If the line contains the player's name with a space after it, then do not include it in the temp string.
                     }
 
                     s.close(); // Close our scanner so other processes can read/write.
@@ -759,24 +884,24 @@ public class FivePiles
             JScrollPane scroll;
             JEditorPane rulesTextPane = new JEditorPane("text/html", ""); // The actual text/content.
             rulesTextPane.setEditable(false); // Make the text not editable.
-            String rulesText = "<b><h2>File Piles Solitaire</h2></b>" // The rules for Five Piles.
-                    +  "<br>(From bvssolitaire.com/rules/five-piles.htm) \n 1 deck. Easy. No redeal.<br> "+
+            String rulesText = "<b>File Piles Solitaire</b>" // The rules for Five Piles.
+                    + "<br>(From bvssolitaire.com/rules/five-piles.htm) 1 deck. Easy. No redeal.<br> "+
                     "" +
                     "<br>Five Piles Solitaire uses one deck (52 cards). You have 5 tableau piles.\n<br>" +
                     "" +
-                    "<br><h3>The object of the game:\n</h3>" +
+                    "<br>The object of the game:\n" +
                     "<br>To discard pairs of cards whose ranks add up to 13.\n <br>" +
                     "<br>Here is a list of valid pairs:" +
-                    "<ul><li>Queen+Ace</li> <li>Jack+2</li> <li>10+3</li> <li>9+4</li> <li>8+5</li> <li>7+6</li> <li>6+7</li> <li>5+8</li> <li>4+9</li>  <li>3+10</li>  <li>2+Jack</li> <li>Ace+Queen</li> </ul>" +
-                    "<br>\n Kings are discarded singularly, To discard a King, just click it.\n<br>" +
-                    "<br><h3>The rules:\n</h3>" +
-                    "<br><ol> <li>Only the top card of each tableau pile is available for play on the foundations.\n</li> <br>" +
+                    "Queen-Ace, Jack-Two, 10-3, 9-4, etc." +
+                    "<br>Kings are discarded singularly, To discard a King, just click it.\n<br>" +
+                    "<br>The rules:\n" +
+                    "<br>Only the top card of each tableau pile is available for play on the foundations.\n<br>" +
                     "\n" +
-                    "<br><li>When you have made all the moves initially available, click on the stock pile to deal one card on each tableau pile. \n</li><<br>" + "<br><li>You cannot move cards from one tableau pile to another. \n</li><br>"   + "<br><li>\n The last 2 cards in the stock are dealt separately from the tableau and can be discarded in a pair with cards from any of the 5 tableau piles.\n</li> <br>" +
+                    "<br>When you have made all the moves initially available, click on the stock pile to deal one card on each tableau pile. You cannot move cards from one tableau pile to another. The last 2 cards in the stock are dealt separately from the tableau and can be discarded in a pair with cards from any of the 5 tableau piles.\n<br>" +
                     "\n" +
-                    "<br><li>Wins are rare.\n</li><br>" +
+                    "<br>Wins are rare.\n<br>" +
                     "\n" +
-                    "<br><li>There is no redeal. </li> </ol><br>";
+                    "<br>There is no redeal.<br>";
             rulesTextPane.setText(rulesText); // Sets the text for our text GUI element to the rules string above.
             ruleFrame.add(scroll = new JScrollPane(rulesTextPane));
 
