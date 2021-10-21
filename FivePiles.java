@@ -294,9 +294,18 @@ public class FivePiles
 
         }
 
-        public static String outputStatsNumbers() {
+        public static String outputStatsNumbers() throws FileNotFoundException {
 
-
+            boolean filesExist = true;
+            if(Player.playerName == null) {
+                File userFolder = new File("users");
+                File[] numberOfFiles = userFolder.listFiles();
+                if(numberOfFiles.length == 0) {
+                    filesExist = false;
+                } else {
+                    loadFile(numberOfFiles[0].toString());
+                }
+            }
             String returnedStats = "\n"
                     + getNumberOfGamesPlayed() + " \n"
                     + getNumberOfGamesWon() + " \n"
@@ -306,12 +315,27 @@ public class FivePiles
                     + getWinRatio() + " \n"
                     + getShortestElapsedTime();
 
+            if(!filesExist) {
+                returnedStats = "";
+            }
 
             return returnedStats;
 
         }
 
-        public static String outputStatsText() {
+        public static String outputStatsText() throws FileNotFoundException {
+            boolean filesExist = true;
+            if(Player.playerName == null) {
+                File userFolder = new File("users");
+                File[] numberOfFiles = userFolder.listFiles();
+                if(numberOfFiles.length == 0) {
+                    filesExist = false;
+                } else {
+                    loadFile(numberOfFiles[0].toString());
+                }
+            }
+
+            playerName = playerNameList.get(0);
             String returnedText = "Stats for player " + playerName + ":\n"
                     + "Number of games played:\n"
                     + "Number of games won:\n"
@@ -320,6 +344,9 @@ public class FivePiles
                     + "Last game score:\n"
                     + "Win/Loss ratio:\n"
                     + "Shortest elapsed time:";
+            if(!filesExist) {
+                returnedText = "There is no player data to load.";
+            }
 
             return returnedText;
         }
@@ -363,13 +390,15 @@ public class FivePiles
         public static String outputTopStatsNames() {
             String returnedStats = "";
             for(int i = 0; i < topPlayerNameList.size(); i++) {
-                returnedStats += topPlayerNameList.get(i);
+                String topPlayerName = topPlayerNameList.get(i).substring(0, 1).toUpperCase() + topPlayerNameList.get(i).substring(1);
+                returnedStats += topPlayerName;
                 if(i != topPlayerNameList.size() - 1) {
                     returnedStats += "\n";
                 }
             }
             return returnedStats;
         }
+
 
         public static String outputTopStatsScores() {
             String returnedStats = "";
@@ -590,14 +619,22 @@ public class FivePiles
     }
 
     protected static void updateStatisticsVisuals(){
-        statisticsTextDisplay.setText(Player.outputStatsText());
+        try {
+            statisticsTextDisplay.setText(Player.outputStatsText());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
         statisticsTextDisplay.setFont(new Font("Courier", Font.BOLD, 20));
         statisticsTextDisplay.setBounds(50, (TABLE_HEIGHT/2)-250, 250, 300);
         statisticsTextDisplay.setBackground(new Color(0, 180, 0));
         statisticsTextDisplay.setVisible(true);
         statisticsTextDisplay.setEditable(false);
 
-        statisticsNumbersDisplay.setText(Player.outputStatsNumbers());
+        try {
+            statisticsNumbersDisplay.setText(Player.outputStatsNumbers());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
         statisticsNumbersDisplay.setFont(new Font("Courier", Font.BOLD, 20));
         statisticsNumbersDisplay.setBounds(300, (TABLE_HEIGHT/2)-249, 50, 300);
         statisticsNumbersDisplay.setBackground(new Color(0, 180, 0));
@@ -707,14 +744,22 @@ public class FivePiles
             table.repaint(); // This is to refresh our table (the primary GUI element that holds all our others).
             //
 
-            statisticsTextDisplay.setText(Player.outputStatsText());
+            try {
+                statisticsTextDisplay.setText(Player.outputStatsText());
+            } catch (FileNotFoundException ex) {
+                ex.printStackTrace();
+            }
             statisticsTextDisplay.setFont(new Font("Courier", Font.BOLD, 20));
             statisticsTextDisplay.setBounds(50, (TABLE_HEIGHT/2)-250, 250, 300);
             statisticsTextDisplay.setBackground(new Color(0, 180, 0));
             statisticsTextDisplay.setVisible(true);
             statisticsTextDisplay.setEditable(false);
 
-            statisticsNumbersDisplay.setText(Player.outputStatsNumbers());
+            try {
+                statisticsNumbersDisplay.setText(Player.outputStatsNumbers());
+            } catch (FileNotFoundException ex) {
+                ex.printStackTrace();
+            }
             statisticsNumbersDisplay.setFont(new Font("Courier", Font.BOLD, 20));
             statisticsNumbersDisplay.setBounds(300, (TABLE_HEIGHT/2)-249, 50, 300);
             statisticsNumbersDisplay.setBackground(new Color(0, 180, 0));
@@ -1432,39 +1477,45 @@ public class FivePiles
         int loop = 0;
 
         File usersFile = new File("users");
+        File saveFile;
         if(!usersFile.exists())
         {
             usersFile.mkdir();
         }
-        File saveFile = new File("users\\" + filePath);
+        if(filePath.startsWith("users\\")) {
+                saveFile = new File(filePath);
+    } else {
+    saveFile = new File("users\\" + filePath);
+}
+
 
 
         if (saveFile.exists()) {
-            Scanner in = new Scanner(saveFile);
-            while (in.hasNextLine()) {
-                if(loop == 0)
-                {
-                    String waste = in.next();
-                    loop++;
-                }
-
-                else {
-                    String fileName = in.next();
-                    int fileScore = in.nextInt();
-                    int fileTime = in.nextInt();
-                    int fileWin = in.nextInt();
-                    Player.updateLists(fileName, fileScore, fileTime, fileWin);
-                }
-
-            }
-        }else {
-            try {
-                saveFile.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+    Scanner in = new Scanner(saveFile);
+    while (in.hasNextLine()) {
+        if(loop == 0)
+        {
+            String waste = in.next();
+            loop++;
         }
+
+        else {
+            String fileName = in.next();
+            int fileScore = in.nextInt();
+            int fileTime = in.nextInt();
+            int fileWin = in.nextInt();
+            Player.updateLists(fileName, fileScore, fileTime, fileWin);
+        }
+
     }
+}else {
+    try {
+        saveFile.createNewFile();
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
+}
 
     public static void main(String[] args) throws FileNotFoundException {
 
