@@ -88,8 +88,8 @@ public class FivePiles
     private static double previousTime = 0;
 
     // ANIMATION
-    private static double animationUpdateFrequency = 0.0001; // This means we update every 0.1 seconds.
-    private static int animationMovementIncrement = 2; // We move by this much every animation update.
+    private static double animationUpdateFrequency = 0.0001; // This means we update every x seconds.
+    private static int animationMovementIncrement = 1; // We move by this much every animation update.
 
 
     private static int index = -1; // keep track of which element is selected for the profile button.
@@ -409,11 +409,13 @@ public class FivePiles
 
         public static String outputTopStatsNames() {
             String returnedStats = "";
-            for(int i = 0; i < topPlayerNameList.size(); i++) {
-                String topPlayerName = topPlayerNameList.get(i).substring(0, 1).toUpperCase() + topPlayerNameList.get(i).substring(1);
-                returnedStats += topPlayerName;
-                if(i != topPlayerNameList.size() - 1) {
-                    returnedStats += "\n";
+            if (topPlayerNameList.size() > 0) {
+                for (int i = 0; i < topPlayerNameList.size(); i++) {
+                    String topPlayerName = topPlayerNameList.get(i).substring(0, 1).toUpperCase() + topPlayerNameList.get(i).substring(1);
+                    returnedStats += topPlayerName;
+                    if (i != topPlayerNameList.size() - 1) {
+                        returnedStats += "\n";
+                    }
                 }
             }
             return returnedStats;
@@ -503,15 +505,24 @@ public class FivePiles
                 while (in.hasNextLine()) {
                     if(loop == 0)
                     {
-                        String waste = in.next();
+                        in.next();
                         loop++;
                     }
 
                     else {
-                        String fileName = in.next();
-                        int fileScore = in.nextInt();
-                        int fileTime = in.nextInt();
-                        int fileWin = in.nextInt();
+                        String fileName = "   ";
+                        int fileScore = 0;
+                        int fileTime = 0;
+                        int fileWin = 0;
+
+                        try {
+                            fileName = in.next();
+                            fileScore = in.nextInt();
+                            fileTime = in.nextInt();
+                            fileWin = in.nextInt();
+                        } catch (Exception e){
+                            System.out.println("Cannot read scores file.");
+                        }
 
                         topPlayerNameList.add(fileName);
                         topPlayerScoreList.add(fileScore);
