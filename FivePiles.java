@@ -86,6 +86,12 @@ public class FivePiles
     private static ArrayList<CardStack> movementToList = new ArrayList();
     private static ArrayList<Card> movementCardList = new ArrayList();
     private static double previousTime = 0;
+
+    // ANIMATION
+    private static double animationUpdateFrequency = 0.0001; // This means we update every 0.1 seconds.
+    private static int animationMovementIncrement = 2; // We move by this much every animation update.
+
+
     private static int index = -1; // keep track of which element is selected for the profile button.
 
     // MISC TRACKING VARIABLES
@@ -598,13 +604,13 @@ public class FivePiles
     }
 
     protected static void updateMovementTimer() {
-        FivePiles.movementTime += 0.0001d;
+        FivePiles.movementTime += 0.0001;
 
         // Run animatedMoveCard through a list of to[x] and from[x].
-        if (movementTime >= previousTime + 0.0001d && movementFromList.size() > 0) {
+        if (movementTime >= previousTime + animationUpdateFrequency && movementFromList.size() > 0) {
             //System.out.println("Size of lists: " + movementFromList.size());
             for (int i = 0; i < movementFromList.size(); i++) {
-                animatedMoveCard(movementFromList.get(i), movementToList.get(i), movementCardList.get(i), 1);
+                animatedMoveCard(movementFromList.get(i), movementToList.get(i), movementCardList.get(i), animationMovementIncrement);
             }
             previousTime = (double)movementTime;
         }
