@@ -20,6 +20,7 @@ import java.util.TimerTask;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
@@ -75,13 +76,21 @@ public class FivePiles
 
     // TIMER UTILITIES
     private static Timer timer = new Timer();
+    private static Timer movementTimer = new Timer();
     private static ScoreClock scoreClock = new ScoreClock();
+    private static MovementClock movementClock = new MovementClock();
+
+    private static ArrayList<CardStack> movementFromList = new ArrayList();
+    private static ArrayList<CardStack> movementToList = new ArrayList();
+    private static ArrayList<Card> movementCardList = new ArrayList();
+    private static double previousTime = 0;
 
     // MISC TRACKING VARIABLES
     private static boolean timeRunning = false;// timer running?
     private static boolean gameLive = false; //is the game currently running?
     private static int score = 0;// keep track of the score
     private static int time = 0;// keep track of seconds elapsed
+    private static double movementTime = 0;
     private static int win = 0;// keep track of whether the game was won or lost
 
     // moves a card to absolute location within a component
@@ -583,7 +592,74 @@ public class FivePiles
         gameLive = newGameState;
     }
 
+    protected static void updateMovementTimer() {
+        FivePiles.movementTime += 0.0001d;
 
+        // Run animatedMoveCard through a list of to[x] and from[x].
+        if (movementTime >= previousTime + 0.0001d && movementFromList.size() > 0) {
+            //System.out.println("Size of lists: " + movementFromList.size());
+            for (int i = 0; i < movementFromList.size(); i++) {
+                animatedMoveCard(movementFromList.get(i), movementToList.get(i), movementCardList.get(i), 1);
+            }
+            previousTime = (double)movementTime;
+        }
+    }
+
+
+    public static void animatedMoveCard(CardStack from, CardStack to, Card c, int movementIncrement){
+
+        if (!to.hasCard(c)) {
+            System.out.println("ADDED");
+            c.moving = true;
+            to.putFirst(c);
+            table.add(moveCard(c, from.getX(), from.getY()));
+            c.repaint();
+            table.repaint();
+        }
+
+        int xDiff = to.getX() - from.getX();
+        int yDiff = to.getY() - from.getY();
+        int xSign = xDiff / (Math.abs(xDiff));
+        int ySign = yDiff / (Math.abs(yDiff));
+
+        if (Math.abs(to.getX() - c.getX()) + Math.abs(to.getY() - c.getY()) > movementIncrement){
+            xDiff = to.getX() - c.getX();
+            yDiff = to.getY() - c.getY();
+            xSign = xDiff == 0 ? 1 : (xDiff / (Math.abs(xDiff)));
+            ySign = yDiff == 0 ? 1 : (yDiff / (Math.abs(yDiff)));
+            System.out.println("Moving : " + c.moving);
+            System.out.println("Moved a bit for " + c.getNumericalValue() + " Difference: " + (Math.abs(to.getX() - c.getX()) + Math.abs(to.getY() - c.getY())));
+            //c.setLocation(new Point(c.getX() + xSign*movementIncrement, c.getY() + ySign*movementIncrement));
+            moveCard(c, c.getX() + xSign*movementIncrement, c.getY() + ySign*movementIncrement);
+            table.repaint();
+            c.repaint();
+        }else {
+                System.out.println("Cleaned up from movement lists!");
+                int index = movementCardList.indexOf(c);
+                movementFromList.remove(index);
+                movementToList.remove(index);
+                movementCardList.remove(index);
+                c.moving = false;
+                table.repaint();
+                c.repaint();
+
+        }
+
+    }
+
+    /**
+     * Adds a cardstack to the from list, a cardstack to the to list, and a card to the card list.
+     *
+     * @param from An ArrayList containing CardStacks from which cards in the card ArrayList are moving.
+     * @param to An ArrayList containing CardStacks to which cards in the card ArrayList are moving.
+     * @param c An ArrayList of cards that are moving from one card stack to another.
+     */
+    public static void animMoveCard(CardStack from, CardStack to, Card c){
+        movementFromList.add(from);
+        movementToList.add(to);
+        movementCardList.add(c);
+        c.moving = true;
+    }
 
     // GAME TIMER UTILITIES
     protected static void updateTimer() {
@@ -602,7 +678,14 @@ public class FivePiles
         if (scoreClock != null){ // He was creating several timers, incrementing all at once.
             scoreClock.cancel(); // Timer fix for acceleration.
         }
+
+        if (movementClock != null){
+            movementClock.cancel();
+        }
+
         scoreClock = new ScoreClock();
+        movementClock = new MovementClock();
+        movementTimer.scheduleAtFixedRate(movementClock, 1, 1);
         // set the timer to update every second
         timer.scheduleAtFixedRate(scoreClock, 1000, 1000);
         timeRunning = true;
@@ -684,6 +767,14 @@ public class FivePiles
         @Override
         public void run() {
             updateTimer();
+        }
+    }
+
+    private static class MovementClock extends TimerTask {
+
+        @Override
+        public void run() {
+            updateMovementTimer();
         }
     }
 
@@ -1112,8 +1203,9 @@ public class FivePiles
                     if (deck.showSize() > 2) { // Added this condition to account for the deck running out / last 2 cards.
                         Card c = deck.pop().setFaceup(); // We get our card from the deck and set it faceup.
                         if (c != null) { // We make sure the "card" we just got actually exists.
-                            playCardStack[x].putFirst(c); // We put this newly obtained card into the pile we're iterating over.
-                            table.add(FivePiles.moveCard(c, SHOW_POS.x, SHOW_POS.y)); // We add the card visual to the table.
+                            //playCardStack[x].putFirst(c); // We put this newly obtained card into the pile we're iterating over.
+                            animMoveCard(deck, playCardStack[x], c);
+                            //table.add(FivePiles.moveCard(c, SHOW_POS.x, SHOW_POS.y)); // We add the card visual to the table.
                             c.repaint(); // We repaint our card so it shows in the card stack (pile).
                         }
                         table.repaint(); // We repaint the table now so it shows the new card stack (pile).
@@ -1125,10 +1217,8 @@ public class FivePiles
                         if (c1 != null && c2 != null){ // We make sure the cards we popped actually exist.
                             c1 = c1.setFaceup(); // Set them faceup.
                             c2 = c2.setFaceup(); // Set them faceup.
-                            playCardStack[NUM_PLAY_DECKS-2].putFirst(c1); // Put first card in the first extra pile.
-                            table.add(FivePiles.moveCard(c1, SHOW_POS.x, SHOW_POS.y)); // We add the card 1's (c1) visual to our table.
-                            playCardStack[NUM_PLAY_DECKS-1].putFirst(c2); // Put the second card in the second extra pile.
-                            table.add(FivePiles.moveCard(c2, SHOW_POS.x, SHOW_POS.y)); // We add the card 2's (c2) visual to our table
+                            animMoveCard(deck, playCardStack[NUM_PLAY_DECKS-2], c1);
+                            animMoveCard(deck, playCardStack[NUM_PLAY_DECKS-1], c2);
                             c1.repaint(); // We repaint so they show up in the pile.
                             c2.repaint(); // We repaint so they show up in the pile.
                         }
@@ -1146,7 +1236,7 @@ public class FivePiles
         public void mouseReleased(MouseEvent e) { // These things happen when the left mouse button is released.
             checkForWin = true; // This is set to true to check if our move we made won the game.
             gameOver = false; // We set this to false to ensure we don't keep the gameOver value from a previous game.
-
+            System.out.println(FivePiles.movementTime);
             // used for status bar updates
             boolean validMoveMade = false;
             String[] options = {"New Game", "Return to Menu", "Return to Game"};
@@ -1268,6 +1358,7 @@ public class FivePiles
 
         }// end mousePressed()
     }//end card movement manager class
+
 
 
     private static void playNewGame() {

@@ -52,6 +52,8 @@ class Card extends JPanel
 
 	final static public int CORNER_ANGLE = 25;
 
+	public boolean moving;
+
 	Card(Suit suit, Value value)
 	{
 		_suit = suit;
@@ -64,6 +66,7 @@ class Card extends JPanel
 		_location.x = x;
 		_location.y = y;
 		whereAmI = new Point();
+		moving = false;
 	}
 
 	Card()
@@ -105,7 +108,6 @@ class Card extends JPanel
 	 * @return Returns the card's ID.
 	 */
 	public String getID(){
-		System.out.println(Integer.toString(_id));
 		return Integer.toString(_id);
 	}
 

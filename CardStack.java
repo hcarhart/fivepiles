@@ -131,7 +131,6 @@ class CardStack extends JComponent
 
 	public int showSize()
 	{
-		System.out.println("Stck Size: " + v.size());
 		return v.size();
 	}
 
@@ -175,6 +174,16 @@ class CardStack extends JComponent
 		setBounds(_x, _y, Card.CARD_WIDTH + 10, Card.CARD_HEIGHT * 3);
 	}
 
+	public boolean hasCard(Card c){
+		for (int i=0; i<v.size(); i++){
+			if (v.get(i).getID().equals(c.getID())){
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	public Point getXY()
 	{
 		// System.out.println("CardStack GET _x: " + _x + " _y: " + _y);
@@ -196,7 +205,7 @@ class CardStack extends JComponent
 				Card c = iter.next();
 				// this origin is point(0,0) inside the cardstack container
 				prev = new Point();// c.getXY(); // starting deck pos
-				if (c != null) {
+				if (c != null && !c.moving) {
 					add(FivePiles.moveCard(c, prev.x, prev.y));
 					// setting x & y position
 					c.setWhereAmI(getXY());
@@ -210,7 +219,7 @@ class CardStack extends JComponent
 			for (; iter.hasNext();)
 			{
 				Card c = iter.next();
-				if (c != null) {
+				if (c != null && !c.moving) {
 					c.setXY(new Point(prev.x, prev.y + SPREAD));
 					add(FivePiles.moveCard(c, prev.x, prev.y + SPREAD));
 					prev = c.getXY();
