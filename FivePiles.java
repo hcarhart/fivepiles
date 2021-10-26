@@ -510,7 +510,7 @@ public class FivePiles
                     }
 
                     else {
-                        String fileName = "   ";
+                        String fileName = "default";
                         int fileScore = 0;
                         int fileTime = 0;
                         int fileWin = 0;
@@ -524,10 +524,12 @@ public class FivePiles
                             System.out.println("Cannot read scores file.");
                         }
 
-                        topPlayerNameList.add(fileName);
-                        topPlayerScoreList.add(fileScore);
-                        topPlayerTimeList.add(fileTime);
-                        topPlayerWinList.add(fileWin);
+                        if (fileName != "default") {
+                            topPlayerNameList.add(fileName);
+                            topPlayerScoreList.add(fileScore);
+                            topPlayerTimeList.add(fileTime);
+                            topPlayerWinList.add(fileWin);
+                        }
 
                     }
 
