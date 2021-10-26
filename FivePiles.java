@@ -20,7 +20,7 @@ import java.util.TimerTask;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
-import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
@@ -73,19 +73,25 @@ public class FivePiles
     private static JButton statisticsButton = new JButton("Statistics");
     private static JButton exitMenuButton = new JButton("Exit");
     private static JButton fivePilesButton = new JButton("Five Piles");
-    private static JComboBox<String> profileButton;
 
     // TIMER UTILITIES
     private static Timer timer = new Timer();
+    private static Timer movementTimer = new Timer();
     private static ScoreClock scoreClock = new ScoreClock();
+    private static MovementClock movementClock = new MovementClock();
+
+    private static ArrayList<CardStack> movementFromList = new ArrayList();
+    private static ArrayList<CardStack> movementToList = new ArrayList();
+    private static ArrayList<Card> movementCardList = new ArrayList();
+    private static double previousTime = 0;
 
     // MISC TRACKING VARIABLES
     private static boolean timeRunning = false;// timer running?
     private static boolean gameLive = false; //is the game currently running?
     private static int score = 0;// keep track of the score
     private static int time = 0;// keep track of seconds elapsed
+    private static double movementTime = 0;
     private static int win = 0;// keep track of whether the game was won or lost
-    private static int index = -1; // keep track of which element is selected for the profile button.
 
     // moves a card to absolute location within a component
     protected static Card moveCard(Card c, int x, int y) {
@@ -586,7 +592,74 @@ public class FivePiles
         gameLive = newGameState;
     }
 
+    protected static void updateMovementTimer() {
+        FivePiles.movementTime += 0.0001d;
 
+        // Run animatedMoveCard through a list of to[x] and from[x].
+        if (movementTime >= previousTime + 0.0001d && movementFromList.size() > 0) {
+            //System.out.println("Size of lists: " + movementFromList.size());
+            for (int i = 0; i < movementFromList.size(); i++) {
+                animatedMoveCard(movementFromList.get(i), movementToList.get(i), movementCardList.get(i), 1);
+            }
+            previousTime = (double)movementTime;
+        }
+    }
+
+
+    public static void animatedMoveCard(CardStack from, CardStack to, Card c, int movementIncrement){
+
+        if (!to.hasCard(c)) {
+            System.out.println("ADDED");
+            c.moving = true;
+            to.putFirst(c);
+            table.add(moveCard(c, from.getX(), from.getY()));
+            c.repaint();
+            table.repaint();
+        }
+
+        int xDiff = to.getX() - from.getX();
+        int yDiff = to.getY() - from.getY();
+        int xSign = xDiff / (Math.abs(xDiff));
+        int ySign = yDiff / (Math.abs(yDiff));
+
+        if (Math.abs(to.getX() - c.getX()) + Math.abs(to.getY() - c.getY()) > movementIncrement){
+            xDiff = to.getX() - c.getX();
+            yDiff = to.getY() - c.getY();
+            xSign = xDiff == 0 ? 1 : (xDiff / (Math.abs(xDiff)));
+            ySign = yDiff == 0 ? 1 : (yDiff / (Math.abs(yDiff)));
+            System.out.println("Moving : " + c.moving);
+            System.out.println("Moved a bit for " + c.getNumericalValue() + " Difference: " + (Math.abs(to.getX() - c.getX()) + Math.abs(to.getY() - c.getY())));
+            //c.setLocation(new Point(c.getX() + xSign*movementIncrement, c.getY() + ySign*movementIncrement));
+            moveCard(c, c.getX() + xSign*movementIncrement, c.getY() + ySign*movementIncrement);
+            table.repaint();
+            c.repaint();
+        }else {
+                System.out.println("Cleaned up from movement lists!");
+                int index = movementCardList.indexOf(c);
+                movementFromList.remove(index);
+                movementToList.remove(index);
+                movementCardList.remove(index);
+                c.moving = false;
+                table.repaint();
+                c.repaint();
+
+        }
+
+    }
+
+    /**
+     * Adds a cardstack to the from list, a cardstack to the to list, and a card to the card list.
+     *
+     * @param from An ArrayList containing CardStacks from which cards in the card ArrayList are moving.
+     * @param to An ArrayList containing CardStacks to which cards in the card ArrayList are moving.
+     * @param c An ArrayList of cards that are moving from one card stack to another.
+     */
+    public static void animMoveCard(CardStack from, CardStack to, Card c){
+        movementFromList.add(from);
+        movementToList.add(to);
+        movementCardList.add(c);
+        c.moving = true;
+    }
 
     // GAME TIMER UTILITIES
     protected static void updateTimer() {
@@ -605,7 +678,14 @@ public class FivePiles
         if (scoreClock != null){ // He was creating several timers, incrementing all at once.
             scoreClock.cancel(); // Timer fix for acceleration.
         }
+
+        if (movementClock != null){
+            movementClock.cancel();
+        }
+
         scoreClock = new ScoreClock();
+        movementClock = new MovementClock();
+        movementTimer.scheduleAtFixedRate(movementClock, 1, 1);
         // set the timer to update every second
         timer.scheduleAtFixedRate(scoreClock, 1000, 1000);
         timeRunning = true;
@@ -632,8 +712,7 @@ public class FivePiles
         statisticsTextDisplay.setBackground(new Color(0, 180, 0));
         statisticsTextDisplay.setVisible(true);
         statisticsTextDisplay.setEditable(false);
-        table.remove(statisticsTextDisplay);
-        table.add(statisticsTextDisplay);
+
         try {
             statisticsNumbersDisplay.setText(Player.outputStatsNumbers());
         } catch (FileNotFoundException e) {
@@ -644,8 +723,6 @@ public class FivePiles
         statisticsNumbersDisplay.setBackground(new Color(0, 180, 0));
         statisticsNumbersDisplay.setVisible(true);
         statisticsNumbersDisplay.setEditable(false);
-        table.remove(statisticsNumbersDisplay);
-        table.add(statisticsNumbersDisplay);
 
         topStatisticsTextDisplay.setText(Player.outputTopStatsText());
         topStatisticsTextDisplay.setFont(new Font("Courier", Font.BOLD, 20));
@@ -682,6 +759,7 @@ public class FivePiles
         topStatisticsWinsDisplay.setVisible(true);
         topStatisticsWinsDisplay.setEditable(false);
 
+        table.repaint();
     }
 
     private static class ScoreClock extends TimerTask {
@@ -692,20 +770,11 @@ public class FivePiles
         }
     }
 
-    private static class ComboBoxTitle extends JLabel implements ListCellRenderer
-    {
-        private String _title;
-
-        public ComboBoxTitle(String title)
-        {
-            _title = title;
-        }
+    private static class MovementClock extends TimerTask {
 
         @Override
-        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean hasFocus) {
-            if (index == -1 && value == null) setText(_title);
-            else setText(value.toString());
-            return this;
+        public void run() {
+            updateMovementTimer();
         }
     }
 
@@ -829,7 +898,6 @@ public class FivePiles
                 exitStatistics.addActionListener(new menuReturnConfirmation());
             }
             exitStatistics.setBounds((TABLE_WIDTH/2)-75, (TABLE_HEIGHT/2)+65, 150, 50);
-            exitStatistics.setVisible(true);
 
             if (resetStatistics.getActionListeners().length < 1){
                 resetStatistics.addActionListener(new resetPlayerStatistics());
@@ -855,39 +923,6 @@ public class FivePiles
         @Override
         public void actionPerformed(ActionEvent e) {
             playNewGame();
-        }
-
-    }
-
-    private static class ProfileButtonListener implements ActionListener {
-
-        @Override
-        public void actionPerformed(ActionEvent ae) {
-            if(profileButton.getSelectedIndex() != index) {
-                index = profileButton.getSelectedIndex();
-                FivePiles.inputName = profileButton.getSelectedItem().toString();
-                Player.setPlayerName(inputName);
-
-                try {
-                    statisticsTextDisplay.setText(Player.outputStatsText());
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-
-                try {
-                    statisticsNumbersDisplay.setText(Player.outputStatsNumbers());
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-
-                if(exitStatistics.isVisible()) {
-                    table.add(statisticsTextDisplay);
-                    statisticsTextDisplay.setVisible(true);
-                    table.add(statisticsNumbersDisplay);
-                    statisticsNumbersDisplay.setVisible(true);
-                    table.repaint();
-                }
-            }
         }
 
     }
@@ -926,7 +961,6 @@ public class FivePiles
         public void actionPerformed(ActionEvent e) { // This is what happens if we click the button.
             menuSureButton.hide(); // We hide ethe menu confirmation button.
             Player.resetPlayerStats();
-            exitStatistics.setVisible(false);
             startProgram(); // And startProgram() which returns us to the main menu.
         }
 
@@ -1169,8 +1203,9 @@ public class FivePiles
                     if (deck.showSize() > 2) { // Added this condition to account for the deck running out / last 2 cards.
                         Card c = deck.pop().setFaceup(); // We get our card from the deck and set it faceup.
                         if (c != null) { // We make sure the "card" we just got actually exists.
-                            playCardStack[x].putFirst(c); // We put this newly obtained card into the pile we're iterating over.
-                            table.add(FivePiles.moveCard(c, SHOW_POS.x, SHOW_POS.y)); // We add the card visual to the table.
+                            //playCardStack[x].putFirst(c); // We put this newly obtained card into the pile we're iterating over.
+                            animMoveCard(deck, playCardStack[x], c);
+                            //table.add(FivePiles.moveCard(c, SHOW_POS.x, SHOW_POS.y)); // We add the card visual to the table.
                             c.repaint(); // We repaint our card so it shows in the card stack (pile).
                         }
                         table.repaint(); // We repaint the table now so it shows the new card stack (pile).
@@ -1182,10 +1217,8 @@ public class FivePiles
                         if (c1 != null && c2 != null){ // We make sure the cards we popped actually exist.
                             c1 = c1.setFaceup(); // Set them faceup.
                             c2 = c2.setFaceup(); // Set them faceup.
-                            playCardStack[NUM_PLAY_DECKS-2].putFirst(c1); // Put first card in the first extra pile.
-                            table.add(FivePiles.moveCard(c1, SHOW_POS.x, SHOW_POS.y)); // We add the card 1's (c1) visual to our table.
-                            playCardStack[NUM_PLAY_DECKS-1].putFirst(c2); // Put the second card in the second extra pile.
-                            table.add(FivePiles.moveCard(c2, SHOW_POS.x, SHOW_POS.y)); // We add the card 2's (c2) visual to our table
+                            animMoveCard(deck, playCardStack[NUM_PLAY_DECKS-2], c1);
+                            animMoveCard(deck, playCardStack[NUM_PLAY_DECKS-1], c2);
                             c1.repaint(); // We repaint so they show up in the pile.
                             c2.repaint(); // We repaint so they show up in the pile.
                         }
@@ -1203,7 +1236,7 @@ public class FivePiles
         public void mouseReleased(MouseEvent e) { // These things happen when the left mouse button is released.
             checkForWin = true; // This is set to true to check if our move we made won the game.
             gameOver = false; // We set this to false to ensure we don't keep the gameOver value from a previous game.
-
+            System.out.println(FivePiles.movementTime);
             // used for status bar updates
             boolean validMoveMade = false;
             String[] options = {"New Game", "Return to Menu", "Return to Game"};
@@ -1327,6 +1360,7 @@ public class FivePiles
     }//end card movement manager class
 
 
+
     private static void playNewGame() {
 
         updateGameState(true);
@@ -1352,6 +1386,7 @@ public class FivePiles
             Player.setPlayerName(inputName);
             System.out.println("Player: " + Player.getPlayerName());
         }
+
 
         if (table.getMouseListeners().length < 1) { // If we have 0 listeners, we add a new one. This is to avoid duplicates.
             table.addMouseListener(new CardMovementManager());
@@ -1449,19 +1484,7 @@ public class FivePiles
         table.add(scoreBox);
         table.repaint();
         //// Adding all of our UI elements to the table for gameplay. ////
-        if(profileButton.getSelectedIndex() == -1) {
-            for(int i = 0; i < profileButton.getItemCount(); i++) {
-                if(Player.playerName.equals(profileButton.getItemAt(i))) {
-                    try {
-                        profileButton.setSelectedItem(Player.playerName);
-                    } catch(IndexOutOfBoundsException e) {}
-                    i = profileButton.getItemCount();
-                }
-                else if(i == profileButton.getItemCount() - 1 && profileButton.getSelectedIndex() == -1) {
-                    profileButton.addItem(Player.playerName);
-                }
-            }
-        }
+
     }
 
     public static void startProgram() // This is the method for our main menu.
@@ -1482,7 +1505,6 @@ public class FivePiles
                 menuSureButton.removeActionListener(menuSureButton.getActionListeners()[i]);
             }
         }
-
         table.removeAll();
         table.repaint();
 
@@ -1501,14 +1523,6 @@ public class FivePiles
         }
         exitMenuButton.setBounds((TABLE_WIDTH/2)-75, (TABLE_HEIGHT/2)+65, 150, 50);
 
-
-        if(profileButton.getActionListeners().length < 1) {
-            profileButton.addActionListener(new ProfileButtonListener());
-        }
-        profileButton.setBounds(15, 15, 100, 35);
-        profileButton.setRenderer(new ComboBoxTitle("Select Profile"));
-        profileButton.setSelectedIndex(index);
-        table.add(profileButton);
 
         table.add(selectGameButton);
         table.add(statisticsButton);
@@ -1560,49 +1574,39 @@ public class FivePiles
             usersFile.mkdir();
         }
         if(filePath.startsWith("users\\")) {
-            saveFile = new File(filePath);
-        } else {
-            saveFile = new File("users\\" + filePath);
-        }
+                saveFile = new File(filePath);
+    } else {
+    saveFile = new File("users\\" + filePath);
+}
 
 
 
         if (saveFile.exists()) {
-            Scanner in = new Scanner(saveFile);
-            while (in.hasNextLine()) {
-                if(loop == 0)
-                {
-                    String waste = in.next();
-                    loop++;
-                }
-
-                else {
-                    String fileName = in.next();
-                    int fileScore = in.nextInt();
-                    int fileTime = in.nextInt();
-                    int fileWin = in.nextInt();
-                    Player.updateLists(fileName, fileScore, fileTime, fileWin);
-                }
-
-            }
-        }else {
-            try {
-                saveFile.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+    Scanner in = new Scanner(saveFile);
+    while (in.hasNextLine()) {
+        if(loop == 0)
+        {
+            String waste = in.next();
+            loop++;
         }
-    }
 
-    public static void setupProfileButton() throws FileNotFoundException{
-        String[] returnedNames;
-        File usersFile = new File("users");
-        if(!usersFile.exists()) {
-            usersFile.mkdir();
+        else {
+            String fileName = in.next();
+            int fileScore = in.nextInt();
+            int fileTime = in.nextInt();
+            int fileWin = in.nextInt();
+            Player.updateLists(fileName, fileScore, fileTime, fileWin);
         }
-        returnedNames = usersFile.list();
-        profileButton = new JComboBox(returnedNames);
+
     }
+}else {
+    try {
+        saveFile.createNewFile();
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
+}
 
     public static void main(String[] args) throws FileNotFoundException {
 
@@ -1610,7 +1614,6 @@ public class FivePiles
         Container contentPane;
 
         Player.updateTopPlayers();
-        setupProfileButton();
 
         frame.setSize(TABLE_WIDTH, TABLE_HEIGHT); // The dimensions of our gameplay area.
 
