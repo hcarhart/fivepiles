@@ -1,19 +1,13 @@
 package fivepiles;
 
 ///////////////////////////////////////// Imports /////////////////////////////////////////
-import java.awt.BorderLayout;
+import java.awt.*;
 import java.awt.event.WindowEvent;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.Font;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -24,6 +18,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 ///////////////////////////////////////// Imports /////////////////////////////////////////
 
@@ -46,7 +41,7 @@ public class FivePiles
 
     // GUI COMPONENTS (top level)
     private static final JFrame frame = new JFrame("Five Piles");
-    protected static final JPanel table = new JPanel();
+    protected static JLabel table = new JLabel();
     // other components
     private static JEditorPane gameTitle = new JEditorPane("text/html", ""); //
     private static JButton showRulesButton = new JButton("Show Rules");
@@ -1719,7 +1714,13 @@ public class FivePiles
 }
 
     public static void main(String[] args) throws FileNotFoundException {
+        Image tableTexture = null;
 
+        try { // We try to load our table's texture image.
+            tableTexture = ImageIO.read(new File("TableTexture.png")).getScaledInstance(TABLE_WIDTH, TABLE_HEIGHT, Image.SCALE_SMOOTH);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         Container contentPane;
 
@@ -1729,7 +1730,12 @@ public class FivePiles
         frame.setSize(TABLE_WIDTH, TABLE_HEIGHT); // The dimensions of our gameplay area.
 
         table.setLayout(null);
-        table.setBackground(new Color(0, 180, 0)); // The color of our "table."
+
+        table.setBackground(new Color(0, 180, 0)); // The color of our "table" if the image doesn't load.
+        if (tableTexture != null){
+            System.out.println("Added table texture.");
+            table = new JLabel(new ImageIcon(tableTexture));
+        }
 
         contentPane = frame.getContentPane();
         contentPane.add(table);

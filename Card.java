@@ -6,14 +6,14 @@
 package fivepiles;
 //goodbye
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
-import javax.swing.JPanel;
+import javax.imageio.ImageIO;
+import javax.swing.*;
 
 class Card extends JPanel
 {
@@ -26,6 +26,9 @@ class Card extends JPanel
 	{
 		SPADES, CLUBS, DIAMONDS, HEARTS
 	}
+
+	protected static Image cardImage; // What you see when the card is face up.
+	protected static Image cardBackImage; // What you see when the card is face down.
 
 	private Suit _suit;
 
@@ -67,6 +70,8 @@ class Card extends JPanel
 		_location.y = y;
 		whereAmI = new Point();
 		moving = false;
+
+		loadCardImages();
 	}
 
 	Card()
@@ -81,6 +86,22 @@ class Card extends JPanel
 		_location.x = x;
 		_location.y = y;
 		whereAmI = new Point();
+
+		loadCardImages();
+	}
+
+	public void loadCardImages(){
+		try {
+			if (cardImage == null) {
+				Card.cardImage = ImageIO.read(new File("CardBack.png")).getScaledInstance(CARD_WIDTH, CARD_HEIGHT, Image.SCALE_SMOOTH);
+			}
+
+			if (cardBackImage == null) {
+				Card.cardBackImage = ImageIO.read(new File("CardBack.png")).getScaledInstance(CARD_WIDTH, CARD_HEIGHT, Image.SCALE_SMOOTH);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public Suit getSuit()
@@ -266,15 +287,17 @@ class Card extends JPanel
 
 	private void drawSuit(Graphics2D g, String suit, Color color)
 	{
+		g.setFont(new Font("Aerial", Font.PLAIN, 30 ));
 		g.setColor(color);
-		g.drawString(suit, _location.x + x_offset, _location.y + y_offset);
-		g.drawString(suit, _location.x + x_offset, _location.y + CARD_HEIGHT - 5);
+		g.drawString(suit, _location.x + x_offset-6, _location.y + y_offset + 28);
+		g.drawString(suit, _location.x + new_x_offset-6, _location.y + CARD_HEIGHT - 5 - 23);
 	}
 
 	private void drawValue(Graphics2D g, String value)
 	{
-		g.drawString(value, _location.x + new_x_offset, _location.y + y_offset);
-		g.drawString(value, _location.x + new_x_offset, _location.y + y_offset + CARD_HEIGHT - 25);
+		g.setFont(new Font("Algerian", Font.PLAIN, 25 )); // This is only necessary until we add card images to replace these.
+		g.drawString(value, _location.x + ((this.getNumericalValue() == 10) ? x_offset-10 : x_offset-5), _location.y + y_offset);
+		g.drawString(value, _location.x + ((this.getNumericalValue() == 10) ? new_x_offset-12 : new_x_offset), _location.y + y_offset + CARD_HEIGHT - 25);
 	}
 
 	@Override
@@ -287,6 +310,8 @@ class Card extends JPanel
 		g2d.fill(rect2);
 		g2d.setColor(Color.black);
 		g2d.draw(rect2);
+		g2d.drawImage(cardImage, _location.x, _location.y, this);
+
 		// DRAW THE CARD SUIT AND VALUE IF FACEUP
 		if (_faceup)
 		{
@@ -357,6 +382,7 @@ class Card extends JPanel
 			g2d.fill(rect);
 			g2d.setColor(Color.black);
 			g2d.draw(rect);
+			g2d.drawImage(cardBackImage, _location.x, _location.y, this); // Include this line for a card back image.
 		}
 
 	}
