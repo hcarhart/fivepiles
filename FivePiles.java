@@ -88,8 +88,8 @@ public class FivePiles
     private static double previousTime = 0;
 
     // ANIMATION
-    private static double animationUpdateFrequency = 0.0001; // This means we update every x seconds.
-    private static int animationMovementIncrement = 1; // We move by this much every animation update.
+    private static double animationUpdateFrequency = 10; // This means we update every x milliseconds.
+    private static int animationMovementIncrement = 25; // We move by this much every animation update.
 
 
     private static int index = -1; // keep track of which element is selected for the profile button.
@@ -617,7 +617,7 @@ public class FivePiles
     }
 
     protected static void updateMovementTimer() {
-        FivePiles.movementTime += 0.0001;
+        FivePiles.movementTime += 1;
 
         // Run animatedMoveCard through a list of to[x] and from[x].
         if (movementTime >= previousTime + animationUpdateFrequency && movementFromList.size() > 0) {
@@ -654,7 +654,7 @@ public class FivePiles
             System.out.println("Moving : " + c.moving);
             System.out.println("Moved a bit for " + c.getNumericalValue() + " Difference: " + (Math.abs(to.getX() - c.getX()) + Math.abs(to.getY() - c.getY())));
             //c.setLocation(new Point(c.getX() + xSign*movementIncrement, c.getY() + ySign*movementIncrement));
-            moveCard(c, c.getX() + xSign*movementIncrement, c.getY() + ySign*movementIncrement);
+            moveCard(c, c.getX() + xSign*(movementIncrement > xDiff ? xDiff : movementIncrement), c.getY() + ySign*(movementIncrement > yDiff ? yDiff : movementIncrement));
             table.repaint();
             c.repaint();
         }else {
