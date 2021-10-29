@@ -653,14 +653,14 @@ public class FivePiles
             table.repaint();
             c.repaint();
         }else {
-                System.out.println("Cleaned up from movement lists!");
-                int index = movementCardList.indexOf(c);
-                movementFromList.remove(index);
-                movementToList.remove(index);
-                movementCardList.remove(index);
-                c.moving = false;
-                table.repaint();
-                c.repaint();
+            System.out.println("Cleaned up from movement lists!");
+            int index = movementCardList.indexOf(c);
+            movementFromList.remove(index);
+            movementToList.remove(index);
+            movementCardList.remove(index);
+            c.moving = false;
+            table.repaint();
+            c.repaint();
 
         }
 
@@ -1314,6 +1314,7 @@ public class FivePiles
             // used for status bar updates
             boolean validMoveMade = false;
             String[] options = {"New Game", "Return to Menu", "Return to Game"};
+            String[] winOptions = {"New Game", "Return to Menu"};
             int result;
 
             table.repaint(); // Repaint table to refresh visual elements.
@@ -1339,9 +1340,8 @@ public class FivePiles
                 }
             }
 
-            if (checkForWin && gameOver) { // If we checked for win and gameOver is true then we won!
+            if (checkForWin && gameOver && gameLive) { // If we checked for win and gameOver is true then we won!
                 toggleTimer(); // Pause the timer since we won.
-                JOptionPane.showMessageDialog(table, "Congratulations! You've Won!"); // Shows a message with this text.
                 statusBox.setText("Game Over!"); // Updates our statusBox (but I don't think the GUI for statusBox is visible.)
                 Player.setPlayerScore(score);//grab score and time and assign to player
                 Player.setPlayerTime(time);
@@ -1361,6 +1361,17 @@ public class FivePiles
 
                 }
                 updateGameState(false);//this is to show that the game has ended.
+                result = JOptionPane.showOptionDialog(table, "Congratulations! You've Won!", "Game State", 2, 1, null, winOptions, null); // Shows a message saying you won.
+                switch(result) // Switch statement to go to the correct option. It depends on the result.
+                {
+                    case 0: playNewGame(); // If result = 0, we playNewGame() meaning user pressed new game.
+                        Player.resetPlayerStats();
+                        break;
+                    case 1: startProgram(); // If result = 1, we startProgram() meaning user pressed main menu.
+                        break;
+                    default:
+                        break;
+                }
             }
 
             else if(deck.empty() && gameLive) // Since we didn't win, we check if we lost instead. Firstly, we ensure the deck is empty and the game is actually running.
@@ -1679,45 +1690,45 @@ public class FivePiles
             usersFile.mkdir();
         }
         if(filePath.startsWith("users\\")) {
-                saveFile = new File(filePath);
-    } else {
-    saveFile = new File("users\\" + filePath);
-}
+            saveFile = new File(filePath);
+        } else {
+            saveFile = new File("users\\" + filePath);
+        }
 
 
 
         if (saveFile.exists()) {
-    Scanner in = new Scanner(saveFile);
-    while (in.hasNextLine()) {
-        if(loop == 0)
-        {
-            String waste = in.next();
-            loop++;
-        }
+            Scanner in = new Scanner(saveFile);
+            while (in.hasNextLine()) {
+                if(loop == 0)
+                {
+                    String waste = in.next();
+                    loop++;
+                }
 
-        else {
-            String fileName = in.next();
-            int fileScore = in.nextInt();
-            int fileTime = in.nextInt();
-            int fileWin = in.nextInt();
-            Player.updateLists(fileName, fileScore, fileTime, fileWin);
-        }
+                else {
+                    String fileName = in.next();
+                    int fileScore = in.nextInt();
+                    int fileTime = in.nextInt();
+                    int fileWin = in.nextInt();
+                    Player.updateLists(fileName, fileScore, fileTime, fileWin);
+                }
 
+            }
+        }else {
+            try {
+                saveFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
-}else {
-    try {
-        saveFile.createNewFile();
-    } catch (IOException e) {
-        e.printStackTrace();
-    }
-}
-}
 
     public static void main(String[] args) throws FileNotFoundException {
         Image tableTexture = null;
 
         try { // We try to load our table's texture image.
-            tableTexture = ImageIO.read(new File("TableTexture.png")).getScaledInstance(TABLE_WIDTH, TABLE_HEIGHT, Image.SCALE_SMOOTH);
+            tableTexture = ImageIO.read(new File("textures\\TableTexture.png")).getScaledInstance(TABLE_WIDTH, TABLE_HEIGHT, Image.SCALE_SMOOTH);
         } catch (IOException e) {
             e.printStackTrace();
         }

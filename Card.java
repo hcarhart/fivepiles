@@ -93,12 +93,14 @@ class Card extends JPanel
 	public void loadCardImages(){
 		try {
 			if (cardImage == null) {
-				Card.cardImage = ImageIO.read(new File("CardBack.png")).getScaledInstance(CARD_WIDTH, CARD_HEIGHT, Image.SCALE_SMOOTH);
+				Card.cardImage = ImageIO.read(new File("textures\\CardBack.png")).getScaledInstance(CARD_WIDTH, CARD_HEIGHT, Image.SCALE_SMOOTH);
 			}
 
 			if (cardBackImage == null) {
-				Card.cardBackImage = ImageIO.read(new File("CardBack.png")).getScaledInstance(CARD_WIDTH, CARD_HEIGHT, Image.SCALE_SMOOTH);
+				Card.cardBackImage = ImageIO.read(new File("textures\\CardBack.png")).getScaledInstance(CARD_WIDTH, CARD_HEIGHT, Image.SCALE_SMOOTH);
 			}
+
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
