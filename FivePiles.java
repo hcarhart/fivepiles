@@ -117,7 +117,6 @@ public class FivePiles
             for (int x = 0; x < NUM_PLAY_DECKS; x++) { // NUM_PLAY_DECKS refers to the number of decks we have in play, we for loop through that.
                 if (playCardStack[x].getFirst() != null) { // x is the index corresponding to the playCardStack of x. The first "pile" is playCardStack[1] of type CardStack.
                     if (playCardStack[x].getFirst().getID().equals(c.getID())) { // If the first card in a pile is the SAME card as what we're checking if is in top, then it is on top.
-                        System.out.println("Is top");
                         valid = true; // The card c is on top of a pile, so it is valid (on top).
                     }
                 }
@@ -573,7 +572,6 @@ public class FivePiles
                 }
 
             }
-            System.out.println("top players size: " + topPlayerScoreList.size());
             updateTopScoresFile();
         }
 
@@ -590,7 +588,6 @@ public class FivePiles
 
         public static String displayInfo(){
             String display = "";
-            System.out.println(playerNameList.size());
             for(int i = 0; i < playerNameList.size(); i++) {
                 display += playerNameList.get(i) + " " + playerScoreList.get(i) + " " + playerTimeList.get(i) + " " + playerWinList.get(i);
                 if(i < playerNameList.size() - 1)
@@ -616,7 +613,6 @@ public class FivePiles
 
         // Run animatedMoveCard through a list of to[x] and from[x].
         if (movementTime >= previousTime + animationUpdateFrequency && movementFromList.size() > 0) {
-            //System.out.println("Size of lists: " + movementFromList.size());
             for (int i = 0; i < movementFromList.size(); i++) {
                 animatedMoveCard(movementFromList.get(i), movementToList.get(i), movementCardList.get(i), animationMovementIncrement);
             }
@@ -628,7 +624,6 @@ public class FivePiles
     public static void animatedMoveCard(CardStack from, CardStack to, Card c, int movementIncrement){
 
         if (!to.hasCard(c)) {
-            System.out.println("ADDED");
             c.moving = true;
             to.putFirst(c);
             table.add(moveCard(c, from.getX(), from.getY()));
@@ -646,14 +641,10 @@ public class FivePiles
             yDiff = to.getY() - c.getY();
             xSign = xDiff == 0 ? 1 : (xDiff / (Math.abs(xDiff)));
             ySign = yDiff == 0 ? 1 : (yDiff / (Math.abs(yDiff)));
-            System.out.println("Moving : " + c.moving);
-            System.out.println("Moved a bit for " + c.getNumericalValue() + " Difference: " + (Math.abs(to.getX() - c.getX()) + Math.abs(to.getY() - c.getY())));
-            //c.setLocation(new Point(c.getX() + xSign*movementIncrement, c.getY() + ySign*movementIncrement));
             moveCard(c, c.getX() + xSign*(movementIncrement > xDiff ? xDiff : movementIncrement), c.getY() + ySign*(movementIncrement > yDiff ? yDiff : movementIncrement));
             table.repaint();
             c.repaint();
         }else {
-            System.out.println("Cleaned up from movement lists!");
             int index = movementCardList.indexOf(c);
             movementFromList.remove(index);
             movementToList.remove(index);
@@ -728,7 +719,7 @@ public class FivePiles
         }
         statisticsTextDisplay.setFont(new Font("Courier", Font.BOLD, 20));
         statisticsTextDisplay.setBounds(50, (TABLE_HEIGHT/2)-250, 250, 300);
-        statisticsTextDisplay.setBackground(new Color(0, 180, 0));
+        statisticsTextDisplay.setOpaque(false);
         statisticsTextDisplay.setVisible(true);
         statisticsTextDisplay.setEditable(false);
         table.remove(statisticsTextDisplay);
@@ -741,7 +732,7 @@ public class FivePiles
         }
         statisticsNumbersDisplay.setFont(new Font("Courier", Font.BOLD, 20));
         statisticsNumbersDisplay.setBounds(300, (TABLE_HEIGHT/2)-249, 50, 300);
-        statisticsNumbersDisplay.setBackground(new Color(0, 180, 0));
+        statisticsNumbersDisplay.setOpaque(false);
         statisticsNumbersDisplay.setVisible(true);
         statisticsNumbersDisplay.setEditable(false);
         table.remove(statisticsNumbersDisplay);
@@ -750,35 +741,35 @@ public class FivePiles
         topStatisticsTextDisplay.setText(Player.outputTopStatsText());
         topStatisticsTextDisplay.setFont(new Font("Courier", Font.BOLD, 20));
         topStatisticsTextDisplay.setBounds(400, (TABLE_HEIGHT/2)-250, 150, 300);
-        topStatisticsTextDisplay.setBackground(new Color(0, 180, 0));
+        topStatisticsTextDisplay.setOpaque(false);
         topStatisticsTextDisplay.setVisible(true);
         topStatisticsTextDisplay.setEditable(false);
 
         topStatisticsNamesDisplay.setText(Player.outputTopStatsNames());
         topStatisticsNamesDisplay.setFont(new Font("Courier", Font.BOLD, 20));
         topStatisticsNamesDisplay.setBounds(550, (TABLE_HEIGHT/2)-225, 100, 300);
-        topStatisticsNamesDisplay.setBackground(new Color(0, 180, 0));
+        topStatisticsNamesDisplay.setOpaque(false);
         topStatisticsNamesDisplay.setVisible(true);
         topStatisticsNamesDisplay.setEditable(false);
 
         topStatisticsScoresDisplay.setText(Player.outputTopStatsScores());
         topStatisticsScoresDisplay.setFont(new Font("Courier", Font.BOLD, 20));
         topStatisticsScoresDisplay.setBounds(650, (TABLE_HEIGHT/2)-225, 50, 300);
-        topStatisticsScoresDisplay.setBackground(new Color(0, 180, 0));
+        topStatisticsScoresDisplay.setOpaque(false);
         topStatisticsScoresDisplay.setVisible(true);
         topStatisticsScoresDisplay.setEditable(false);
 
         topStatisticsTimesDisplay.setText(Player.outputTopStatsTimes());
         topStatisticsTimesDisplay.setFont(new Font("Courier", Font.BOLD, 20));
         topStatisticsTimesDisplay.setBounds(700, (TABLE_HEIGHT/2)-225, 50, 300);
-        topStatisticsTimesDisplay.setBackground(new Color(0, 180, 0));
+        topStatisticsTimesDisplay.setOpaque(false);
         topStatisticsTimesDisplay.setVisible(true);
         topStatisticsTimesDisplay.setEditable(false);
 
         topStatisticsWinsDisplay.setText(Player.outputTopStatsWins());
         topStatisticsWinsDisplay.setFont(new Font("Courier", Font.BOLD, 20));
         topStatisticsWinsDisplay.setBounds(750, (TABLE_HEIGHT/2)-225, 50, 300);
-        topStatisticsWinsDisplay.setBackground(new Color(0, 180, 0));
+        topStatisticsWinsDisplay.setOpaque(false);
         topStatisticsWinsDisplay.setVisible(true);
         topStatisticsWinsDisplay.setEditable(false);
 
@@ -881,7 +872,7 @@ public class FivePiles
             }
             statisticsTextDisplay.setFont(new Font("Courier", Font.BOLD, 20));
             statisticsTextDisplay.setBounds(50, (TABLE_HEIGHT/2)-250, 250, 300);
-            statisticsTextDisplay.setBackground(new Color(0, 180, 0));
+            statisticsTextDisplay.setOpaque(false);
             statisticsTextDisplay.setVisible(true);
             statisticsTextDisplay.setEditable(false);
 
@@ -892,46 +883,44 @@ public class FivePiles
             }
             statisticsNumbersDisplay.setFont(new Font("Courier", Font.BOLD, 20));
             statisticsNumbersDisplay.setBounds(300, (TABLE_HEIGHT/2)-249, 50, 300);
-            statisticsNumbersDisplay.setBackground(new Color(0, 180, 0));
+            statisticsNumbersDisplay.setOpaque(false);
             statisticsNumbersDisplay.setVisible(true);
             statisticsNumbersDisplay.setEditable(false);
 
             topStatisticsTextDisplay.setText(Player.outputTopStatsText());
             topStatisticsTextDisplay.setFont(new Font("Courier", Font.BOLD, 20));
             topStatisticsTextDisplay.setBounds(400, (TABLE_HEIGHT/2)-250, 150, 300);
-            topStatisticsTextDisplay.setBackground(new Color(0, 180, 0));
+            topStatisticsTextDisplay.setOpaque(false);
             topStatisticsTextDisplay.setVisible(true);
             topStatisticsTextDisplay.setEditable(false);
 
             topStatisticsNamesDisplay.setText(Player.outputTopStatsNames());
             topStatisticsNamesDisplay.setFont(new Font("Courier", Font.BOLD, 20));
             topStatisticsNamesDisplay.setBounds(550, (TABLE_HEIGHT/2)-225, 100, 300);
-            topStatisticsNamesDisplay.setBackground(new Color(0, 180, 0));
+            topStatisticsNamesDisplay.setOpaque(false);
             topStatisticsNamesDisplay.setVisible(true);
             topStatisticsNamesDisplay.setEditable(false);
 
             topStatisticsScoresDisplay.setText(Player.outputTopStatsScores());
             topStatisticsScoresDisplay.setFont(new Font("Courier", Font.BOLD, 20));
             topStatisticsScoresDisplay.setBounds(650, (TABLE_HEIGHT/2)-225, 50, 300);
-            topStatisticsScoresDisplay.setBackground(new Color(0, 180, 0));
+            topStatisticsScoresDisplay.setOpaque(false);
             topStatisticsScoresDisplay.setVisible(true);
             topStatisticsScoresDisplay.setEditable(false);
 
             topStatisticsTimesDisplay.setText(Player.outputTopStatsTimes());
             topStatisticsTimesDisplay.setFont(new Font("Courier", Font.BOLD, 20));
             topStatisticsTimesDisplay.setBounds(700, (TABLE_HEIGHT/2)-225, 50, 300);
-            topStatisticsTimesDisplay.setBackground(new Color(0, 180, 0));
+            topStatisticsTimesDisplay.setOpaque(false);
             topStatisticsTimesDisplay.setVisible(true);
             topStatisticsTimesDisplay.setEditable(false);
 
             topStatisticsWinsDisplay.setText(Player.outputTopStatsWins());
             topStatisticsWinsDisplay.setFont(new Font("Courier", Font.BOLD, 20));
             topStatisticsWinsDisplay.setBounds(750, (TABLE_HEIGHT/2)-225, 50, 300);
-            topStatisticsWinsDisplay.setBackground(new Color(0, 180, 0));
+            topStatisticsWinsDisplay.setOpaque(false);
             topStatisticsWinsDisplay.setVisible(true);
             topStatisticsWinsDisplay.setEditable(false);
-
-            //topStatisticsNumbersDisplay.setText
 
             if (exitStatistics.getActionListeners().length < 1) { // This condition is to ensure the same action happens only once per click.
                 exitStatistics.addActionListener(new menuReturnConfirmation());
@@ -1004,8 +993,6 @@ public class FivePiles
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            System.out.println(menuSureButton.isVisible());
-            System.out.println(menuButton.getActionListeners().length);
             if (menuSureButton.isVisible()){ // If the menu is visible, we hide it.
                 menuSureButton.hide();
             }else { // Otherwise it isn't visible, so we show it. Basically a toggle.
@@ -1197,7 +1184,6 @@ public class FivePiles
                     if (c.contains(start) && source.contains(start) && c.getFaceStatus()) {
                         card = c;
                         stopSearch = true;
-                        System.out.println("Transfer Size: " + transferStack.showSize());
                         break;
                     }
                 }
@@ -1212,32 +1198,27 @@ public class FivePiles
                 int value = card.getNumericalValue(); // Gets the value of the card clicked on.
                 if (ChosenCards.getFirst() != null) { // If the first card in our temporary pile isn't null, it means we selected 2 cards and should combine their values.
                     value += ChosenCards.getFirst().getNumericalValue(); // Combine the values of our two selected cards.
-                    System.out.println("Added value: " + value);
                 }
 
                 Card old = null; // Initialize a new variable to hold the card that we selected before.
 
                 if (!card.isKing()){ // If the card we clicked ISN'T a king. This method is custom and doesn't exist for other types.
-                    System.out.println("Not king");
                     old = ChosenCards.getFirst(); // Store the old card in a variable
                 }
                 ChosenCards.putFirst(card); // Put the clicked card on top of the temporary card stack.
 
-                System.out.println(isTop(card));
-
                 if (isValidPair(card, old) || card.isKing() && isTop(card)) { // If the combined value of 2 selected cards is 13, a king, and is on top.
-                    System.out.println("20 points added for matching to 13!");
                     score += 20; // Add 20 points. This is just temporary and can be changed.
                     for (int x = 0; x < NUM_PLAY_DECKS; x++) { // Loop through all existing play decks.
                         if (playCardStack[x].getFirst() != null) { // If the first card in the play deck exists
                             if (playCardStack[x].getFirst().getXY().equals(card.getXY()) && playCardStack[x].getFirst().getID().equals(card.getID())) { // Check if it is the same card as the one we clicked on. Basically, if the position (xy) and ID are the same, it's the same card.
-                                System.out.println("Popped and removed/repainted.");
+
 
                                 Card c = playCardStack[x].popFirst(); // We pop the card from the play deck, since it added to 13.
 
                                 if (c != null) {
                                     table.remove(FivePiles.moveCard(c, SHOW_POS.x, SHOW_POS.y)); // We remove the card from the table.
-                                    System.out.println("Removed: " + card.getID());
+
                                     c.repaint(); // Repaint to visualize changes.
                                 }
                                 table.repaint(); // Repaint to visualize changes.
@@ -1245,7 +1226,7 @@ public class FivePiles
                         }
                         if (old != null && playCardStack[x].getFirst() != null) { // If the first card in the play deck exists and the previously clicked card exists
                             if (playCardStack[x].getFirst().getXY().equals(old.getXY()) && playCardStack[x].getFirst().getID().equals(old.getID())) { // Check if it is the same card as the one we PREVIOUSLY clicked on.
-                                System.out.println("Popped and removed/repainted.");
+
 
                                 Card c = playCardStack[x].popFirst(); // We pop the card from the play deck, since it added to 13.
 
@@ -1310,7 +1291,7 @@ public class FivePiles
         public void mouseReleased(MouseEvent e) { // These things happen when the left mouse button is released.
             checkForWin = true; // This is set to true to check if our move we made won the game.
             gameOver = false; // We set this to false to ensure we don't keep the gameOver value from a previous game.
-            System.out.println(FivePiles.movementTime);
+
             // used for status bar updates
             boolean validMoveMade = false;
             String[] options = {"New Game", "Return to Menu", "Return to Game"};
@@ -1334,7 +1315,7 @@ public class FivePiles
                         emptyPiles += 1;
                     }
                 }
-                System.out.println("Empty piles: " + emptyPiles);
+
                 if (emptyPiles == 7){
                     gameOver = true;
                 }
@@ -1355,7 +1336,6 @@ public class FivePiles
                 try
                 {
                     saveGame();
-                    System.out.println("saving game from game won");
                 } catch (FileNotFoundException ex)
                 {
 
@@ -1390,7 +1370,6 @@ public class FivePiles
 
                 if (noValidMoves){ // If no valid moves exist, as previously determined, we lose.
                     toggleTimer(); // Since we lost, we toggle timer.
-                    System.out.println("Game Over!");
                     updateGameState(false); //this is to show that the game has ended.
                     Player.setPlayerScore(score);//grab score and time and assign to player
                     Player.setPlayerTime(time);
@@ -1404,16 +1383,12 @@ public class FivePiles
                     try
                     {
                         saveGame();
-                        System.out.println("saving game from game loss");
                     } catch (FileNotFoundException ex)
                     {
                         System.out.println("save game didn't work from game lose");
                     }
                     result = JOptionPane.showOptionDialog(table, "You Lost.", "Game State", 2, 1, null, options, null); // Show a message saying you lost.
                     statusBox.setText("Game Over!"); // Put in the status box you lost.
-                    System.out.println("Player score and time for "+ Player.getPlayerName()+ ": "+ Player.getPlayerScore() +" points in "+  Player.getPlayerTime() + " seconds");
-                    System.out.println("result: " + result); // Print the result of the options from our optionsDialog.
-
 
                     switch(result) // Switch statement to go to the correct option. It depends on the result.
                     {
@@ -1469,7 +1444,6 @@ public class FivePiles
         if (Player.playerName != inputName) {
             inputName = inputName.replace(" ", "_");
             Player.setPlayerName(inputName);
-            System.out.println("Player: " + Player.getPlayerName());
         }
 
 
@@ -1744,7 +1718,6 @@ public class FivePiles
 
         table.setBackground(new Color(0, 180, 0)); // The color of our "table" if the image doesn't load.
         if (tableTexture != null){
-            System.out.println("Added table texture.");
             table = new JLabel(new ImageIcon(tableTexture));
         }
 
@@ -1753,6 +1726,8 @@ public class FivePiles
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         startProgram();
+
+        Card.loadCardImages();
 
         frame.setResizable(false); // We don't want the user to be able to resize the window.
         frame.setVisible(true); // We want the window visible.

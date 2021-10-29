@@ -11,8 +11,10 @@ import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+
 import javax.swing.*;
 
 class Card extends JPanel
@@ -27,7 +29,7 @@ class Card extends JPanel
 		SPADES, CLUBS, DIAMONDS, HEARTS
 	}
 
-	protected static Image cardImage; // What you see when the card is face up.
+	protected static Image[][] cardImage = new Image[4][13]; // What you see when the card is face up.
 	protected static Image cardBackImage; // What you see when the card is face down.
 
 	private Suit _suit;
@@ -70,8 +72,6 @@ class Card extends JPanel
 		_location.y = y;
 		whereAmI = new Point();
 		moving = false;
-
-		loadCardImages();
 	}
 
 	Card()
@@ -86,43 +86,21 @@ class Card extends JPanel
 		_location.x = x;
 		_location.y = y;
 		whereAmI = new Point();
-
-		loadCardImages();
 	}
 
-	public void loadCardImages(){
-		try {
-			if (cardImage == null) {
-				Card.cardImage = ImageIO.read(new File("textures\\CardBack.png")).getScaledInstance(CARD_WIDTH, CARD_HEIGHT, Image.SCALE_SMOOTH);
+	public static void loadCardImages() {
+		for(int i = 0; i < 4; i++) {
+			for(int j = 0; j < 13; j++) {
+				int math = (i * 13) + j;
+				try {
+					cardImage[i][j] = ImageIO.read(new File("textures\\" + Integer.toString(math) + ".png"));
+				} catch (IOException ex) {}
 			}
-
-			if (cardBackImage == null) {
-				Card.cardBackImage = ImageIO.read(new File("textures\\CardBack.png")).getScaledInstance(CARD_WIDTH, CARD_HEIGHT, Image.SCALE_SMOOTH);
-			}
-
-
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 	}
 
 	public Suit getSuit()
 	{
-		switch (_suit)
-		{
-		case HEARTS:
-			System.out.println("Hearts");
-			break;
-		case DIAMONDS:
-			System.out.println("Diamonds");
-			break;
-		case SPADES:
-			System.out.println("Spades");
-			break;
-		case CLUBS:
-			System.out.println("Clubs");
-			break;
-		}
 		return _suit;
 	}
 
@@ -136,48 +114,6 @@ class Card extends JPanel
 
 	public Value getValue()
 	{
-		switch (_value)
-		{
-		case ACE:
-			System.out.println(" Ace");
-			break;
-		case TWO:
-			System.out.println(" 2");
-			break;
-		case THREE:
-			System.out.println(" 3");
-			break;
-		case FOUR:
-			System.out.println(" 4");
-			break;
-		case FIVE:
-			System.out.println(" 5");
-			break;
-		case SIX:
-			System.out.println(" 6");
-			break;
-		case SEVEN:
-			System.out.println(" 7");
-			break;
-		case EIGHT:
-			System.out.println(" 8");
-			break;
-		case NINE:
-			System.out.println(" 9");
-			break;
-		case TEN:
-			System.out.println(" 10");
-			break;
-		case JACK:
-			System.out.println(" Jack");
-			break;
-		case QUEEN:
-			System.out.println(" Queen");
-			break;
-		case KING:
-			System.out.println(" King");
-			break;
-		}
 		return _value;
 	}
 
@@ -312,69 +248,29 @@ class Card extends JPanel
 		g2d.fill(rect2);
 		g2d.setColor(Color.black);
 		g2d.draw(rect2);
-		g2d.drawImage(cardImage, _location.x, _location.y, this);
+		//g2d.drawImage(cardImage, _location.x, _location.y, this);
 
 		// DRAW THE CARD SUIT AND VALUE IF FACEUP
 		if (_faceup)
 		{
+
 			switch (_suit)
 			{
-			case HEARTS:
-				drawSuit(g2d, "♥", Color.RED);
-				break;
-			case DIAMONDS:
-				drawSuit(g2d, "◆", Color.RED);
-				break;
-			case SPADES:
-				drawSuit(g2d, "♠", Color.BLACK);
-				break;
-			case CLUBS:
-				drawSuit(g2d, "♣", Color.BLACK);
-				break;
+				case HEARTS:
+					g2d.drawImage(cardImage[0][getNumericalValue()-1], _location.x, _location.y, this);
+					break;
+				case SPADES:
+					g2d.drawImage(cardImage[1][getNumericalValue()-1], _location.x, _location.y, this);
+					break;
+				case DIAMONDS:
+					g2d.drawImage(cardImage[2][getNumericalValue()-1], _location.x, _location.y, this);
+					break;
+				case CLUBS:
+					g2d.drawImage(cardImage[3][getNumericalValue()-1], _location.x, _location.y, this);
+					break;
 			}
 			int new_x_offset = x_offset + (CARD_WIDTH - 30);
-			switch (_value)
-			{
-			case ACE:
-				drawValue(g2d, "A");
-				break;
-			case TWO:
-				drawValue(g2d, "2");
-				break;
-			case THREE:
-				drawValue(g2d, "3");
-				break;
-			case FOUR:
-				drawValue(g2d, "4");
-				break;
-			case FIVE:
-				drawValue(g2d, "5");
-				break;
-			case SIX:
-				drawValue(g2d, "6");
-				break;
-			case SEVEN:
-				drawValue(g2d, "7");
-				break;
-			case EIGHT:
-				drawValue(g2d, "8");
-				break;
-			case NINE:
-				drawValue(g2d, "9");
-				break;
-			case TEN:
-				drawValue(g2d, "10");
-				break;
-			case JACK:
-				drawValue(g2d, "J");
-				break;
-			case QUEEN:
-				drawValue(g2d, "Q");
-				break;
-			case KING:
-				drawValue(g2d, "K");
-				break;
-			}
+
 		} else
 		{
 			// DRAW THE BACK OF THE CARD IF FACEDOWN
@@ -390,4 +286,3 @@ class Card extends JPanel
 	}
 
 }// END Card
-
