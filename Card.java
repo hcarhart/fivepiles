@@ -245,7 +245,7 @@ class Card extends JPanel
 		return (rect.contains(p));
 	}
 
-	// No longer needed.
+	// No longer needed
 	private void drawSuit(Graphics2D g, String suit, Color color)
 	{
 		g.setFont(new Font("Aerial", Font.PLAIN, 30 ));

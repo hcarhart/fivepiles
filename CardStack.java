@@ -239,7 +239,7 @@ class CardStack extends JComponent
 			Point prev = new Point(); // positioning relative to the container
 			Point prevWhereAmI = new Point();// abs positioning on the board
 
-			// To set the image of what is selected.
+			// To set the image of what is selected
 			if (isSelected && this.getFirst() != null){
 				CardStack.selectedImage = this.getFirst().getCardImage();
 			}

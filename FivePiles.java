@@ -152,7 +152,7 @@ public class FivePiles
     }
 
     /**
-     * This method sets isSelected to true for CardStack c and then loops through all the CardStacks in playCardStack and sets their isSelected to false.
+     * This method sets isSelected to true for CardStack c and then loops through all the CardStacks in playCardStack and sets their isSelected to false
      * @param c The CardStack that is being selected.
      */
     public static void select(CardStack c){
