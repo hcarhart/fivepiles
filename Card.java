@@ -245,6 +245,7 @@ class Card extends JPanel
 		return (rect.contains(p));
 	}
 
+	// No longer needed.
 	private void drawSuit(Graphics2D g, String suit, Color color)
 	{
 		g.setFont(new Font("Aerial", Font.PLAIN, 30 ));
@@ -253,6 +254,7 @@ class Card extends JPanel
 		g.drawString(suit, _location.x + new_x_offset-6, _location.y + CARD_HEIGHT - 5 - 23);
 	}
 
+	// No longer needed.
 	private void drawValue(Graphics2D g, String value)
 	{
 		g.setFont(new Font("Algerian", Font.PLAIN, 25 )); // This is only necessary until we add card images to replace these.
