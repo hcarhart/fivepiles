@@ -218,7 +218,6 @@ class CardStack extends JComponent
 		Graphics g = FivePiles.table.getGraphics();
 		for(int i=0; i<FivePiles.playCardStack.length; i++){
 			if(FivePiles.playCardStack[i].isSelected() && FivePiles.playCardStack[i].getFirst() != null && CardStack.selectedImage != null){
-				System.out.println("TOP: " + FivePiles.playCardStack[i].getFirst().getNumericalValue());
 				// paint a copy of the top card of the CardStack to top right of the table. It should be permanent.
 				g.drawImage(CardStack.selectedImage, FivePiles.table.getWidth() - CardStack.selectedImage.getWidth(null), 0, FivePiles.table);
 				// Ensure that multiples of the same image are not drawn on top of each other.
