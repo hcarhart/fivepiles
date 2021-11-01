@@ -36,12 +36,12 @@ public class FivePiles
     public static final Point PLAY_POS = new Point(DECK_POS.x, FINAL_POS.y + Card.CARD_HEIGHT + 30);
 
     // GAMEPLAY STRUCTURES
-    private static CardStack[] playCardStack; // Tableau stacks
+    public static CardStack[] playCardStack; // Tableau stacks
     private static CardStack deck; // populated with standard 52 card deck
 
     // GUI COMPONENTS (top level)
     private static final JFrame frame = new JFrame("Five Piles");
-    protected static JLabel table = new JLabel();
+    public static JLabel table = new JLabel();
     // other components
     private static JEditorPane gameTitle = new JEditorPane("text/html", ""); //
     private static JButton showRulesButton = new JButton("Show Rules");
@@ -150,6 +150,30 @@ public class FivePiles
         scoreBox.setText(newScore); // Update the score box with our new message.
         scoreBox.repaint(); // We call repaint on the GUI element scoreBox to refresh it with our new information we gave it.
     }
+
+    /**
+     * This method sets isSelected to true for CardStack c and then loops through all the CardStacks in playCardStack and sets their isSelected to false.
+     * @param c The CardStack that is being selected.
+     */
+    public static void select(CardStack c){
+        for(int i=0; i<NUM_PLAY_DECKS; i++){
+            if (playCardStack[i] != c && playCardStack[i].isSelected()) {
+                playCardStack[i].setSelected(false);
+            }
+        }
+        c.setSelected(true);
+    }
+
+    /**
+     * This method deselects all CardStacks in playCardStack.
+     */
+    public static void deselectAll(){
+        for(int i=0; i<NUM_PLAY_DECKS; i++){
+            playCardStack[i].setSelected(false);
+        }
+    }
+
+
 
     //player class
     private static class Player{
@@ -1165,6 +1189,8 @@ public class FivePiles
             statusBox.setText("");
             transferStack.makeEmpty();
 
+
+
             /*
              * Here we use transferStack to temporarily hold all the cards above
              * the selected card in case player wants to move a stack rather
@@ -1182,11 +1208,17 @@ public class FivePiles
                         transferStack.putFirst(c);
                     }
                     if (c.contains(start) && source.contains(start) && c.getFaceStatus()) {
+                        System.out.println(x);
+
+                        select(playCardStack[x]); // Selects the CardStack that the card is in.
                         card = c;
                         stopSearch = true;
                         break;
                     }
                 }
+
+
+
 
             }
 
@@ -1208,6 +1240,7 @@ public class FivePiles
                 ChosenCards.putFirst(card); // Put the clicked card on top of the temporary card stack.
 
                 if (isValidPair(card, old) || card.isKing() && isTop(card)) { // If the combined value of 2 selected cards is 13, a king, and is on top.
+                    deselectAll(); // Deselect all cards since we just made a valid match.
                     score += 20; // Add 20 points. This is just temporary and can be changed.
                     for (int x = 0; x < NUM_PLAY_DECKS; x++) { // Loop through all existing play decks.
                         if (playCardStack[x].getFirst() != null) { // If the first card in the play deck exists
@@ -1253,7 +1286,7 @@ public class FivePiles
 
                 ChosenCards = new CardStack(false); // Added this to ensure we can't pick between cards from different layers.
 
-
+                deselectAll(); // Deselect all cards since we are dealing new cards.
                 for (int x = 0; x < NUM_PLAY_DECKS-2; x++) { // We want to add new cards to our 5 piles, so we for loop through the total number of play decks.
                     if (deck.showSize() > 2) { // Added this condition to account for the deck running out / last 2 cards.
                         Card c = deck.pop().setFaceup(); // We get our card from the deck and set it faceup.
@@ -1291,6 +1324,7 @@ public class FivePiles
         public void mouseReleased(MouseEvent e) { // These things happen when the left mouse button is released.
             checkForWin = true; // This is set to true to check if our move we made won the game.
             gameOver = false; // We set this to false to ensure we don't keep the gameOver value from a previous game.
+
 
             // used for status bar updates
             boolean validMoveMade = false;

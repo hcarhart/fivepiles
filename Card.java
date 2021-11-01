@@ -99,6 +99,28 @@ class Card extends JPanel
 		}
 	}
 
+	public Image getCardImage(){
+		// Next we make a switch statement such that a variable s is assigned 0 if it is a heart, 1 if it is a spade, 2 if it is a diamond, and 3 if it is a club.
+		// This is done to make the card image array easier to read.
+		int s = 0;
+		switch (_suit) {
+			case SPADES:
+				s = 1;
+				break;
+			case CLUBS:
+				s = 3;
+				break;
+			case DIAMONDS:
+				s = 2;
+				break;
+			case HEARTS:
+				s = 0;
+				break;
+		}
+
+		return cardImage[s][getNumericalValue()-1];
+	}
+
 	public Suit getSuit()
 	{
 		return _suit;

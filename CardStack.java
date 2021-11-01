@@ -7,9 +7,8 @@ package fivepiles;
 
 
 
-import java.awt.Graphics;
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.*;
+import java.awt.geom.RoundRectangle2D;
 import java.util.ListIterator;
 import java.util.Vector;
 
@@ -27,6 +26,9 @@ class CardStack extends JComponent
 	protected int SPREAD = 18; // Was 18 originally.
 	protected int _x = 0;
 	protected int _y = 0;
+
+	public boolean isSelected = false;
+	public static Image selectedImage = null;
 
 	public CardStack(boolean isDeck)
 	{
@@ -190,7 +192,43 @@ class CardStack extends JComponent
 		return new Point(_x, _y);
 	}
 
-	@Override
+	/**
+	 * Sets the selected state of the stack.
+	 * @param b
+	 */
+	public void setSelected(boolean b){
+		isSelected = b;
+	}
+
+	/**
+     * Returns the selected state of the stack.
+     * @return
+     */
+	public boolean isSelected(){
+        return isSelected;
+    }
+
+
+	/**
+	 * Loops through all the CardStacks in playCardStack and if a CardStack is selected, it paints a copy of the top card of that selected CardStack to bottom right of the table.
+	 * cs.getFirst gets the first (top) card in a stack.
+	 * cs.getFirst().getCardImage() gets the image of the first (top) card in the stack.
+	 */
+	public void paintSelected(){
+		Graphics g = FivePiles.table.getGraphics();
+		for(int i=0; i<FivePiles.playCardStack.length; i++){
+			if(FivePiles.playCardStack[i].isSelected() && FivePiles.playCardStack[i].getFirst() != null && CardStack.selectedImage != null){
+				System.out.println("TOP: " + FivePiles.playCardStack[i].getFirst().getNumericalValue());
+				// paint a copy of the top card of the CardStack to top right of the table. It should be permanent.
+				g.drawImage(CardStack.selectedImage, FivePiles.table.getWidth() - CardStack.selectedImage.getWidth(null), 0, FivePiles.table);
+				// Ensure that multiples of the same image are not drawn on top of each other.
+				g.dispose();
+
+
+			}
+		}
+	}
+
 	protected void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);
@@ -200,6 +238,12 @@ class CardStack extends JComponent
 			ListIterator<Card> iter = v.listIterator();
 			Point prev = new Point(); // positioning relative to the container
 			Point prevWhereAmI = new Point();// abs positioning on the board
+
+			if (isSelected && this.getFirst() != null){
+				CardStack.selectedImage = this.getFirst().getCardImage();
+			}
+			paintSelected();
+
 			if (iter.hasNext())
 			{
 				Card c = iter.next();
