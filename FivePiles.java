@@ -473,7 +473,7 @@ public class FivePiles
             return returnedStats;
         }
 
-        public static void setPlayerName(String inputName) {
+        public static void setPlayerName() {
             playerName = FivePiles.inputName.toLowerCase();
             playerName = playerName.replace(" ", "_");
             playerName = playerName.substring(0, 1).toUpperCase() + playerName.substring(1);
@@ -978,7 +978,7 @@ public class FivePiles
             if(profileButton.getSelectedIndex() != index) {
                 index = profileButton.getSelectedIndex();
                 FivePiles.inputName = profileButton.getSelectedItem().toString();
-                Player.setPlayerName(inputName);
+                Player.setPlayerName();
 
                 try {
                     statisticsTextDisplay.setText(Player.outputStatsText());
@@ -1121,10 +1121,10 @@ public class FivePiles
     }
 
     private static boolean containsInvalidCharacter(String c) {
-        String[] invalidCharacters = {"!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "[", "]", "{", "}", ":", ";", "'", "<", ">", ",", ".", "?", "/", "\\", "~", "`", "|",};
-        for (int i = 0; i < invalidCharacters.length; i++) {
-            if (c.contains(invalidCharacters[i])){
-                return true;
+        String[] invalidCharacters = {"!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "[", "]", "{", "}", ":", ";", "'", "<", ">", ",", ".", "?", "/", "\\", "~", "`", "|", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0"};
+        for (int i = 0; i < invalidCharacters.length; i++) { // Loop through every invalid character
+            if (c.contains(invalidCharacters[i]) || c.length() > 10){ // If the string contains any of the invalid characters or if the string is longer than 10 characters then
+                return true; // return true.
             }
         }
         return false;
@@ -1461,23 +1461,24 @@ public class FivePiles
 
         //checks name is not whitespace or blank
         boolean validateName = true;
-        if(Player.playerName != null)
+        if(FivePiles.inputName != null)
         {
             validateName = false;
-            Player.setPlayerName(Player.playerName); // Possibly an issue duplicating player scores.
+            Player.setPlayerName(); // Possibly an issue duplicating player scores.
         }
         while(validateName){
             inputName = (String)JOptionPane.showInputDialog("Enter player name: ");
-            if(inputName.isEmpty() || containsInvalidCharacter(inputName)){
-                JOptionPane.showMessageDialog(frame, "Please enter name");
-            }
-            else{
-                validateName = false;
+            if (inputName != null) {
+                if (inputName.isEmpty() || containsInvalidCharacter(inputName)) {
+                    JOptionPane.showMessageDialog(frame, "Please enter name");
+                } else {
+                    validateName = false;
+                }
             }
         }
         if (Player.playerName != inputName) {
             inputName = inputName.replace(" ", "_");
-            Player.setPlayerName(inputName);
+            Player.setPlayerName();
         }
 
 
