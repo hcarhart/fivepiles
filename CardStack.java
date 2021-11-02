@@ -23,7 +23,7 @@ class CardStack extends JComponent
 	protected int NUM_CARDS = 52; // Set this to any number lower than 52 for less cards. I recommend 5x + 2 cards.
 	protected Vector<Card> v;
 	protected boolean playStack = false;
-	protected int SPREAD = 18; // Was 18 originally.
+	protected int SPREAD = 28; // Was 18 originally.
 	protected int _x = 0;
 	protected int _y = 0;
 

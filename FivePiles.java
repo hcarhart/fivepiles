@@ -27,7 +27,7 @@ public class FivePiles
 
 
     // CONSTANTS
-    public static final int TABLE_HEIGHT = Card.CARD_HEIGHT * 4; //150*4 = 600
+    public static final int TABLE_HEIGHT = Card.CARD_HEIGHT * 4 + 100; //150*4 = 600
     public static final int TABLE_WIDTH = (Card.CARD_WIDTH * 7) + 100; //100 * 7 = 700
     public static final int NUM_PLAY_DECKS = 7; // 5 playing piles, 2 extra for the last 2 cards.
     public static final Point DECK_POS = new Point(5, 5);

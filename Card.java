@@ -64,7 +64,7 @@ class Card extends JPanel
 		_suit = suit;
 		_value = value;
 		_faceup = false;
-		_id = (int)(Math.random()*100000f);
+		_id = (int)(Math.random()*10000000f);
 		_location = new Point();
 		x = 0;
 		y = 0;
