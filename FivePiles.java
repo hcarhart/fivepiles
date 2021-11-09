@@ -1136,7 +1136,7 @@ public class FivePiles
         public void actionPerformed(ActionEvent e) {
             JDialog ruleFrame = new JDialog(frame, true); // Create a new dialog box for our frame.
             ruleFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE); // Set what happens when the window closes.
-            ruleFrame.setSize(TABLE_HEIGHT, TABLE_WIDTH); // Set the dimensions of the dialog box.
+            ruleFrame.setSize(TABLE_WIDTH, TABLE_HEIGHT); // Set the dimensions of the dialog box.
             JScrollPane scroll;
             JEditorPane rulesTextPane = new JEditorPane("text/html", ""); // The actual text/content.
             rulesTextPane.setEditable(false); // Make the text not editable.
