@@ -1174,8 +1174,8 @@ public class FivePiles
         private Point start = null;// where mouse was clicked
         private Card card = null; // card being clicked
         // used for moving single cards
-        private CardStack source = null;
-        private CardStack dest = null;
+        private CardStack source = null; // where card was clicked
+        private CardStack dest = null; // where card is being moved to
         // used for moving a stack of cards
         private CardStack transferStack = new CardStack(false);
 
