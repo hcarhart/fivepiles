@@ -495,7 +495,7 @@ public class FivePiles
         }
 
         public static void setPlayerWin(int win){
-            playerWin = win;
+            FivePiles.win = win;
         }
         public static void updateLists(String fileName, int fileScore, int fileTime, int fileWin)
         {
@@ -1155,7 +1155,9 @@ public class FivePiles
                     "\n" +
                     "<br><li>When you have made all the moves initially available, click on the stock pile to deal one card on each tableau pile. \n</li><<br>" + "<br><li>You cannot move cards from one tableau pile to another. \n</li><br>"   + "<br><li>\n The last 2 cards in the stock are dealt separately from the tableau and can be discarded in a pair with cards from any of the 5 tableau piles.\n</li> <br>" +
                     "\n" +
-                    "<br><li>Wins are rare.\n</li><br>" +
+                    "<br><li>Wins are rare. You win if you rid yourself of every current card on the field by making matches equal to 13.\n</li><br>" +
+                    "\n" +
+                    "<br><li>You lose if you run out of playable moves (Example: if you no longer have any cards in your deck and no cards in play can add to 13)\n</li><br>" +
                     "\n" +
                     "<br><li>There is no redeal. </li> </ol><br>";
             rulesTextPane.setText(rulesText); // Sets the text for our text GUI element to the rules string above.
@@ -1239,7 +1241,7 @@ public class FivePiles
                 }
                 ChosenCards.putFirst(card); // Put the clicked card on top of the temporary card stack.
 
-                if (isValidPair(card, old) || card.isKing() && isTop(card)) { // If the combined value of 2 selected cards is 13, a king, and is on top.
+                if ((isValidPair(card, old) || card.isKing()) && isTop(card)) { // If the combined value of 2 selected cards is 13, a king, and is on top.
                     deselectAll(); // Deselect all cards since we just made a valid match.
                     score += 20; // Add 20 points. This is just temporary and can be changed.
                     for (int x = 0; x < NUM_PLAY_DECKS; x++) { // Loop through all existing play decks.
@@ -1340,7 +1342,7 @@ public class FivePiles
                 statusBox.setText("That Is Not A Valid Move");
             }
             // CHECKING FOR WIN
-            if (checkForWin) {
+            if (checkForWin && movementCardList.isEmpty()) {
                 int emptyPiles = 0;
                 // cycle through play decks, if they are all empty, then you beat five piles.
                 for (int x = 0; x < NUM_PLAY_DECKS; x++) {
@@ -1355,7 +1357,7 @@ public class FivePiles
                 }
             }
 
-            if (checkForWin && gameOver && gameLive) { // If we checked for win and gameOver is true then we won!
+            if (checkForWin && gameOver && gameLive && movementCardList.isEmpty()) { // If we checked for win and gameOver is true then we won!
                 toggleTimer(); // Pause the timer since we won.
                 statusBox.setText("Game Over!"); // Updates our statusBox (but I don't think the GUI for statusBox is visible.)
                 Player.setPlayerScore(score);//grab score and time and assign to player
@@ -1388,14 +1390,14 @@ public class FivePiles
                 }
             }
 
-            else if(deck.empty() && gameLive) // Since we didn't win, we check if we lost instead. Firstly, we ensure the deck is empty and the game is actually running.
+            else if(deck.empty() && gameLive && movementCardList.isEmpty()) // Since we didn't win, we check if we lost instead. Firstly, we ensure the deck is empty and the game is actually running.
             {
                 boolean noValidMoves = true; // This starts as true because we're assuming we have no valid moves.
 
                 for (int i=0; i<NUM_PLAY_DECKS;  i++){ // Loop through all piles.
                     for (int j=0; j<NUM_PLAY_DECKS; j++){ // For each loop through all piles, loop again.
                         if (playCardStack[i].getFirst() != null && playCardStack[j].getFirst() != null) { // If neither top card is null then continue.
-                            if (isValidPair(playCardStack[i].getFirst(), playCardStack[j].getFirst()) || playCardStack[i].getFirst().getNumericalValue() == 13 || playCardStack[j].getFirst().getNumericalValue() == 13) { // If the pair of cards looped through i, j is valid (13 and on top) or we have a king in either i or j then...
+                            if (isValidPair(playCardStack[i].getFirst(), playCardStack[j].getFirst()) || (playCardStack[i].getFirst().getNumericalValue() == 13 && isTop(playCardStack[i].getFirst())) || (playCardStack[j].getFirst().getNumericalValue() == 13 && isTop(playCardStack[j].getFirst()))) { // If the pair of cards looped through i, j is valid (13 and on top) or we have a king in either i or j then...
                                 noValidMoves = false; // therefore, valid moves exist.
                             }
                         }
@@ -1744,8 +1746,8 @@ public class FivePiles
 
         Container contentPane;
 
-        Player.updateTopPlayers();
-        setupProfileButton();
+        Player.updateTopPlayers(); // We update the top players list.
+        setupProfileButton(); // We setup the profile button.
 
         frame.setSize(TABLE_WIDTH, TABLE_HEIGHT); // The dimensions of our gameplay area.
 
