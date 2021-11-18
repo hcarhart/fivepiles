@@ -374,7 +374,7 @@ public class FivePiles
             if (playerNameList.size() > 0) {
                 playerName = playerNameList.get(0);
             }
-            String returnedText = "Stats for player " + playerName + ":\n"
+            String returnedText = "Stats for " + playerName + ":\n"
                     + "Number of games played:\n"
                     + "Number of games won:\n"
                     + "Highest game score:\n"
@@ -415,7 +415,7 @@ public class FivePiles
 
         public static String outputTopStatsText() {
 
-            String returnedStats = "Top Statistics \n"
+            String returnedStats = "Top Statistics  Name  Score  Time  Win \n"
                     + "First place: \n"
                     + "Second place: \n"
                     + "Third place: \n"
@@ -736,13 +736,13 @@ public class FivePiles
     }
 
     protected static void updateStatisticsVisuals(){
+        statisticsTextDisplay.setFont(new Font("Aerial", Font.BOLD, 20));
         try {
             statisticsTextDisplay.setText(Player.outputStatsText());
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        statisticsTextDisplay.setFont(new Font("Courier", Font.BOLD, 20));
-        statisticsTextDisplay.setBounds(50, (TABLE_HEIGHT/2)-250, 250, 300);
+        statisticsTextDisplay.setBounds(20, (TABLE_HEIGHT/2)-250, 290, 300);
         statisticsTextDisplay.setOpaque(false);
         statisticsTextDisplay.setVisible(true);
         statisticsTextDisplay.setEditable(false);
@@ -754,7 +754,7 @@ public class FivePiles
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        statisticsNumbersDisplay.setFont(new Font("Courier", Font.BOLD, 20));
+        statisticsNumbersDisplay.setFont(new Font("Aerial", Font.BOLD, 20));
         statisticsNumbersDisplay.setBounds(300, (TABLE_HEIGHT/2)-249, 50, 300);
         statisticsNumbersDisplay.setOpaque(false);
         statisticsNumbersDisplay.setVisible(true);
@@ -763,35 +763,35 @@ public class FivePiles
         table.add(statisticsNumbersDisplay);
 
         topStatisticsTextDisplay.setText(Player.outputTopStatsText());
-        topStatisticsTextDisplay.setFont(new Font("Courier", Font.BOLD, 20));
-        topStatisticsTextDisplay.setBounds(400, (TABLE_HEIGHT/2)-250, 150, 300);
+        topStatisticsTextDisplay.setFont(new Font("Aerial", Font.BOLD, 20));
+        topStatisticsTextDisplay.setBounds(400, (TABLE_HEIGHT/2)-250, 500, 300);
         topStatisticsTextDisplay.setOpaque(false);
         topStatisticsTextDisplay.setVisible(true);
         topStatisticsTextDisplay.setEditable(false);
 
         topStatisticsNamesDisplay.setText(Player.outputTopStatsNames());
-        topStatisticsNamesDisplay.setFont(new Font("Courier", Font.BOLD, 20));
+        topStatisticsNamesDisplay.setFont(new Font("Aerial", Font.BOLD, 20));
         topStatisticsNamesDisplay.setBounds(550, (TABLE_HEIGHT/2)-225, 100, 300);
         topStatisticsNamesDisplay.setOpaque(false);
         topStatisticsNamesDisplay.setVisible(true);
         topStatisticsNamesDisplay.setEditable(false);
 
         topStatisticsScoresDisplay.setText(Player.outputTopStatsScores());
-        topStatisticsScoresDisplay.setFont(new Font("Courier", Font.BOLD, 20));
+        topStatisticsScoresDisplay.setFont(new Font("Aerial", Font.BOLD, 20));
         topStatisticsScoresDisplay.setBounds(650, (TABLE_HEIGHT/2)-225, 50, 300);
         topStatisticsScoresDisplay.setOpaque(false);
         topStatisticsScoresDisplay.setVisible(true);
         topStatisticsScoresDisplay.setEditable(false);
 
         topStatisticsTimesDisplay.setText(Player.outputTopStatsTimes());
-        topStatisticsTimesDisplay.setFont(new Font("Courier", Font.BOLD, 20));
+        topStatisticsTimesDisplay.setFont(new Font("Aerial", Font.BOLD, 20));
         topStatisticsTimesDisplay.setBounds(700, (TABLE_HEIGHT/2)-225, 50, 300);
         topStatisticsTimesDisplay.setOpaque(false);
         topStatisticsTimesDisplay.setVisible(true);
         topStatisticsTimesDisplay.setEditable(false);
 
         topStatisticsWinsDisplay.setText(Player.outputTopStatsWins());
-        topStatisticsWinsDisplay.setFont(new Font("Courier", Font.BOLD, 20));
+        topStatisticsWinsDisplay.setFont(new Font("Aerial", Font.BOLD, 20));
         topStatisticsWinsDisplay.setBounds(750, (TABLE_HEIGHT/2)-225, 50, 300);
         topStatisticsWinsDisplay.setOpaque(false);
         topStatisticsWinsDisplay.setVisible(true);
@@ -889,13 +889,13 @@ public class FivePiles
             table.repaint(); // This is to refresh our table (the primary GUI element that holds all our others).
             //
 
+            statisticsTextDisplay.setFont(new Font("Aerial", Font.BOLD, 20));
             try {
                 statisticsTextDisplay.setText(Player.outputStatsText());
             } catch (FileNotFoundException ex) {
                 ex.printStackTrace();
             }
-            statisticsTextDisplay.setFont(new Font("Courier", Font.BOLD, 20));
-            statisticsTextDisplay.setBounds(50, (TABLE_HEIGHT/2)-250, 250, 300);
+            statisticsTextDisplay.setBounds(20, (TABLE_HEIGHT/2)-250, 290, 300);
             statisticsTextDisplay.setOpaque(false);
             statisticsTextDisplay.setVisible(true);
             statisticsTextDisplay.setEditable(false);
@@ -905,42 +905,42 @@ public class FivePiles
             } catch (FileNotFoundException ex) {
                 ex.printStackTrace();
             }
-            statisticsNumbersDisplay.setFont(new Font("Courier", Font.BOLD, 20));
+            statisticsNumbersDisplay.setFont(new Font("Aerial", Font.BOLD, 20));
             statisticsNumbersDisplay.setBounds(300, (TABLE_HEIGHT/2)-249, 50, 300);
             statisticsNumbersDisplay.setOpaque(false);
             statisticsNumbersDisplay.setVisible(true);
             statisticsNumbersDisplay.setEditable(false);
 
             topStatisticsTextDisplay.setText(Player.outputTopStatsText());
-            topStatisticsTextDisplay.setFont(new Font("Courier", Font.BOLD, 20));
-            topStatisticsTextDisplay.setBounds(400, (TABLE_HEIGHT/2)-250, 150, 300);
+            topStatisticsTextDisplay.setFont(new Font("Aerial", Font.BOLD, 20));
+            topStatisticsTextDisplay.setBounds(400, (TABLE_HEIGHT/2)-250, 500, 300);
             topStatisticsTextDisplay.setOpaque(false);
             topStatisticsTextDisplay.setVisible(true);
             topStatisticsTextDisplay.setEditable(false);
 
             topStatisticsNamesDisplay.setText(Player.outputTopStatsNames());
-            topStatisticsNamesDisplay.setFont(new Font("Courier", Font.BOLD, 20));
+            topStatisticsNamesDisplay.setFont(new Font("Aerial", Font.BOLD, 20));
             topStatisticsNamesDisplay.setBounds(550, (TABLE_HEIGHT/2)-225, 100, 300);
             topStatisticsNamesDisplay.setOpaque(false);
             topStatisticsNamesDisplay.setVisible(true);
             topStatisticsNamesDisplay.setEditable(false);
 
             topStatisticsScoresDisplay.setText(Player.outputTopStatsScores());
-            topStatisticsScoresDisplay.setFont(new Font("Courier", Font.BOLD, 20));
-            topStatisticsScoresDisplay.setBounds(650, (TABLE_HEIGHT/2)-225, 50, 300);
+            topStatisticsScoresDisplay.setFont(new Font("Aerial", Font.BOLD, 20));
+            topStatisticsScoresDisplay.setBounds(610, (TABLE_HEIGHT/2)-225, 50, 300);
             topStatisticsScoresDisplay.setOpaque(false);
             topStatisticsScoresDisplay.setVisible(true);
             topStatisticsScoresDisplay.setEditable(false);
 
             topStatisticsTimesDisplay.setText(Player.outputTopStatsTimes());
-            topStatisticsTimesDisplay.setFont(new Font("Courier", Font.BOLD, 20));
+            topStatisticsTimesDisplay.setFont(new Font("Aerial", Font.BOLD, 20));
             topStatisticsTimesDisplay.setBounds(700, (TABLE_HEIGHT/2)-225, 50, 300);
             topStatisticsTimesDisplay.setOpaque(false);
             topStatisticsTimesDisplay.setVisible(true);
             topStatisticsTimesDisplay.setEditable(false);
 
             topStatisticsWinsDisplay.setText(Player.outputTopStatsWins());
-            topStatisticsWinsDisplay.setFont(new Font("Courier", Font.BOLD, 20));
+            topStatisticsWinsDisplay.setFont(new Font("Aerial", Font.BOLD, 20));
             topStatisticsWinsDisplay.setBounds(750, (TABLE_HEIGHT/2)-225, 50, 300);
             topStatisticsWinsDisplay.setOpaque(false);
             topStatisticsWinsDisplay.setVisible(true);
