@@ -771,14 +771,14 @@ public class FivePiles
 
         topStatisticsNamesDisplay.setText(Player.outputTopStatsNames());
         topStatisticsNamesDisplay.setFont(new Font("Aerial", Font.BOLD, 20));
-        topStatisticsNamesDisplay.setBounds(550, (TABLE_HEIGHT/2)-225, 100, 300);
+        topStatisticsNamesDisplay.setBounds(535, (TABLE_HEIGHT/2)-225, 100, 300);
         topStatisticsNamesDisplay.setOpaque(false);
         topStatisticsNamesDisplay.setVisible(true);
         topStatisticsNamesDisplay.setEditable(false);
 
         topStatisticsScoresDisplay.setText(Player.outputTopStatsScores());
         topStatisticsScoresDisplay.setFont(new Font("Aerial", Font.BOLD, 20));
-        topStatisticsScoresDisplay.setBounds(650, (TABLE_HEIGHT/2)-225, 50, 300);
+        topStatisticsScoresDisplay.setBounds(625, (TABLE_HEIGHT/2)-225, 50, 300);
         topStatisticsScoresDisplay.setOpaque(false);
         topStatisticsScoresDisplay.setVisible(true);
         topStatisticsScoresDisplay.setEditable(false);
@@ -920,14 +920,14 @@ public class FivePiles
 
             topStatisticsNamesDisplay.setText(Player.outputTopStatsNames());
             topStatisticsNamesDisplay.setFont(new Font("Aerial", Font.BOLD, 20));
-            topStatisticsNamesDisplay.setBounds(550, (TABLE_HEIGHT/2)-225, 100, 300);
+            topStatisticsNamesDisplay.setBounds(535, (TABLE_HEIGHT/2)-225, 100, 300);
             topStatisticsNamesDisplay.setOpaque(false);
             topStatisticsNamesDisplay.setVisible(true);
             topStatisticsNamesDisplay.setEditable(false);
 
             topStatisticsScoresDisplay.setText(Player.outputTopStatsScores());
             topStatisticsScoresDisplay.setFont(new Font("Aerial", Font.BOLD, 20));
-            topStatisticsScoresDisplay.setBounds(610, (TABLE_HEIGHT/2)-225, 50, 300);
+            topStatisticsScoresDisplay.setBounds(625, (TABLE_HEIGHT/2)-225, 50, 300);
             topStatisticsScoresDisplay.setOpaque(false);
             topStatisticsScoresDisplay.setVisible(true);
             topStatisticsScoresDisplay.setEditable(false);
